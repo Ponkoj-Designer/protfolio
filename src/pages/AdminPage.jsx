@@ -139,28 +139,61 @@ export const AdminPage = () => {
 
   // Profile Edit Form State
   const [profileFormData, setProfileFormData] = useState({
-    name: personalInfo.name,
-    title: personalInfo.title,
-    tagline: personalInfo.tagline,
-    bio: personalInfo.bio,
-    email: personalInfo.email,
-    phone: personalInfo.phone,
-    location: personalInfo.location,
-    availability: personalInfo.availability,
-    heroImage: personalInfo.heroImage,
-    aboutImage: personalInfo.aboutImage || personalInfo.heroImage,
-    adminAvatar: personalInfo.adminAvatar || personalInfo.heroImage,
+    name: personalInfo.name || '',
+    title: personalInfo.title || '',
+    tagline: personalInfo.tagline || '',
+    bio: personalInfo.bio || '',
+    email: personalInfo.email || '',
+    phone: personalInfo.phone || '',
+    location: personalInfo.location || '',
+    availability: personalInfo.availability || '',
+    heroImage: personalInfo.heroImage || '',
+    aboutImage: personalInfo.aboutImage || personalInfo.heroImage || '',
+    adminAvatar: personalInfo.adminAvatar || personalInfo.heroImage || '',
     socials: {
       facebook: personalInfo.socials?.facebook || 'https://facebook.com',
       instagram: personalInfo.socials?.instagram || 'https://instagram.com',
       linkedin: personalInfo.socials?.linkedin || 'https://linkedin.com',
       github: personalInfo.socials?.github || 'https://github.com',
-      dribbble: personalInfo.socials?.dribbble || 'https://dribbble.com'
+      dribbble: personalInfo.socials?.dribbble || 'https://dribbble.com',
+      behance: personalInfo.socials?.behance || 'https://behance.com',
+      twitter: personalInfo.socials?.twitter || 'https://twitter.com'
     },
-    projectsCompleted: personalInfo.stats.projectsCompleted,
-    happyClients: personalInfo.stats.happyClients,
-    yearsExperience: personalInfo.stats.yearsExperience
+    projectsCompleted: personalInfo.stats?.projectsCompleted || 45,
+    happyClients: personalInfo.stats?.happyClients || 30,
+    yearsExperience: personalInfo.stats?.yearsExperience || 5
   });
+
+  // Sync profile form state whenever personalInfo changes/loads from server database
+  React.useEffect(() => {
+    if (personalInfo) {
+      setProfileFormData({
+        name: personalInfo.name || '',
+        title: personalInfo.title || '',
+        tagline: personalInfo.tagline || '',
+        bio: personalInfo.bio || '',
+        email: personalInfo.email || '',
+        phone: personalInfo.phone || '',
+        location: personalInfo.location || '',
+        availability: personalInfo.availability || '',
+        heroImage: personalInfo.heroImage || '',
+        aboutImage: personalInfo.aboutImage || personalInfo.heroImage || '',
+        adminAvatar: personalInfo.adminAvatar || personalInfo.heroImage || '',
+        socials: {
+          facebook: personalInfo.socials?.facebook || 'https://facebook.com',
+          instagram: personalInfo.socials?.instagram || 'https://instagram.com',
+          linkedin: personalInfo.socials?.linkedin || 'https://linkedin.com',
+          github: personalInfo.socials?.github || 'https://github.com',
+          dribbble: personalInfo.socials?.dribbble || 'https://dribbble.com',
+          behance: personalInfo.socials?.behance || 'https://behance.com',
+          twitter: personalInfo.socials?.twitter || 'https://twitter.com'
+        },
+        projectsCompleted: personalInfo.stats?.projectsCompleted || 45,
+        happyClients: personalInfo.stats?.happyClients || 30,
+        yearsExperience: personalInfo.stats?.yearsExperience || 5
+      });
+    }
+  }, [personalInfo]);
 
   // Trigger Crop Modal Helper
   const triggerCropper = ({ title, currentImage, aspectRatio, onSave }) => {
@@ -236,8 +269,10 @@ export const AdminPage = () => {
   };
 
   // Save Project Form
-  const handleSaveProject = (e) => {
+  const handleSaveProject = async (e) => {
     e.preventDefault();
+    setToastMsg('Saving project to server database...');
+
     const formattedProject = {
       ...projectFormData,
       tags: typeof projectFormData.tags === 'string'
@@ -245,29 +280,40 @@ export const AdminPage = () => {
         : projectFormData.tags
     };
 
+    let result;
     if (editingProjectId) {
-      updateProject(editingProjectId, formattedProject);
-      setToastMsg('Project updated successfully!');
+      result = await updateProject(editingProjectId, formattedProject);
     } else {
-      addProject(formattedProject);
-      setToastMsg('New project added successfully!');
+      result = await addProject(formattedProject);
     }
 
-    setProjectModalOpen(false);
+    if (result && result.success) {
+      setToastMsg('✅ Saved permanently to production database!');
+      setProjectModalOpen(false);
+    } else {
+      setToastMsg(`❌ Save failed: ${result?.error || 'Server error'}`);
+    }
   };
 
   // Delete Project
-  const handleDeleteProject = (id) => {
+  const handleDeleteProject = async (id) => {
     if (window.confirm('Are you sure you want to delete this project?')) {
-      deleteProject(id);
-      setToastMsg('Project deleted.');
+      setToastMsg('Deleting project from database...');
+      const result = await deleteProject(id);
+      if (result && result.success) {
+        setToastMsg('✅ Project deleted permanently.');
+      } else {
+        setToastMsg(`❌ Delete failed: ${result?.error || 'Server error'}`);
+      }
     }
   };
 
   // Save Profile Info
-  const handleSaveProfile = (e) => {
+  const handleSaveProfile = async (e) => {
     e.preventDefault();
-    updatePersonalInfo({
+    setToastMsg('Saving changes to server database...');
+
+    const result = await updatePersonalInfo({
       name: profileFormData.name,
       title: profileFormData.title,
       tagline: profileFormData.tagline,
@@ -286,7 +332,12 @@ export const AdminPage = () => {
         yearsExperience: Number(profileFormData.yearsExperience)
       }
     });
-    setToastMsg('Profile information & site images updated live!');
+
+    if (result && result.success) {
+      setToastMsg('✅ Saved permanently to production database!');
+    } else {
+      setToastMsg(`❌ Save failed: ${result?.error || 'Server error'}`);
+    }
   };
 
   const unreadMessagesCount = inboxMessages.filter((m) => !m.read).length;
@@ -309,10 +360,15 @@ export const AdminPage = () => {
                 title: 'Upload & Crop Admin Avatar',
                 currentImage: personalInfo.adminAvatar || personalInfo.heroImage,
                 aspectRatio: '1:1',
-                onSave: (croppedDataUrl) => {
+                onSave: async (croppedDataUrl) => {
                   setProfileFormData((prev) => ({ ...prev, adminAvatar: croppedDataUrl }));
-                  updatePersonalInfo({ adminAvatar: croppedDataUrl });
-                  setToastMsg('Admin avatar updated live!');
+                  setToastMsg('Saving avatar to server database...');
+                  const res = await updatePersonalInfo({ adminAvatar: croppedDataUrl });
+                  if (res && res.success) {
+                    setToastMsg('✅ Admin avatar saved permanently to database!');
+                  } else {
+                    setToastMsg(`❌ Avatar save failed: ${res?.error || 'Server error'}`);
+                  }
                 }
               })}
               className="absolute inset-0 bg-black/60 rounded-full opacity-0 group-hover:opacity-100 flex items-center justify-center text-white text-[10px] transition-opacity"
@@ -468,10 +524,15 @@ export const AdminPage = () => {
                     title: 'Crop & Resize Hero Photo',
                     currentImage: personalInfo.heroImage,
                     aspectRatio: '4:5',
-                    onSave: (croppedDataUrl) => {
+                    onSave: async (croppedDataUrl) => {
                       setProfileFormData((prev) => ({ ...prev, heroImage: croppedDataUrl }));
-                      updatePersonalInfo({ heroImage: croppedDataUrl });
-                      setToastMsg('Hero Section photo updated!');
+                      setToastMsg('Saving Hero photo to server database...');
+                      const res = await updatePersonalInfo({ heroImage: croppedDataUrl });
+                      if (res && res.success) {
+                        setToastMsg('✅ Hero photo saved permanently to database!');
+                      } else {
+                        setToastMsg(`❌ Hero photo save failed: ${res?.error || 'Server error'}`);
+                      }
                     }
                   })}
                   className="w-full bg-primary text-on-primary dark:bg-white dark:text-black py-2.5 rounded font-label-caps text-xs font-bold uppercase flex items-center justify-center gap-2 hover:opacity-90 shadow-sm"
@@ -495,10 +556,15 @@ export const AdminPage = () => {
                     title: 'Crop & Resize About Photo',
                     currentImage: personalInfo.aboutImage || personalInfo.heroImage,
                     aspectRatio: '4:5',
-                    onSave: (croppedDataUrl) => {
+                    onSave: async (croppedDataUrl) => {
                       setProfileFormData((prev) => ({ ...prev, aboutImage: croppedDataUrl }));
-                      updatePersonalInfo({ aboutImage: croppedDataUrl });
-                      setToastMsg('About Me section photo updated!');
+                      setToastMsg('Saving About photo to server database...');
+                      const res = await updatePersonalInfo({ aboutImage: croppedDataUrl });
+                      if (res && res.success) {
+                        setToastMsg('✅ About photo saved permanently to database!');
+                      } else {
+                        setToastMsg(`❌ About photo save failed: ${res?.error || 'Server error'}`);
+                      }
                     }
                   })}
                   className="w-full bg-primary text-on-primary dark:bg-white dark:text-black py-2.5 rounded font-label-caps text-xs font-bold uppercase flex items-center justify-center gap-2 hover:opacity-90 shadow-sm"
@@ -522,10 +588,15 @@ export const AdminPage = () => {
                     title: 'Crop & Resize Avatar',
                     currentImage: personalInfo.adminAvatar || personalInfo.heroImage,
                     aspectRatio: '1:1',
-                    onSave: (croppedDataUrl) => {
+                    onSave: async (croppedDataUrl) => {
                       setProfileFormData((prev) => ({ ...prev, adminAvatar: croppedDataUrl }));
-                      updatePersonalInfo({ adminAvatar: croppedDataUrl });
-                      setToastMsg('Admin avatar photo updated!');
+                      setToastMsg('Saving Avatar to server database...');
+                      const res = await updatePersonalInfo({ adminAvatar: croppedDataUrl });
+                      if (res && res.success) {
+                        setToastMsg('✅ Avatar photo saved permanently to database!');
+                      } else {
+                        setToastMsg(`❌ Avatar save failed: ${res?.error || 'Server error'}`);
+                      }
                     }
                   })}
                   className="w-full bg-primary text-on-primary dark:bg-white dark:text-black py-2.5 rounded font-label-caps text-xs font-bold uppercase flex items-center justify-center gap-2 hover:opacity-90 shadow-sm"

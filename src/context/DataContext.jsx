@@ -4,7 +4,7 @@ import { initialPortfolioData } from '../data/portfolioData';
 const DataContext = createContext();
 
 export const DataProvider = ({ children }) => {
-  // Pure Server Database Source of Truth (no browser-only localStorage for content)
+  // Pure Server Database Source of Truth
   const [data, setData] = useState(initialPortfolioData);
   const [loaded, setLoaded] = useState(false);
 
@@ -34,10 +34,9 @@ export const DataProvider = ({ children }) => {
   const persistDataset = async (newDataset) => {
     const token = localStorage.getItem('ponkoj_admin_token');
 
-    // Optimistically update React state
-    setData(newDataset);
-
-    if (!token) return;
+    if (!token) {
+      return { success: false, error: 'Authentication token missing. Please log in again.' };
+    }
 
     try {
       const response = await fetch('/api/admin/data', {
@@ -53,27 +52,36 @@ export const DataProvider = ({ children }) => {
         const resJson = await response.json();
         if (resJson.success && resJson.data) {
           setData(resJson.data);
+          return { success: true, message: resJson.message || 'Saved permanently to production database.' };
         }
       }
+      const errJson = await response.json().catch(() => ({}));
+      return { success: false, error: errJson.error || 'Server database save failed.' };
     } catch (err) {
       console.error('[DataContext] Failed to persist dataset to production server database:', err.message);
+      return { success: false, error: err.message || 'Server connection error.' };
     }
   };
 
   // Project CRUD Actions
-  const addProject = (newProject) => {
+  const addProject = async (newProject) => {
     const p = { ...newProject, id: newProject.id || `proj-${Date.now()}`, year: newProject.year || String(new Date().getFullYear()) };
-    persistDataset({ ...data, projects: [p, ...data.projects] });
+    const updated = { ...data, projects: [p, ...data.projects] };
+    return await persistDataset(updated);
   };
 
-  const updateProject = (id, fields) =>
-    persistDataset({ ...data, projects: data.projects.map((p) => (p.id === id ? { ...p, ...fields } : p)) });
+  const updateProject = async (id, fields) => {
+    const updated = { ...data, projects: data.projects.map((p) => (p.id === id ? { ...p, ...fields } : p)) };
+    return await persistDataset(updated);
+  };
 
-  const deleteProject = (id) =>
-    persistDataset({ ...data, projects: data.projects.filter((p) => p.id !== id) });
+  const deleteProject = async (id) => {
+    const updated = { ...data, projects: data.projects.filter((p) => p.id !== id) };
+    return await persistDataset(updated);
+  };
 
   // Inbox & Messages Actions
-  const addMessage = (msg) => {
+  const addMessage = async (msg) => {
     const newMsg = {
       ...msg,
       id: `msg-${Date.now()}`,
@@ -81,26 +89,35 @@ export const DataProvider = ({ children }) => {
       read: false,
       starred: false
     };
-    persistDataset({ ...data, inboxMessages: [newMsg, ...(data.inboxMessages || [])] });
+    const updated = { ...data, inboxMessages: [newMsg, ...(data.inboxMessages || [])] };
+    await persistDataset(updated);
     return newMsg;
   };
 
-  const toggleMessageRead = (id) =>
-    persistDataset({ ...data, inboxMessages: (data.inboxMessages || []).map((m) => (m.id === id ? { ...m, read: !m.read } : m)) });
+  const toggleMessageRead = async (id) => {
+    const updated = { ...data, inboxMessages: (data.inboxMessages || []).map((m) => (m.id === id ? { ...m, read: !m.read } : m)) };
+    return await persistDataset(updated);
+  };
 
-  const toggleMessageStarred = (id) =>
-    persistDataset({ ...data, inboxMessages: (data.inboxMessages || []).map((m) => (m.id === id ? { ...m, starred: !m.starred } : m)) });
+  const toggleMessageStarred = async (id) => {
+    const updated = { ...data, inboxMessages: (data.inboxMessages || []).map((m) => (m.id === id ? { ...m, starred: !m.starred } : m)) };
+    return await persistDataset(updated);
+  };
 
-  const deleteMessage = (id) =>
-    persistDataset({ ...data, inboxMessages: (data.inboxMessages || []).filter((m) => m.id !== id) });
+  const deleteMessage = async (id) => {
+    const updated = { ...data, inboxMessages: (data.inboxMessages || []).filter((m) => m.id !== id) };
+    return await persistDataset(updated);
+  };
 
   // Testimonials Actions
-  const addTestimonial = (testimonial) =>
-    persistDataset({ ...data, testimonials: [{ ...testimonial, id: `test-${Date.now()}` }, ...data.testimonials] });
+  const addTestimonial = async (testimonial) => {
+    const updated = { ...data, testimonials: [{ ...testimonial, id: `test-${Date.now()}` }, ...data.testimonials] };
+    return await persistDataset(updated);
+  };
 
   // Personal Info (includes cropped images, social links, contact info, bio, stats)
-  const updatePersonalInfo = (info) =>
-    persistDataset({
+  const updatePersonalInfo = async (info) => {
+    const updated = {
       ...data,
       personalInfo: {
         ...data.personalInfo,
@@ -108,11 +125,13 @@ export const DataProvider = ({ children }) => {
         socials: { ...data.personalInfo.socials, ...(info.socials || {}) },
         stats: { ...data.personalInfo.stats, ...(info.stats || {}) }
       }
-    });
+    };
+    return await persistDataset(updated);
+  };
 
   // Reset to initial defaults ONLY when explicitly triggered by Admin button
-  const resetToDefaultData = () => {
-    persistDataset(initialPortfolioData);
+  const resetToDefaultData = async () => {
+    return await persistDataset(initialPortfolioData);
   };
 
   return (
