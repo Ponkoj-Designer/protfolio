@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
+import { createClient } from '@supabase/supabase-js';
 import { initialPortfolioData } from './src/data/portfolioData.js';
 
 dotenv.config();
@@ -88,6 +89,74 @@ const saveLocalFileDb = (newData) => {
 
 loadLocalFileDb();
 
+// ─── Supabase PostgreSQL Integration ─────────────────────────────────────────────
+const SUPABASE_URL = cleanEnvStr(process.env.SUPABASE_URL, '');
+const SUPABASE_KEY = cleanEnvStr(process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_KEY, '');
+
+let supabase = null;
+if (SUPABASE_URL && SUPABASE_KEY) {
+  try {
+    supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+    console.log('[Supabase] Initialized Supabase PostgreSQL client.');
+  } catch (err) {
+    console.warn('[Supabase] Initialization warning:', err.message);
+  }
+}
+
+const fetchFromSupabase = async () => {
+  if (!supabase) return null;
+  try {
+    const { data, error } = await supabase
+      .from('portfolio_data')
+      .select('data')
+      .eq('id', 'default')
+      .maybeSingle();
+
+    if (error) {
+      console.warn('[Supabase Fetch Warning]:', error.message);
+      return null;
+    }
+    if (data && data.data && data.data.personalInfo) {
+      console.log('[Supabase] Loaded persistent portfolio data from Supabase PostgreSQL database.');
+      const normalized = normalizePortfolioData(data.data);
+      serverMemoryDb = normalized;
+      saveLocalFileDb(normalized);
+      return normalized;
+    }
+  } catch (err) {
+    console.warn('[Supabase Fetch Exception]:', err.message);
+  }
+  return null;
+};
+
+const saveToSupabase = async (data) => {
+  const normalized = normalizePortfolioData(data);
+  saveLocalFileDb(normalized);
+  let supabaseSaved = false;
+
+  if (supabase) {
+    try {
+      const { error } = await supabase
+        .from('portfolio_data')
+        .upsert({
+          id: 'default',
+          data: normalized,
+          updated_at: new Date().toISOString()
+        });
+
+      if (error) {
+        console.error('[Supabase Save Warning]:', error.message);
+      } else {
+        console.log('[Supabase] Saved portfolio data permanently to Supabase PostgreSQL database.');
+        supabaseSaved = true;
+      }
+    } catch (err) {
+      console.error('[Supabase Save Exception]:', err.message);
+    }
+  }
+  return supabaseSaved;
+};
+
 // ─── JSONBin.io Persistent Global Database ─────────────────────────────────────
 
 const JSONBIN_BIN_ID = cleanEnvStr(process.env.JSONBIN_BIN_ID, '');
@@ -100,7 +169,6 @@ const jsonbinHeaders = () => ({
   'X-Bin-Versioning': 'false'
 });
 
-// Fetch portfolio data from JSONBin or fallback to local db
 const fetchFromJsonBin = async () => {
   if (JSONBIN_BIN_ID && JSONBIN_MASTER_KEY) {
     try {
@@ -127,7 +195,6 @@ const fetchFromJsonBin = async () => {
   return serverMemoryDb;
 };
 
-// Save portfolio data to JSONBin & local file
 const saveToJsonBin = async (data) => {
   const normalized = normalizePortfolioData(data);
   saveLocalFileDb(normalized);
@@ -150,11 +217,33 @@ const saveToJsonBin = async (data) => {
       console.error('[JSONBin] saveToJsonBin error:', err.message);
     }
   }
-  return cloudSaved || !!serverMemoryDb;
+  return cloudSaved;
 };
 
-// Seed/Migrate full dataset to JSONBin if new
-fetchFromJsonBin();
+// Combined Database Load Engine
+const fetchDatabaseData = async () => {
+  const supabaseData = await fetchFromSupabase();
+  if (supabaseData) return supabaseData;
+
+  const jsonbinData = await fetchFromJsonBin();
+  if (jsonbinData) return jsonbinData;
+
+  return serverMemoryDb || initialPortfolioData;
+};
+
+// Combined Database Save Engine
+const saveDatabaseData = async (data) => {
+  const normalized = normalizePortfolioData(data);
+  saveLocalFileDb(normalized);
+
+  const supabaseSaved = await saveToSupabase(normalized);
+  const jsonbinSaved = await saveToJsonBin(normalized);
+
+  return supabaseSaved || jsonbinSaved || !!serverMemoryDb;
+};
+
+// Seed/Migrate full dataset to Database on startup
+fetchDatabaseData();
 
 // ─── Email Config (env-seeded) ──────────────────────────────────────────────────
 
@@ -243,7 +332,7 @@ const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 // ── Public: Fetch portfolio data (served to ALL visitors on ALL devices) ───────
 const handleGetData = async (req, res) => {
   try {
-    const data = await fetchFromJsonBin();
+    const data = await fetchDatabaseData();
     return res.status(200).json({ success: true, data: data || serverMemoryDb || initialPortfolioData });
   } catch (err) {
     console.error('[GET /api/data] Error:', err);
@@ -254,14 +343,14 @@ const handleGetData = async (req, res) => {
 app.get('/api/data', handleGetData);
 app.get('/data', handleGetData);
 
-// ── Protected: Admin saves portfolio data to server database ──────────────────
+// ── Protected: Admin saves portfolio data to production database ──────────────
 const handleSaveData = async (req, res) => {
   const { data } = req.body;
   if (!data) {
     return res.status(400).json({ success: false, error: 'No data payload provided.' });
   }
 
-  const saved = await saveToJsonBin(data);
+  const saved = await saveDatabaseData(data);
   if (saved) {
     return res.status(200).json({
       success: true,
@@ -462,6 +551,7 @@ app.post('/contact', handleContactForm);
 const handleHealth = (_req, res) =>
   res.json({
     status: 'ok',
+    supabaseConfigured: !!(SUPABASE_URL && SUPABASE_KEY),
     jsonbinConfigured: !!(JSONBIN_BIN_ID && JSONBIN_MASTER_KEY),
     hasLocalDb: !!serverMemoryDb,
     recipient: emailConfig.recipientEmail
@@ -474,6 +564,7 @@ app.get('/health', handleHealth);
 if (process.env.NETLIFY !== 'true' && process.env.NODE_ENV !== 'test') {
   app.listen(PORT, () => {
     console.log(`[Server] Running on port ${PORT}`);
+    console.log(`[Supabase] Configured: ${!!(SUPABASE_URL && SUPABASE_KEY)}`);
     console.log(`[JSONBin] Configured: ${!!(JSONBIN_BIN_ID && JSONBIN_MASTER_KEY)}`);
     console.log(`[Server] Recipient Email: ${emailConfig.recipientEmail}`);
   });
