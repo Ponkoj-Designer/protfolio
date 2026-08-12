@@ -89,7 +89,7 @@ const saveLocalFileDb = (newData) => {
 
 loadLocalFileDb();
 
-// ─── Supabase PostgreSQL Integration ─────────────────────────────────────────────
+// ─── Supabase PostgreSQL & Supabase Storage Integration ─────────────────────────
 const SUPABASE_URL = cleanEnvStr(process.env.SUPABASE_URL, '');
 const SUPABASE_KEY = cleanEnvStr(process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_KEY, '');
 
@@ -97,11 +97,86 @@ let supabase = null;
 if (SUPABASE_URL && SUPABASE_KEY) {
   try {
     supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
-    console.log('[Supabase] Initialized Supabase PostgreSQL client.');
+    console.log('[Supabase] Initialized Supabase PostgreSQL & Storage client.');
   } catch (err) {
     console.warn('[Supabase] Initialization warning:', err.message);
   }
 }
+
+// Upload Base64 Image to Supabase Storage Bucket 'portfolio-images'
+const uploadImageToSupabaseStorage = async (base64Str, filenamePrefix = 'image') => {
+  if (!supabase || !base64Str || typeof base64Str !== 'string' || !base64Str.startsWith('data:image')) {
+    return base64Str;
+  }
+
+  try {
+    const matches = base64Str.match(/^data:(image\/[a-zA-Z+]+);base64,(.+)$/);
+    if (!matches) return base64Str;
+
+    const mimeType = matches[1];
+    const ext = mimeType.split('/')[1] || 'jpeg';
+    const buffer = Buffer.from(matches[2], 'base64');
+    const fileName = `${filenamePrefix}-${Date.now()}-${crypto.randomBytes(4).toString('hex')}.${ext}`;
+
+    const { error } = await supabase.storage
+      .from('portfolio-images')
+      .upload(fileName, buffer, {
+        contentType: mimeType,
+        upsert: true
+      });
+
+    if (error) {
+      console.warn(`[Supabase Storage] Bucket upload notice (${error.message}). Storing in PostgreSQL database.`);
+      return base64Str;
+    }
+
+    const { data: publicUrlData } = supabase.storage
+      .from('portfolio-images')
+      .getPublicUrl(fileName);
+
+    if (publicUrlData && publicUrlData.publicUrl) {
+      console.log(`[Supabase Storage] Uploaded ${fileName} -> ${publicUrlData.publicUrl}`);
+      return publicUrlData.publicUrl;
+    }
+  } catch (err) {
+    console.warn('[Supabase Storage Exception]:', err.message);
+  }
+  return base64Str;
+};
+
+// Process all images in portfolio dataset for Supabase Storage
+const processImagesForSupabaseStorage = async (dataset) => {
+  if (!supabase || !dataset || !dataset.personalInfo) return dataset;
+  const clone = JSON.parse(JSON.stringify(dataset));
+
+  if (clone.personalInfo.heroImage) {
+    clone.personalInfo.heroImage = await uploadImageToSupabaseStorage(clone.personalInfo.heroImage, 'hero');
+  }
+  if (clone.personalInfo.aboutImage) {
+    clone.personalInfo.aboutImage = await uploadImageToSupabaseStorage(clone.personalInfo.aboutImage, 'about');
+  }
+  if (clone.personalInfo.adminAvatar) {
+    clone.personalInfo.adminAvatar = await uploadImageToSupabaseStorage(clone.personalInfo.adminAvatar, 'avatar');
+  }
+
+  if (Array.isArray(clone.projects)) {
+    for (let i = 0; i < clone.projects.length; i++) {
+      if (clone.projects[i].thumbnail) {
+        clone.projects[i].thumbnail = await uploadImageToSupabaseStorage(clone.projects[i].thumbnail, `project-thumb-${i}`);
+      }
+      if (clone.projects[i].heroImage) {
+        clone.projects[i].heroImage = await uploadImageToSupabaseStorage(clone.projects[i].heroImage, `project-hero-${i}`);
+      }
+      if (Array.isArray(clone.projects[i].gallery)) {
+        for (let g = 0; g < clone.projects[i].gallery.length; g++) {
+          clone.projects[i].gallery[g] = await uploadImageToSupabaseStorage(clone.projects[i].gallery[g], `project-gallery-${i}-${g}`);
+        }
+      }
+    }
+  }
+
+  return clone;
+};
 
 const fetchFromSupabase = async () => {
   if (!supabase) return null;
@@ -130,7 +205,8 @@ const fetchFromSupabase = async () => {
 };
 
 const saveToSupabase = async (data) => {
-  const normalized = normalizePortfolioData(data);
+  const processedData = await processImagesForSupabaseStorage(data);
+  const normalized = normalizePortfolioData(processedData);
   saveLocalFileDb(normalized);
   let supabaseSaved = false;
 
@@ -354,7 +430,7 @@ const handleSaveData = async (req, res) => {
   if (saved) {
     return res.status(200).json({
       success: true,
-      message: 'Portfolio data saved permanently to production database. All devices will see updated data.',
+      message: 'Portfolio data saved permanently to production database and storage. All devices will see updated data.',
       data: serverMemoryDb
     });
   }
