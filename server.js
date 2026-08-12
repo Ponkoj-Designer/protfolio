@@ -3,6 +3,8 @@ import cors from 'cors';
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
 import crypto from 'crypto';
+import fs from 'fs';
+import path from 'path';
 
 dotenv.config();
 
@@ -18,6 +20,42 @@ const cleanEnvStr = (val, defaultVal = '') => {
   }
   return str.trim();
 };
+
+// Persistent Storage File Path (handles local and Netlify /tmp writable directory)
+const DB_FILE = process.env.NETLIFY === 'true'
+  ? path.join('/tmp', 'portfolio_db.json')
+  : path.join(process.cwd(), 'data', 'db.json');
+
+// Initialize Server Persistent Database
+let persistentData = null;
+
+const loadPersistentData = () => {
+  try {
+    if (fs.existsSync(DB_FILE)) {
+      const fileData = fs.readFileSync(DB_FILE, 'utf-8');
+      persistentData = JSON.parse(fileData);
+      console.log('[Database] Loaded persistent portfolio data from file.');
+    }
+  } catch (err) {
+    console.warn('[Database] Failed to read db.json, using default dataset:', err.message);
+  }
+};
+
+const savePersistentData = (newData) => {
+  persistentData = newData;
+  try {
+    const dir = path.dirname(DB_FILE);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    fs.writeFileSync(DB_FILE, JSON.stringify(newData, null, 2), 'utf-8');
+    console.log('[Database] Saved updated portfolio data to persistent storage.');
+  } catch (err) {
+    console.warn('[Database] Saved to in-memory store (file write warning):', err.message);
+  }
+};
+
+loadPersistentData();
 
 // Dynamic Email Configuration state (initialized from .env)
 let emailConfig = {
@@ -35,8 +73,8 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 // Path Normalization Middleware for Netlify Functions & Direct Server Execution
 app.use((req, res, next) => {
@@ -111,6 +149,37 @@ const requireAdminAuth = (req, res, next) => {
   req.adminUser = payload.username;
   next();
 };
+
+// Public Portfolio Data Fetch Endpoint
+const handleGetPortfolioData = (req, res) => {
+  res.status(200).json({
+    success: true,
+    data: persistentData
+  });
+};
+
+app.get('/api/data', handleGetPortfolioData);
+app.get('/data', handleGetPortfolioData);
+
+// Protected Admin Portfolio Data Save Endpoint
+const handleSavePortfolioData = (req, res) => {
+  const { data } = req.body;
+  if (!data) {
+    return res.status(400).json({ success: false, error: 'Portfolio dataset is required.' });
+  }
+
+  savePersistentData(data);
+  console.log('[Admin Data Save] Successfully persisted updated portfolio data.');
+
+  res.status(200).json({
+    success: true,
+    message: 'Portfolio data saved to persistent production database.',
+    data: persistentData
+  });
+};
+
+app.post('/api/admin/data', requireAdminAuth, handleSavePortfolioData);
+app.post('/admin/data', requireAdminAuth, handleSavePortfolioData);
 
 // Admin Login Handler
 const handleAdminLogin = (req, res) => {
@@ -440,7 +509,8 @@ const handleHealth = (req, res) => {
   res.json({
     status: 'ok',
     recipient: emailConfig.recipientEmail,
-    hasSmtpPass: !!emailConfig.smtpPass
+    hasSmtpPass: !!emailConfig.smtpPass,
+    hasPersistentData: !!persistentData
   });
 };
 

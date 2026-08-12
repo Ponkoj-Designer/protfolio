@@ -10,7 +10,6 @@ export const DataProvider = ({ children }) => {
       try {
         const parsed = JSON.parse(savedData);
         if (parsed.personalInfo) {
-          // Auto-migrate stale email & phone to updated values if old placeholders were cached
           if (!parsed.personalInfo.email || parsed.personalInfo.email === 'contact@ponkojdas.com') {
             parsed.personalInfo.email = 'ponkojdas6586@gmail.com';
           }
@@ -26,9 +25,43 @@ export const DataProvider = ({ children }) => {
     return initialPortfolioData;
   });
 
+  // Fetch production database data from backend server on initial mount
   useEffect(() => {
-    localStorage.setItem('ponkoj_portfolio_data', JSON.stringify(data));
-  }, [data]);
+    const loadServerData = async () => {
+      try {
+        const res = await fetch('/api/data');
+        if (res.ok) {
+          const resData = await res.json();
+          if (resData.success && resData.data) {
+            setData(resData.data);
+            localStorage.setItem('ponkoj_portfolio_data', JSON.stringify(resData.data));
+          }
+        }
+      } catch (err) {
+        console.warn('Could not connect to production server database on load (using cached state):', err);
+      }
+    };
+
+    loadServerData();
+  }, []);
+
+  // Sync dataset changes to backend server storage & localStorage
+  const persistDataset = (newDataset) => {
+    setData(newDataset);
+    localStorage.setItem('ponkoj_portfolio_data', JSON.stringify(newDataset));
+
+    const token = localStorage.getItem('ponkoj_admin_token');
+    fetch('/api/admin/data', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {})
+      },
+      body: JSON.stringify({ data: newDataset })
+    }).catch((err) => {
+      console.warn('Backend server database sync notice:', err);
+    });
+  };
 
   // Project CRUD Actions
   const addProject = (newProject) => {
@@ -37,24 +70,27 @@ export const DataProvider = ({ children }) => {
       id: newProject.id || `proj-${Date.now()}`,
       year: newProject.year || new Date().getFullYear().toString()
     };
-    setData((prev) => ({
-      ...prev,
-      projects: [projectWithId, ...prev.projects]
-    }));
+    const updated = {
+      ...data,
+      projects: [projectWithId, ...data.projects]
+    };
+    persistDataset(updated);
   };
 
   const updateProject = (id, updatedFields) => {
-    setData((prev) => ({
-      ...prev,
-      projects: prev.projects.map((p) => (p.id === id ? { ...p, ...updatedFields } : p))
-    }));
+    const updated = {
+      ...data,
+      projects: data.projects.map((p) => (p.id === id ? { ...p, ...updatedFields } : p))
+    };
+    persistDataset(updated);
   };
 
   const deleteProject = (id) => {
-    setData((prev) => ({
-      ...prev,
-      projects: prev.projects.filter((p) => p.id !== id)
-    }));
+    const updated = {
+      ...data,
+      projects: data.projects.filter((p) => p.id !== id)
+    };
+    persistDataset(updated);
   };
 
   // Inbox & Messages Actions
@@ -66,32 +102,36 @@ export const DataProvider = ({ children }) => {
       read: false,
       starred: false
     };
-    setData((prev) => ({
-      ...prev,
-      inboxMessages: [newMsg, ...(prev.inboxMessages || [])]
-    }));
+    const updated = {
+      ...data,
+      inboxMessages: [newMsg, ...(data.inboxMessages || [])]
+    };
+    persistDataset(updated);
     return newMsg;
   };
 
   const toggleMessageRead = (id) => {
-    setData((prev) => ({
-      ...prev,
-      inboxMessages: prev.inboxMessages.map((m) => (m.id === id ? { ...m, read: !m.read } : m))
-    }));
+    const updated = {
+      ...data,
+      inboxMessages: (data.inboxMessages || []).map((m) => (m.id === id ? { ...m, read: !m.read } : m))
+    };
+    persistDataset(updated);
   };
 
   const toggleMessageStarred = (id) => {
-    setData((prev) => ({
-      ...prev,
-      inboxMessages: prev.inboxMessages.map((m) => (m.id === id ? { ...m, starred: !m.starred } : m))
-    }));
+    const updated = {
+      ...data,
+      inboxMessages: (data.inboxMessages || []).map((m) => (m.id === id ? { ...m, starred: !m.starred } : m))
+    };
+    persistDataset(updated);
   };
 
   const deleteMessage = (id) => {
-    setData((prev) => ({
-      ...prev,
-      inboxMessages: prev.inboxMessages.filter((m) => m.id !== id)
-    }));
+    const updated = {
+      ...data,
+      inboxMessages: (data.inboxMessages || []).filter((m) => m.id !== id)
+    };
+    persistDataset(updated);
   };
 
   // Testimonials Actions
@@ -100,23 +140,25 @@ export const DataProvider = ({ children }) => {
       ...testimonial,
       id: `test-${Date.now()}`
     };
-    setData((prev) => ({
-      ...prev,
-      testimonials: [newTestimonial, ...prev.testimonials]
-    }));
+    const updated = {
+      ...data,
+      testimonials: [newTestimonial, ...data.testimonials]
+    };
+    persistDataset(updated);
   };
 
   // Personal Info Update Action
   const updatePersonalInfo = (info) => {
-    setData((prev) => ({
-      ...prev,
-      personalInfo: { ...prev.personalInfo, ...info }
-    }));
+    const updated = {
+      ...data,
+      personalInfo: { ...data.personalInfo, ...info }
+    };
+    persistDataset(updated);
   };
 
   // Reset to initial defaults
   const resetToDefaultData = () => {
-    setData(initialPortfolioData);
+    persistDataset(initialPortfolioData);
   };
 
   return (
