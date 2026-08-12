@@ -47,13 +47,16 @@ export const AuthProvider = ({ children }) => {
   }, [authToken]);
 
   const login = async (username, password) => {
+    const cleanUser = String(username || '').trim();
+    const cleanPass = String(password || '').trim();
+
     try {
       const response = await fetch('/api/admin/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ username, password })
+        body: JSON.stringify({ username: cleanUser, password: cleanPass })
       });
 
       const data = await response.json();

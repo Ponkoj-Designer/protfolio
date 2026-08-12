@@ -11,26 +11,31 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5005;
 
-// Dynamic Email Configuration state (initialized from .env)
-let emailConfig = {
-  recipientEmail: process.env.RECIPIENT_EMAIL || 'ponkojdas6586@gmail.com',
-  smtpHost: process.env.SMTP_HOST || 'smtp.gmail.com',
-  smtpPort: Number(process.env.SMTP_PORT) || 587,
-  smtpSecure: process.env.SMTP_SECURE === 'true',
-  smtpUser: process.env.SMTP_USER || 'ponkojdas6586@gmail.com',
-  smtpPass: process.env.SMTP_PASS || '',
-  web3FormsKey: process.env.WEB3FORMS_ACCESS_KEY || ''
+// Helper: Clean environment variable strings (strips accidental quotes & whitespace)
+const cleanEnvStr = (val, defaultVal = '') => {
+  if (!val) return defaultVal;
+  let str = String(val).trim();
+  if ((str.startsWith('"') && str.endsWith('"')) || (str.startsWith("'") && str.endsWith("'"))) {
+    str = str.slice(1, -1);
+  }
+  return str.trim();
 };
 
-const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'ponkoj';
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'Puja##2211';
-const JWT_SECRET = process.env.JWT_SECRET || 'secret_jwt_key_ponkoj_das_2026';
+// Dynamic Email Configuration state (initialized from .env)
+let emailConfig = {
+  recipientEmail: cleanEnvStr(process.env.RECIPIENT_EMAIL, 'ponkojdas6586@gmail.com'),
+  smtpHost: cleanEnvStr(process.env.SMTP_HOST, 'smtp.gmail.com'),
+  smtpPort: Number(process.env.SMTP_PORT) || 587,
+  smtpSecure: process.env.SMTP_SECURE === 'true',
+  smtpUser: cleanEnvStr(process.env.SMTP_USER, 'ponkojdas6586@gmail.com'),
+  smtpPass: cleanEnvStr(process.env.SMTP_PASS, ''),
+  web3FormsKey: cleanEnvStr(process.env.WEB3FORMS_ACCESS_KEY, '')
+};
 
 app.use(cors());
 app.use(express.json());
 
-// In-memory session store
-const activeAdminSessions = new Map();
+// In-memory rate limiting map for contact spam protection
 const recentSubmissions = new Map();
 
 // Helper: Validate email format
@@ -39,7 +44,44 @@ const isValidEmail = (email) => {
   return emailRegex.test(email);
 };
 
-// Authentication Middleware
+// Helper: Stateless HMAC JWT Signing & Verification (works seamlessly across Netlify Lambdas)
+const getJwtSecret = () => cleanEnvStr(process.env.JWT_SECRET, 'ponkoj_das_portfolio_secure_jwt_key_2026_secret_9988');
+
+const signToken = (payload) => {
+  const secret = getJwtSecret();
+  const header = Buffer.from(JSON.stringify({ alg: 'HS256', typ: 'JWT' })).toString('base64url');
+  const body = Buffer.from(JSON.stringify(payload)).toString('base64url');
+  const signature = crypto
+    .createHmac('sha256', secret)
+    .update(`${header}.${body}`)
+    .digest('base64url');
+  return `${header}.${body}.${signature}`;
+};
+
+const verifyToken = (token) => {
+  try {
+    if (!token || typeof token !== 'string') return null;
+    const parts = token.split('.');
+    if (parts.length !== 3) return null;
+    const [header, body, signature] = parts;
+    const secret = getJwtSecret();
+    const expectedSignature = crypto
+      .createHmac('sha256', secret)
+      .update(`${header}.${body}`)
+      .digest('base64url');
+
+    if (signature !== expectedSignature) return null;
+
+    const payload = JSON.parse(Buffer.from(body, 'base64url').toString('utf-8'));
+    if (payload.exp && payload.exp < Date.now()) return null;
+
+    return payload;
+  } catch (e) {
+    return null;
+  }
+};
+
+// Authentication Middleware for Protected Server Endpoints
 const requireAdminAuth = (req, res, next) => {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -47,14 +89,13 @@ const requireAdminAuth = (req, res, next) => {
   }
 
   const token = authHeader.split(' ')[1];
-  const session = activeAdminSessions.get(token);
+  const payload = verifyToken(token);
 
-  if (!session || session.expiresAt < Date.now()) {
-    if (session) activeAdminSessions.delete(token);
+  if (!payload) {
     return res.status(401).json({ success: false, error: 'Session expired or unauthorized token.' });
   }
 
-  req.adminUser = session.username;
+  req.adminUser = payload.username;
   next();
 };
 
@@ -66,22 +107,26 @@ app.post('/api/admin/login', (req, res) => {
     return res.status(400).json({ success: false, error: 'Username and password are required.' });
   }
 
-  const expectedUser = process.env.ADMIN_USERNAME || 'ponkoj';
-  const expectedPass = process.env.ADMIN_PASSWORD || 'Puja##2211';
+  const cleanInputUser = String(username).trim();
+  const cleanInputPass = String(password).trim();
 
-  if (username !== expectedUser || password !== expectedPass) {
+  const expectedUser = cleanEnvStr(process.env.ADMIN_USERNAME, 'ponkoj');
+  const expectedPass = cleanEnvStr(process.env.ADMIN_PASSWORD, 'Puja##2211');
+
+  if (cleanInputUser !== expectedUser || cleanInputPass !== expectedPass) {
+    console.warn(`[Admin Auth Failed] Attempt user: '${cleanInputUser}' vs Expected user: '${expectedUser}'`);
     return res.status(401).json({ success: false, error: 'Invalid admin credentials. Access denied.' });
   }
 
-  const token = crypto.randomBytes(32).toString('hex');
   const expiresAt = Date.now() + 24 * 60 * 60 * 1000;
+  const token = signToken({ username: expectedUser, exp: expiresAt });
 
-  activeAdminSessions.set(token, { username, expiresAt });
+  console.log(`[Admin Auth] Successful login for admin '${expectedUser}'`);
 
   return res.status(200).json({
     success: true,
     token,
-    username,
+    username: expectedUser,
     expiresAt,
     message: 'Authentication successful.'
   });
@@ -112,13 +157,13 @@ app.get('/api/admin/email-config', requireAdminAuth, (req, res) => {
 app.post('/api/admin/email-config', requireAdminAuth, (req, res) => {
   const { recipientEmail, smtpHost, smtpPort, smtpSecure, smtpUser, smtpPass, web3FormsKey } = req.body;
 
-  if (recipientEmail) emailConfig.recipientEmail = recipientEmail.trim();
-  if (smtpHost) emailConfig.smtpHost = smtpHost.trim();
+  if (recipientEmail) emailConfig.recipientEmail = cleanEnvStr(recipientEmail);
+  if (smtpHost) emailConfig.smtpHost = cleanEnvStr(smtpHost);
   if (smtpPort) emailConfig.smtpPort = Number(smtpPort);
   if (typeof smtpSecure === 'boolean') emailConfig.smtpSecure = smtpSecure;
-  if (smtpUser) emailConfig.smtpUser = smtpUser.trim();
-  if (smtpPass !== undefined && smtpPass !== '') emailConfig.smtpPass = smtpPass.trim();
-  if (web3FormsKey !== undefined) emailConfig.web3FormsKey = web3FormsKey.trim();
+  if (smtpUser) emailConfig.smtpUser = cleanEnvStr(smtpUser);
+  if (smtpPass !== undefined && smtpPass !== '') emailConfig.smtpPass = cleanEnvStr(smtpPass);
+  if (web3FormsKey !== undefined) emailConfig.web3FormsKey = cleanEnvStr(web3FormsKey);
 
   console.log(`[Admin] Updated email delivery config for ${emailConfig.recipientEmail}`);
 
@@ -197,9 +242,6 @@ app.post('/api/admin/test-email', requireAdminAuth, async (req, res) => {
 
 // Admin Logout Endpoint
 app.post('/api/admin/logout', requireAdminAuth, (req, res) => {
-  const authHeader = req.headers.authorization;
-  const token = authHeader.split(' ')[1];
-  activeAdminSessions.delete(token);
   res.status(200).json({ success: true, message: 'Logged out successfully.' });
 });
 
