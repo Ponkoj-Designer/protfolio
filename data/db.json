@@ -1,9 +1,16 @@
 {
   "personalInfo": {
     "name": "Ponkoj Das",
-    "title": "Lead Graphic & Web Designer",
+    "title": "Graphics Designer — 2026-08-12T09:32:02.519Z",
     "email": "ponkojdas6586@gmail.com",
-    "phone": "+8801741783521"
+    "phone": "+8801741783521",
+    "socials": {
+      "facebook": "https://facebook.com/ponkoj",
+      "instagram": "https://instagram.com/ponkoj",
+      "linkedin": "https://linkedin.com/in/ponkoj"
+    }
   },
-  "projects": []
+  "projects": [],
+  "testimonials": [],
+  "inboxMessages": []
 }

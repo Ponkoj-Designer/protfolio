@@ -3,15 +3,14 @@ import cors from 'cors';
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
 import crypto from 'crypto';
-import fs from 'fs';
-import path from 'path';
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5005;
 
-// Helper: Clean environment variable strings (strips accidental quotes & whitespace)
+// ─── Helpers ───────────────────────────────────────────────────────────────────
+
 const cleanEnvStr = (val, defaultVal = '') => {
   if (!val) return defaultVal;
   let str = String(val).trim();
@@ -21,43 +20,72 @@ const cleanEnvStr = (val, defaultVal = '') => {
   return str.trim();
 };
 
-// Persistent Storage File Path (handles local and Netlify /tmp writable directory)
-const DB_FILE = process.env.NETLIFY === 'true'
-  ? path.join('/tmp', 'portfolio_db.json')
-  : path.join(process.cwd(), 'data', 'db.json');
+// ─── JSONBin.io Persistent Global Database ─────────────────────────────────────
+// JSONBin.io is an external REST API storage service.
+// Data saved here is globally accessible across all devices, browsers, and
+// Netlify lambda instances. It survives redeployments and server restarts.
 
-// Initialize Server Persistent Database
-let persistentData = null;
+const JSONBIN_BIN_ID = cleanEnvStr(process.env.JSONBIN_BIN_ID, '');
+const JSONBIN_MASTER_KEY = cleanEnvStr(process.env.JSONBIN_MASTER_KEY, '');
+const JSONBIN_BASE = 'https://api.jsonbin.io/v3/b';
 
-const loadPersistentData = () => {
+const jsonbinHeaders = () => ({
+  'Content-Type': 'application/json',
+  'X-Master-Key': JSONBIN_MASTER_KEY,
+  'X-Bin-Versioning': 'false'   // always overwrite, no version history
+});
+
+// Fetch portfolio data from JSONBin (global persistent storage)
+const fetchFromJsonBin = async () => {
+  if (!JSONBIN_BIN_ID || !JSONBIN_MASTER_KEY) return null;
   try {
-    if (fs.existsSync(DB_FILE)) {
-      const fileData = fs.readFileSync(DB_FILE, 'utf-8');
-      persistentData = JSON.parse(fileData);
-      console.log('[Database] Loaded persistent portfolio data from file.');
+    const res = await fetch(`${JSONBIN_BASE}/${JSONBIN_BIN_ID}/latest`, {
+      headers: { 'X-Master-Key': JSONBIN_MASTER_KEY }
+    });
+    if (!res.ok) {
+      console.warn('[JSONBin] Fetch failed:', res.status, await res.text());
+      return null;
     }
+    const json = await res.json();
+    // JSONBin wraps the stored data under { record: <yourData> }
+    const record = json.record || json;
+    if (record && record.personalInfo) {
+      console.log('[JSONBin] Loaded persistent portfolio data from JSONBin.');
+      return record;
+    }
+    return null;
   } catch (err) {
-    console.warn('[Database] Failed to read db.json, using default dataset:', err.message);
+    console.warn('[JSONBin] fetchFromJsonBin error:', err.message);
+    return null;
   }
 };
 
-const savePersistentData = (newData) => {
-  persistentData = newData;
+// Save portfolio data to JSONBin (global persistent storage)
+const saveToJsonBin = async (data) => {
+  if (!JSONBIN_BIN_ID || !JSONBIN_MASTER_KEY) {
+    console.warn('[JSONBin] No BIN_ID/MASTER_KEY set — data not persisted to JSONBin.');
+    return false;
+  }
   try {
-    const dir = path.dirname(DB_FILE);
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
+    const res = await fetch(`${JSONBIN_BASE}/${JSONBIN_BIN_ID}`, {
+      method: 'PUT',
+      headers: jsonbinHeaders(),
+      body: JSON.stringify(data)
+    });
+    if (!res.ok) {
+      console.error('[JSONBin] Save failed:', res.status, await res.text());
+      return false;
     }
-    fs.writeFileSync(DB_FILE, JSON.stringify(newData, null, 2), 'utf-8');
-    console.log('[Database] Saved updated portfolio data to persistent storage.');
+    console.log('[JSONBin] Successfully saved portfolio data to persistent global database.');
+    return true;
   } catch (err) {
-    console.warn('[Database] Saved to in-memory store (file write warning):', err.message);
+    console.error('[JSONBin] saveToJsonBin error:', err.message);
+    return false;
   }
 };
 
-loadPersistentData();
+// ─── Email Config (env-seeded) ──────────────────────────────────────────────────
 
-// Dynamic Email Configuration state (initialized from .env)
 let emailConfig = {
   recipientEmail: cleanEnvStr(process.env.RECIPIENT_EMAIL, 'ponkojdas6586@gmail.com'),
   smtpHost: cleanEnvStr(process.env.SMTP_HOST, 'smtp.gmail.com'),
@@ -68,6 +96,8 @@ let emailConfig = {
   web3FormsKey: cleanEnvStr(process.env.WEB3FORMS_ACCESS_KEY, '')
 };
 
+// ─── Express Middleware ─────────────────────────────────────────────────────────
+
 app.use(cors({
   origin: '*',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -76,37 +106,25 @@ app.use(cors({
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
-// Path Normalization Middleware for Netlify Functions & Direct Server Execution
-app.use((req, res, next) => {
+// Path normalization — strips Netlify Function prefix so Express routes match correctly
+app.use((req, _res, next) => {
   if (req.url.startsWith('/.netlify/functions/api')) {
-    req.url = req.url.replace('/.netlify/functions/api', '/api');
-  } else if (req.url.startsWith('/.netlify/functions/server')) {
-    req.url = req.url.replace('/.netlify/functions/server', '/api');
+    req.url = req.url.replace('/.netlify/functions/api', '') || '/';
   }
   next();
 });
 
-// In-memory rate limiting map for contact spam protection
-const recentSubmissions = new Map();
+// ─── JWT Auth ───────────────────────────────────────────────────────────────────
 
-// Helper: Validate email format
-const isValidEmail = (email) => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
-};
-
-// Helper: Stateless HMAC JWT Signing & Verification (works seamlessly across Netlify Lambdas)
-const getJwtSecret = () => cleanEnvStr(process.env.JWT_SECRET, 'ponkoj_das_portfolio_secure_jwt_key_2026_secret_9988');
+const getJwtSecret = () =>
+  cleanEnvStr(process.env.JWT_SECRET, 'ponkoj_das_portfolio_secure_jwt_key_2026_secret_9988');
 
 const signToken = (payload) => {
   const secret = getJwtSecret();
   const header = Buffer.from(JSON.stringify({ alg: 'HS256', typ: 'JWT' })).toString('base64url');
   const body = Buffer.from(JSON.stringify(payload)).toString('base64url');
-  const signature = crypto
-    .createHmac('sha256', secret)
-    .update(`${header}.${body}`)
-    .digest('base64url');
-  return `${header}.${body}.${signature}`;
+  const sig = crypto.createHmac('sha256', secret).update(`${header}.${body}`).digest('base64url');
+  return `${header}.${body}.${sig}`;
 };
 
 const verifyToken = (token) => {
@@ -114,131 +132,129 @@ const verifyToken = (token) => {
     if (!token || typeof token !== 'string') return null;
     const parts = token.split('.');
     if (parts.length !== 3) return null;
-    const [header, body, signature] = parts;
+    const [header, body, sig] = parts;
     const secret = getJwtSecret();
-    const expectedSignature = crypto
-      .createHmac('sha256', secret)
-      .update(`${header}.${body}`)
-      .digest('base64url');
-
-    if (signature !== expectedSignature) return null;
-
+    const expected = crypto.createHmac('sha256', secret).update(`${header}.${body}`).digest('base64url');
+    if (sig !== expected) return null;
     const payload = JSON.parse(Buffer.from(body, 'base64url').toString('utf-8'));
     if (payload.exp && payload.exp < Date.now()) return null;
-
     return payload;
-  } catch (e) {
+  } catch {
     return null;
   }
 };
 
-// Authentication Middleware for Protected Server Endpoints
 const requireAdminAuth = (req, res, next) => {
   const authHeader = req.headers.authorization;
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+  if (!authHeader?.startsWith('Bearer ')) {
     return res.status(401).json({ success: false, error: 'Unauthorized: Missing or invalid token.' });
   }
-
-  const token = authHeader.split(' ')[1];
-  const payload = verifyToken(token);
-
+  const payload = verifyToken(authHeader.split(' ')[1]);
   if (!payload) {
     return res.status(401).json({ success: false, error: 'Session expired or unauthorized token.' });
   }
-
   req.adminUser = payload.username;
   next();
 };
 
-// Public Portfolio Data Fetch Endpoint
-const handleGetPortfolioData = (req, res) => {
-  res.status(200).json({
-    success: true,
-    data: persistentData
-  });
+// ─── Spam guard ─────────────────────────────────────────────────────────────────
+
+const recentSubmissions = new Map();
+const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+// ═══════════════════════════════════════════════════════════════════════════════
+//  ROUTES
+// ═══════════════════════════════════════════════════════════════════════════════
+
+// ── Public: Fetch portfolio data (served to ALL visitors on ALL devices) ───────
+const handleGetData = async (req, res) => {
+  try {
+    const data = await fetchFromJsonBin();
+    if (data) {
+      return res.status(200).json({ success: true, data });
+    }
+    // JSONBin not configured or empty → return null so frontend uses its defaults
+    return res.status(200).json({ success: false, data: null });
+  } catch (err) {
+    console.error('[GET /api/data] Error:', err);
+    return res.status(500).json({ success: false, error: err.message });
+  }
 };
 
-app.get('/api/data', handleGetPortfolioData);
-app.get('/data', handleGetPortfolioData);
+app.get('/api/data', handleGetData);
+app.get('/data', handleGetData);
 
-// Protected Admin Portfolio Data Save Endpoint
-const handleSavePortfolioData = (req, res) => {
+// ── Protected: Admin saves portfolio data to JSONBin ──────────────────────────
+const handleSaveData = async (req, res) => {
   const { data } = req.body;
   if (!data) {
-    return res.status(400).json({ success: false, error: 'Portfolio dataset is required.' });
+    return res.status(400).json({ success: false, error: 'No data payload provided.' });
   }
 
-  savePersistentData(data);
-  console.log('[Admin Data Save] Successfully persisted updated portfolio data.');
-
-  res.status(200).json({
-    success: true,
-    message: 'Portfolio data saved to persistent production database.',
-    data: persistentData
+  const saved = await saveToJsonBin(data);
+  if (saved) {
+    return res.status(200).json({
+      success: true,
+      message: 'Portfolio data saved to persistent global database (JSONBin.io). All devices will see updated data immediately.'
+    });
+  }
+  return res.status(500).json({
+    success: false,
+    error: 'Failed to save to JSONBin. Check JSONBIN_BIN_ID and JSONBIN_MASTER_KEY environment variables.'
   });
 };
 
-app.post('/api/admin/data', requireAdminAuth, handleSavePortfolioData);
-app.post('/admin/data', requireAdminAuth, handleSavePortfolioData);
+app.post('/api/admin/data', requireAdminAuth, handleSaveData);
+app.post('/admin/data', requireAdminAuth, handleSaveData);
 
-// Admin Login Handler
+// ── Admin Login ────────────────────────────────────────────────────────────────
 const handleAdminLogin = (req, res) => {
   const { username, password } = req.body || {};
-
   if (!username || !password) {
     return res.status(400).json({ success: false, error: 'Username and password are required.' });
   }
 
-  const cleanInputUser = String(username).trim().toLowerCase();
-  const cleanInputPass = String(password).trim();
+  const inputUser = String(username).trim().toLowerCase();
+  const inputPass = String(password).trim();
 
-  const expectedUser = cleanEnvStr(process.env.ADMIN_USERNAME, 'ponkoj').toLowerCase();
-  const expectedPass = cleanEnvStr(process.env.ADMIN_PASSWORD, 'Puja##2211');
+  const envUser = cleanEnvStr(process.env.ADMIN_USERNAME, 'ponkoj').toLowerCase();
+  const envPass = cleanEnvStr(process.env.ADMIN_PASSWORD, 'Puja##2211');
 
-  // Flexible production matching to guarantee authorization for ponkoj / Puja##2211
-  const isUserValid = (cleanInputUser === 'ponkoj' || cleanInputUser === 'admin' || cleanInputUser === expectedUser);
-  const isPassValid = (cleanInputPass === 'Puja##2211' || cleanInputPass === 'AdminSecretPassword123!' || cleanInputPass === expectedPass);
+  const userOk = inputUser === 'ponkoj' || inputUser === 'admin' || inputUser === envUser;
+  const passOk = inputPass === 'Puja##2211' || inputPass === 'AdminSecretPassword123!' || inputPass === envPass;
 
-  if (!isUserValid || !isPassValid) {
-    console.warn(`[Admin Auth Mismatch] Attempted user: '${cleanInputUser}', userValid: ${isUserValid}, passValid: ${isPassValid}`);
-    return res.status(401).json({
-      success: false,
-      error: 'Invalid admin credentials. Access denied.',
-      debug: {
-        userMatched: isUserValid,
-        passMatched: isPassValid
-      }
-    });
+  if (!userOk || !passOk) {
+    console.warn(`[Auth] Login failed for user '${inputUser}'`);
+    return res.status(401).json({ success: false, error: 'Invalid admin credentials. Access denied.' });
   }
 
-  const authorizedUser = cleanInputUser === 'admin' ? 'admin' : 'ponkoj';
+  const authorizedUser = inputUser === 'admin' ? 'admin' : 'ponkoj';
   const expiresAt = Date.now() + 24 * 60 * 60 * 1000;
   const token = signToken({ username: authorizedUser, exp: expiresAt });
 
-  console.log(`[Admin Auth Success] User '${authorizedUser}' logged in.`);
-
-  return res.status(200).json({
-    success: true,
-    token,
-    username: authorizedUser,
-    expiresAt,
-    message: 'Authentication successful.'
-  });
+  console.log(`[Auth] Login success for '${authorizedUser}'`);
+  return res.status(200).json({ success: true, token, username: authorizedUser, expiresAt, message: 'Authentication successful.' });
 };
 
 app.post('/api/admin/login', handleAdminLogin);
 app.post('/admin/login', handleAdminLogin);
 
-// Admin Verify Token Endpoint
-const handleAdminVerify = (req, res) => {
-  res.status(200).json({ success: true, authenticated: true, user: req.adminUser, emailConfig });
-};
+// ── Admin Verify Token ─────────────────────────────────────────────────────────
+const handleAdminVerify = (req, res) =>
+  res.status(200).json({ success: true, authenticated: true, user: req.adminUser });
 
 app.get('/api/admin/verify', requireAdminAuth, handleAdminVerify);
 app.get('/admin/verify', requireAdminAuth, handleAdminVerify);
 
-// Admin Get Email Config
-const handleGetEmailConfig = (req, res) => {
+// ── Admin Logout ───────────────────────────────────────────────────────────────
+const handleAdminLogout = (_req, res) =>
+  res.status(200).json({ success: true, message: 'Logged out successfully.' });
+
+app.post('/api/admin/logout', requireAdminAuth, handleAdminLogout);
+app.post('/admin/logout', requireAdminAuth, handleAdminLogout);
+
+// ── Admin Email Config GET ─────────────────────────────────────────────────────
+const handleGetEmailConfig = (_req, res) =>
   res.status(200).json({
     success: true,
     config: {
@@ -251,15 +267,13 @@ const handleGetEmailConfig = (req, res) => {
       web3FormsKey: emailConfig.web3FormsKey
     }
   });
-};
 
 app.get('/api/admin/email-config', requireAdminAuth, handleGetEmailConfig);
 app.get('/admin/email-config', requireAdminAuth, handleGetEmailConfig);
 
-// Admin Update Email Config
+// ── Admin Email Config POST ────────────────────────────────────────────────────
 const handleUpdateEmailConfig = (req, res) => {
   const { recipientEmail, smtpHost, smtpPort, smtpSecure, smtpUser, smtpPass, web3FormsKey } = req.body;
-
   if (recipientEmail) emailConfig.recipientEmail = cleanEnvStr(recipientEmail);
   if (smtpHost) emailConfig.smtpHost = cleanEnvStr(smtpHost);
   if (smtpPort) emailConfig.smtpPort = Number(smtpPort);
@@ -268,258 +282,127 @@ const handleUpdateEmailConfig = (req, res) => {
   if (smtpPass !== undefined && smtpPass !== '') emailConfig.smtpPass = cleanEnvStr(smtpPass);
   if (web3FormsKey !== undefined) emailConfig.web3FormsKey = cleanEnvStr(web3FormsKey);
 
-  console.log(`[Admin] Updated email delivery config for ${emailConfig.recipientEmail}`);
-
-  res.status(200).json({
+  return res.status(200).json({
     success: true,
-    message: 'Email configuration updated successfully.',
-    config: {
-      recipientEmail: emailConfig.recipientEmail,
-      smtpHost: emailConfig.smtpHost,
-      smtpPort: emailConfig.smtpPort,
-      smtpUser: emailConfig.smtpUser,
-      hasSmtpPass: !!emailConfig.smtpPass
-    }
+    message: 'Email configuration updated.',
+    config: { recipientEmail: emailConfig.recipientEmail, smtpHost: emailConfig.smtpHost }
   });
 };
 
 app.post('/api/admin/email-config', requireAdminAuth, handleUpdateEmailConfig);
 app.post('/admin/email-config', requireAdminAuth, handleUpdateEmailConfig);
 
-// Admin Test Email Delivery Endpoint
+// ── Admin Test Email ───────────────────────────────────────────────────────────
 const handleTestEmail = async (req, res) => {
+  const targetEmail = (req.body?.testEmail) || emailConfig.recipientEmail;
+  if (!emailConfig.smtpUser || !emailConfig.smtpPass) {
+    return res.status(400).json({ success: false, error: 'SMTP Password not set. Configure it in Admin → Email Settings.' });
+  }
   try {
-    const { testEmail } = req.body;
-    const targetEmail = testEmail || emailConfig.recipientEmail;
-
-    if (!emailConfig.smtpUser || !emailConfig.smtpPass) {
-      return res.status(400).json({
-        success: false,
-        error: 'SMTP Password is not set. Please enter your Gmail App Password in Admin settings or .env file.'
-      });
-    }
-
     const transporter = nodemailer.createTransport({
       host: emailConfig.smtpHost,
       port: emailConfig.smtpPort,
       secure: emailConfig.smtpPort === 465 || emailConfig.smtpSecure,
-      auth: {
-        user: emailConfig.smtpUser,
-        pass: emailConfig.smtpPass
-      },
-      tls: {
-        rejectUnauthorized: false
-      }
+      auth: { user: emailConfig.smtpUser, pass: emailConfig.smtpPass },
+      tls: { rejectUnauthorized: false }
     });
-
     await transporter.verify();
-
-    const mailOptions = {
+    await transporter.sendMail({
       from: `"Ponkoj Portfolio System" <${emailConfig.smtpUser}>`,
       to: targetEmail,
-      subject: '✅ Test Email Delivery Confirmation - Ponkoj Das Portfolio',
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; padding: 20px; border: 1px solid #10b981; border-radius: 8px;">
-          <h2 style="color: #10b981;">Email Delivery Verified!</h2>
-          <p>This is a test notification confirming that your backend email server is properly configured and successfully delivering messages.</p>
-          <hr />
-          <p><strong>Recipient:</strong> ${targetEmail}</p>
-          <p><strong>SMTP Host:</strong> ${emailConfig.smtpHost}:${emailConfig.smtpPort}</p>
-          <p><strong>Timestamp:</strong> ${new Date().toLocaleString()}</p>
-        </div>
-      `
-    };
-
-    await transporter.sendMail(mailOptions);
-    console.log(`[Admin Test Email] Successfully delivered to ${targetEmail}`);
-
-    return res.status(200).json({
-      success: true,
-      message: `Test email successfully delivered to ${targetEmail}!`
+      subject: '✅ Test Email - Ponkoj Das Portfolio',
+      html: `<div style="font-family:Arial;padding:20px;border:1px solid #10b981;border-radius:8px"><h2 style="color:#10b981">Email Delivery Verified!</h2><p>SMTP is correctly configured.</p><p><strong>Timestamp:</strong> ${new Date().toLocaleString()}</p></div>`
     });
+    return res.status(200).json({ success: true, message: `Test email sent to ${targetEmail}.` });
   } catch (err) {
-    console.error('[Admin Test Email Error]:', err);
-    return res.status(500).json({
-      success: false,
-      error: `Email delivery failed: ${err.message}`
-    });
+    return res.status(500).json({ success: false, error: `Email failed: ${err.message}` });
   }
 };
 
 app.post('/api/admin/test-email', requireAdminAuth, handleTestEmail);
 app.post('/admin/test-email', requireAdminAuth, handleTestEmail);
 
-// Admin Logout Endpoint
-const handleAdminLogout = (req, res) => {
-  res.status(200).json({ success: true, message: 'Logged out successfully.' });
-};
-
-app.post('/api/admin/logout', requireAdminAuth, handleAdminLogout);
-app.post('/admin/logout', requireAdminAuth, handleAdminLogout);
-
-// Contact Form Endpoint (Public API)
+// ── Contact Form ───────────────────────────────────────────────────────────────
 const handleContactForm = async (req, res) => {
   try {
     const { name, email, subject, message, serviceRequested, budget } = req.body;
+    if (!name?.trim()) return res.status(400).json({ success: false, error: 'Name is required.' });
+    if (!email || !isValidEmail(email.trim())) return res.status(400).json({ success: false, error: 'Valid email required.' });
+    if (!message?.trim()) return res.status(400).json({ success: false, error: 'Message is required.' });
 
-    if (!name || typeof name !== 'string' || !name.trim()) {
-      return res.status(400).json({ success: false, error: 'Name is required.' });
-    }
-
-    if (!email || !isValidEmail(email.trim())) {
-      return res.status(400).json({ success: false, error: 'Please provide a valid email address.' });
-    }
-
-    if (!message || typeof message !== 'string' || !message.trim()) {
-      return res.status(400).json({ success: false, error: 'Message content cannot be empty.' });
-    }
-
-    // Rate limiting (30 sec)
-    const userEmailKey = email.trim().toLowerCase();
-    const lastTime = recentSubmissions.get(userEmailKey);
+    const key = email.trim().toLowerCase();
     const now = Date.now();
-
-    if (lastTime && now - lastTime < 30000) {
-      return res.status(429).json({
-        success: false,
-        error: 'Please wait 30 seconds before sending another message.'
-      });
+    if (recentSubmissions.get(key) && now - recentSubmissions.get(key) < 30000) {
+      return res.status(429).json({ success: false, error: 'Please wait 30 seconds before sending another message.' });
     }
-    recentSubmissions.set(userEmailKey, now);
+    recentSubmissions.set(key, now);
 
-    const emailSubject = subject?.trim() || `New Portfolio Inquiry from ${name.trim()}`;
     const cleanName = name.trim();
     const cleanEmail = email.trim();
-    const cleanMessage = message.trim();
-    const cleanService = serviceRequested || 'General Inquiry';
-    const cleanBudget = budget || 'Not specified';
-    const targetRecipient = emailConfig.recipientEmail || 'ponkojdas6586@gmail.com';
-
-    console.log(`[Contact Form] Processing inquiry from ${cleanName} (${cleanEmail}) -> ${targetRecipient}`);
+    const cleanMsg = message.trim();
+    const emailSubject = subject?.trim() || `New Portfolio Inquiry from ${cleanName}`;
+    const target = emailConfig.recipientEmail || 'ponkojdas6586@gmail.com';
 
     let delivered = false;
-    let lastErrorDetails = '';
+    let lastErr = '';
 
-    // 1. Attempt Nodemailer SMTP delivery if SMTP user & pass configured
     if (emailConfig.smtpUser && emailConfig.smtpPass) {
       try {
-        const transporter = nodemailer.createTransport({
-          host: emailConfig.smtpHost,
-          port: emailConfig.smtpPort,
+        const t = nodemailer.createTransport({
+          host: emailConfig.smtpHost, port: emailConfig.smtpPort,
           secure: emailConfig.smtpPort === 465 || emailConfig.smtpSecure,
-          auth: {
-            user: emailConfig.smtpUser,
-            pass: emailConfig.smtpPass
-          },
-          tls: {
-            rejectUnauthorized: false
-          }
+          auth: { user: emailConfig.smtpUser, pass: emailConfig.smtpPass },
+          tls: { rejectUnauthorized: false }
         });
-
-        const mailOptions = {
-          from: `"${cleanName}" <${emailConfig.smtpUser}>`,
-          replyTo: cleanEmail,
-          to: targetRecipient,
+        await t.sendMail({
+          from: `"${cleanName}" <${emailConfig.smtpUser}>`, replyTo: cleanEmail, to: target,
           subject: `[Portfolio Inquiry] ${emailSubject}`,
-          html: `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
-              <h2 style="color: #1a1a1a; border-bottom: 2px solid #e0e0e0; padding-bottom: 10px;">New Portfolio Website Inquiry</h2>
-              <p><strong>From:</strong> ${cleanName} (&lt;${cleanEmail}&gt;)</p>
-              <p><strong>Service Requested:</strong> ${cleanService}</p>
-              <p><strong>Budget Range:</strong> ${cleanBudget}</p>
-              <p><strong>Subject:</strong> ${emailSubject}</p>
-              <div style="background-color: #f9f9f9; padding: 15px; border-left: 4px solid #10b981; margin: 20px 0;">
-                <p style="margin: 0; white-space: pre-wrap;">${cleanMessage}</p>
-              </div>
-              <p style="font-size: 12px; color: #888888; border-top: 1px solid #e0e0e0; padding-top: 10px;">
-                Sent via Ponkoj Das Portfolio Website Backend Server
-              </p>
-            </div>
-          `
-        };
-
-        await transporter.sendMail(mailOptions);
+          html: `<div style="font-family:Arial;max-width:600px;padding:20px;border:1px solid #e0e0e0;border-radius:8px"><h2>New Portfolio Inquiry</h2><p><strong>From:</strong> ${cleanName} &lt;${cleanEmail}&gt;</p><p><strong>Service:</strong> ${serviceRequested || 'General'}</p><p><strong>Budget:</strong> ${budget || 'Not specified'}</p><div style="background:#f9f9f9;padding:15px;border-left:4px solid #10b981;margin:20px 0"><p style="margin:0;white-space:pre-wrap">${cleanMsg}</p></div></div>`
+        });
         delivered = true;
-        console.log(`[Contact Form] Email successfully delivered to ${targetRecipient} via SMTP.`);
-      } catch (err) {
-        console.error('[Contact Form SMTP Error]:', err.message);
-        lastErrorDetails = `SMTP Delivery Error: ${err.message}`;
-      }
+      } catch (err) { lastErr = err.message; }
     }
 
-    // 2. Attempt Web3Forms API fallback if key available
     if (!delivered && emailConfig.web3FormsKey) {
       try {
-        const web3Res = await fetch('https://api.web3forms.com/submit', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            access_key: emailConfig.web3FormsKey,
-            name: cleanName,
-            email: cleanEmail,
-            subject: `[Portfolio Inquiry] ${emailSubject}`,
-            message: `Service: ${cleanService}\nBudget: ${cleanBudget}\n\nMessage:\n${cleanMessage}`
-          })
+        const r = await fetch('https://api.web3forms.com/submit', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ access_key: emailConfig.web3FormsKey, name: cleanName, email: cleanEmail, subject: emailSubject, message: cleanMsg })
         });
-        const web3Data = await web3Res.json();
-        if (web3Data.success) {
-          delivered = true;
-          console.log(`[Contact Form] Delivered via Web3Forms API to ${targetRecipient}`);
-        } else {
-          lastErrorDetails = `Web3Forms Error: ${web3Data.message}`;
-        }
-      } catch (err) {
-        console.error('[Contact Form Web3Forms Error]:', err.message);
-      }
+        if ((await r.json()).success) delivered = true;
+      } catch (err) { lastErr = err.message; }
     }
 
     if (!delivered && !emailConfig.smtpPass && !emailConfig.web3FormsKey) {
-      console.warn(`[Contact Form Warning] Message stored in inbox, but live email requires Gmail App Password in Admin or .env.`);
-      return res.status(200).json({
-        success: true,
-        message: 'Thank you! Your message has been received and saved to the inbox. (Live email delivery pending SMTP App Password configuration).'
-      });
+      return res.status(200).json({ success: true, message: 'Message received. (Configure SMTP in Admin Panel for live email delivery.)' });
     }
+    if (!delivered) return res.status(500).json({ success: false, error: `Email delivery failed: ${lastErr}` });
 
-    if (!delivered) {
-      return res.status(500).json({
-        success: false,
-        error: `Email delivery failed. ${lastErrorDetails || 'Please check SMTP credentials in Admin Panel.'}`
-      });
-    }
-
-    return res.status(200).json({
-      success: true,
-      message: 'Thank you! Your message has been sent successfully to Ponkoj. Expect a response within 24 hours.'
-    });
-  } catch (error) {
-    console.error('[Contact Form Internal Error]:', error);
-    return res.status(500).json({
-      success: false,
-      error: 'An unexpected server error occurred while processing your message.'
-    });
+    return res.status(200).json({ success: true, message: 'Message sent successfully! Expect a reply within 24 hours.' });
+  } catch (err) {
+    return res.status(500).json({ success: false, error: 'Server error processing your message.' });
   }
 };
 
 app.post('/api/contact', handleContactForm);
 app.post('/contact', handleContactForm);
 
-// Healthcheck
-const handleHealth = (req, res) => {
+// ── Healthcheck ────────────────────────────────────────────────────────────────
+const handleHealth = (_req, res) =>
   res.json({
     status: 'ok',
-    recipient: emailConfig.recipientEmail,
-    hasSmtpPass: !!emailConfig.smtpPass,
-    hasPersistentData: !!persistentData
+    jsonbinConfigured: !!(JSONBIN_BIN_ID && JSONBIN_MASTER_KEY),
+    recipient: emailConfig.recipientEmail
   });
-};
 
 app.get('/api/health', handleHealth);
 app.get('/health', handleHealth);
 
+// ─── Local Dev Server ───────────────────────────────────────────────────────────
 if (process.env.NETLIFY !== 'true' && process.env.NODE_ENV !== 'test') {
   app.listen(PORT, () => {
-    console.log(`[Server] Portfolio Contact & Auth API running on port ${PORT}`);
+    console.log(`[Server] Running on port ${PORT}`);
+    console.log(`[JSONBin] Configured: ${!!(JSONBIN_BIN_ID && JSONBIN_MASTER_KEY)}`);
     console.log(`[Server] Recipient Email: ${emailConfig.recipientEmail}`);
   });
 }

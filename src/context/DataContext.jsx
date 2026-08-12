@@ -3,137 +3,68 @@ import { initialPortfolioData } from '../data/portfolioData';
 
 const DataContext = createContext();
 
-// Helper: Intelligently merge new dataset over existing data without overwriting custom user fields with empty/demo fallbacks
-const mergeDatasets = (existingData, incomingData) => {
-  if (!incomingData || !incomingData.personalInfo) return existingData || initialPortfolioData;
-
-  const mergedPersonalInfo = {
-    ...initialPortfolioData.personalInfo,
-    ...(existingData?.personalInfo || {}),
-    ...(incomingData.personalInfo || {})
-  };
-
-  // Preserve social links
-  mergedPersonalInfo.socials = {
-    ...initialPortfolioData.personalInfo.socials,
-    ...(existingData?.personalInfo?.socials || {}),
-    ...(incomingData.personalInfo?.socials || {})
-  };
-
-  // Preserve stats
-  mergedPersonalInfo.stats = {
-    ...initialPortfolioData.personalInfo.stats,
-    ...(existingData?.personalInfo?.stats || {}),
-    ...(incomingData.personalInfo?.stats || {})
-  };
-
-  return {
-    ...initialPortfolioData,
-    ...existingData,
-    ...incomingData,
-    personalInfo: mergedPersonalInfo,
-    projects: incomingData.projects || existingData?.projects || initialPortfolioData.projects,
-    services: incomingData.services || existingData?.services || initialPortfolioData.services,
-    experience: incomingData.experience || existingData?.experience || initialPortfolioData.experience,
-    skills: incomingData.skills || existingData?.skills || initialPortfolioData.skills,
-    testimonials: incomingData.testimonials || existingData?.testimonials || initialPortfolioData.testimonials,
-    inboxMessages: incomingData.inboxMessages || existingData?.inboxMessages || []
-  };
-};
-
 export const DataProvider = ({ children }) => {
-  // Initialize state from local persistent storage first
-  const [data, setData] = useState(() => {
-    const savedData = localStorage.getItem('ponkoj_portfolio_data');
-    if (savedData) {
-      try {
-        const parsed = JSON.parse(savedData);
-        if (parsed && parsed.personalInfo) {
-          return mergeDatasets(initialPortfolioData, parsed);
-        }
-      } catch (err) {
-        console.error('Failed to parse saved portfolio data', err);
-      }
-    }
-    return initialPortfolioData;
-  });
+  // Start with initial defaults — server is the source of truth
+  const [data, setData] = useState(initialPortfolioData);
+  const [loaded, setLoaded] = useState(false);
 
-  // Fetch production database data from backend server on initial mount and merge cleanly
+  // ── On mount: fetch from server (JSONBin) — the single global source of truth ──
   useEffect(() => {
-    const loadServerData = async () => {
+    const loadFromServer = async () => {
       try {
         const res = await fetch('/api/data');
         if (res.ok) {
-          const resData = await res.json();
-          if (resData.success && resData.data && resData.data.personalInfo) {
-            setData((prev) => {
-              const merged = mergeDatasets(prev, resData.data);
-              localStorage.setItem('ponkoj_portfolio_data', JSON.stringify(merged));
-              return merged;
-            });
+          const json = await res.json();
+          if (json.success && json.data && json.data.personalInfo) {
+            setData(json.data);
+            setLoaded(true);
+            return;
           }
         }
       } catch (err) {
-        console.warn('Could not connect to production server database on load (using cached state):', err);
+        console.warn('[DataContext] Server fetch failed, using initial data:', err.message);
       }
+      // Server not available (first deploy before any save) — use initial defaults
+      setLoaded(true);
     };
 
-    loadServerData();
+    loadFromServer();
   }, []);
 
-  // Sync dataset changes permanently to backend server storage & local storage
-  const persistDataset = (newDataset) => {
+  // ── Persist to server (JSONBin) immediately on every Admin change ──────────────
+  const persistDataset = async (newDataset) => {
     setData(newDataset);
-    try {
-      localStorage.setItem('ponkoj_portfolio_data', JSON.stringify(newDataset));
-    } catch (e) {
-      console.warn('localStorage save warning (quota or restricted):', e);
-    }
 
     const token = localStorage.getItem('ponkoj_admin_token');
-    fetch('/api/admin/data', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(token ? { Authorization: `Bearer ${token}` } : {})
-      },
-      body: JSON.stringify({ data: newDataset })
-    }).catch((err) => {
-      console.warn('Backend server database sync notice:', err);
-    });
+    if (!token) return;
+
+    try {
+      await fetch('/api/admin/data', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ data: newDataset })
+      });
+    } catch (err) {
+      console.error('[DataContext] Failed to persist to server:', err.message);
+    }
   };
 
-  // Project CRUD Actions
+  // ── Project CRUD ───────────────────────────────────────────────────────────────
   const addProject = (newProject) => {
-    const projectWithId = {
-      ...newProject,
-      id: newProject.id || `proj-${Date.now()}`,
-      year: newProject.year || new Date().getFullYear().toString()
-    };
-    const updated = {
-      ...data,
-      projects: [projectWithId, ...data.projects]
-    };
-    persistDataset(updated);
+    const p = { ...newProject, id: newProject.id || `proj-${Date.now()}`, year: newProject.year || String(new Date().getFullYear()) };
+    persistDataset({ ...data, projects: [p, ...data.projects] });
   };
 
-  const updateProject = (id, updatedFields) => {
-    const updated = {
-      ...data,
-      projects: data.projects.map((p) => (p.id === id ? { ...p, ...updatedFields } : p))
-    };
-    persistDataset(updated);
-  };
+  const updateProject = (id, fields) =>
+    persistDataset({ ...data, projects: data.projects.map((p) => (p.id === id ? { ...p, ...fields } : p)) });
 
-  const deleteProject = (id) => {
-    const updated = {
-      ...data,
-      projects: data.projects.filter((p) => p.id !== id)
-    };
-    persistDataset(updated);
-  };
+  const deleteProject = (id) =>
+    persistDataset({ ...data, projects: data.projects.filter((p) => p.id !== id) });
 
-  // Inbox & Messages Actions
+  // ── Inbox / Messages ───────────────────────────────────────────────────────────
   const addMessage = (msg) => {
     const newMsg = {
       ...msg,
@@ -142,76 +73,37 @@ export const DataProvider = ({ children }) => {
       read: false,
       starred: false
     };
-    const updated = {
-      ...data,
-      inboxMessages: [newMsg, ...(data.inboxMessages || [])]
-    };
-    persistDataset(updated);
+    persistDataset({ ...data, inboxMessages: [newMsg, ...(data.inboxMessages || [])] });
     return newMsg;
   };
 
-  const toggleMessageRead = (id) => {
-    const updated = {
-      ...data,
-      inboxMessages: (data.inboxMessages || []).map((m) => (m.id === id ? { ...m, read: !m.read } : m))
-    };
-    persistDataset(updated);
-  };
+  const toggleMessageRead = (id) =>
+    persistDataset({ ...data, inboxMessages: (data.inboxMessages || []).map((m) => (m.id === id ? { ...m, read: !m.read } : m)) });
 
-  const toggleMessageStarred = (id) => {
-    const updated = {
-      ...data,
-      inboxMessages: (data.inboxMessages || []).map((m) => (m.id === id ? { ...m, starred: !m.starred } : m))
-    };
-    persistDataset(updated);
-  };
+  const toggleMessageStarred = (id) =>
+    persistDataset({ ...data, inboxMessages: (data.inboxMessages || []).map((m) => (m.id === id ? { ...m, starred: !m.starred } : m)) });
 
-  const deleteMessage = (id) => {
-    const updated = {
-      ...data,
-      inboxMessages: (data.inboxMessages || []).filter((m) => m.id !== id)
-    };
-    persistDataset(updated);
-  };
+  const deleteMessage = (id) =>
+    persistDataset({ ...data, inboxMessages: (data.inboxMessages || []).filter((m) => m.id !== id) });
 
-  // Testimonials Actions
-  const addTestimonial = (testimonial) => {
-    const newTestimonial = {
-      ...testimonial,
-      id: `test-${Date.now()}`
-    };
-    const updated = {
-      ...data,
-      testimonials: [newTestimonial, ...data.testimonials]
-    };
-    persistDataset(updated);
-  };
+  // ── Testimonials ───────────────────────────────────────────────────────────────
+  const addTestimonial = (testimonial) =>
+    persistDataset({ ...data, testimonials: [{ ...testimonial, id: `test-${Date.now()}` }, ...data.testimonials] });
 
-  // Personal Info Update Action
-  const updatePersonalInfo = (info) => {
-    const updated = {
+  // ── Personal Info (includes images, socials, contact, bio) ────────────────────
+  const updatePersonalInfo = (info) =>
+    persistDataset({
       ...data,
       personalInfo: {
         ...data.personalInfo,
         ...info,
-        socials: {
-          ...data.personalInfo.socials,
-          ...(info.socials || {})
-        },
-        stats: {
-          ...data.personalInfo.stats,
-          ...(info.stats || {})
-        }
+        socials: { ...data.personalInfo.socials, ...(info.socials || {}) },
+        stats: { ...data.personalInfo.stats, ...(info.stats || {}) }
       }
-    };
-    persistDataset(updated);
-  };
+    });
 
-  // Reset to initial defaults ONLY when explicitly triggered by Admin button
-  const resetToDefaultData = () => {
-    localStorage.removeItem('ponkoj_portfolio_data');
-    persistDataset(initialPortfolioData);
-  };
+  // ── Reset (only on explicit admin button press) ────────────────────────────────
+  const resetToDefaultData = () => persistDataset(initialPortfolioData);
 
   return (
     <DataContext.Provider
@@ -223,6 +115,7 @@ export const DataProvider = ({ children }) => {
         skills: data.skills,
         testimonials: data.testimonials,
         inboxMessages: data.inboxMessages || [],
+        dataLoaded: loaded,
         addProject,
         updateProject,
         deleteProject,
@@ -241,9 +134,7 @@ export const DataProvider = ({ children }) => {
 };
 
 export const useData = () => {
-  const context = useContext(DataContext);
-  if (!context) {
-    throw new Error('useData must be used within a DataProvider');
-  }
-  return context;
+  const ctx = useContext(DataContext);
+  if (!ctx) throw new Error('useData must be used within a DataProvider');
+  return ctx;
 };
