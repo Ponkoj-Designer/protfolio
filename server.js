@@ -3,8 +3,6 @@ import cors from 'cors';
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
 import crypto from 'crypto';
-import fs from 'fs';
-import path from 'path';
 
 dotenv.config();
 
@@ -34,6 +32,16 @@ let emailConfig = {
 
 app.use(cors());
 app.use(express.json());
+
+// Path Normalization Middleware for Netlify Functions & Direct Server Execution
+app.use((req, res, next) => {
+  if (req.url.startsWith('/.netlify/functions/api')) {
+    req.url = req.url.replace('/.netlify/functions/api', '/api');
+  } else if (req.url.startsWith('/.netlify/functions/server')) {
+    req.url = req.url.replace('/.netlify/functions/server', '/api');
+  }
+  next();
+});
 
 // In-memory rate limiting map for contact spam protection
 const recentSubmissions = new Map();
@@ -99,29 +107,29 @@ const requireAdminAuth = (req, res, next) => {
   next();
 };
 
-// Admin Login Endpoint
-app.post('/api/admin/login', (req, res) => {
+// Admin Login Handler
+const handleAdminLogin = (req, res) => {
   const { username, password } = req.body;
 
   if (!username || !password) {
     return res.status(400).json({ success: false, error: 'Username and password are required.' });
   }
 
-  const cleanInputUser = String(username).trim();
+  const cleanInputUser = String(username).trim().toLowerCase();
   const cleanInputPass = String(password).trim();
 
-  const expectedUser = cleanEnvStr(process.env.ADMIN_USERNAME, 'ponkoj');
+  const expectedUser = cleanEnvStr(process.env.ADMIN_USERNAME, 'ponkoj').toLowerCase();
   const expectedPass = cleanEnvStr(process.env.ADMIN_PASSWORD, 'Puja##2211');
 
   if (cleanInputUser !== expectedUser || cleanInputPass !== expectedPass) {
-    console.warn(`[Admin Auth Failed] Attempt user: '${cleanInputUser}' vs Expected user: '${expectedUser}'`);
+    console.warn(`[Admin Auth Mismatch] Attempt user: '${cleanInputUser}' vs Expected user: '${expectedUser}'`);
     return res.status(401).json({ success: false, error: 'Invalid admin credentials. Access denied.' });
   }
 
   const expiresAt = Date.now() + 24 * 60 * 60 * 1000;
   const token = signToken({ username: expectedUser, exp: expiresAt });
 
-  console.log(`[Admin Auth] Successful login for admin '${expectedUser}'`);
+  console.log(`[Admin Auth Success] User '${expectedUser}' logged in.`);
 
   return res.status(200).json({
     success: true,
@@ -130,15 +138,21 @@ app.post('/api/admin/login', (req, res) => {
     expiresAt,
     message: 'Authentication successful.'
   });
-});
+};
+
+app.post('/api/admin/login', handleAdminLogin);
+app.post('/admin/login', handleAdminLogin);
 
 // Admin Verify Token Endpoint
-app.get('/api/admin/verify', requireAdminAuth, (req, res) => {
+const handleAdminVerify = (req, res) => {
   res.status(200).json({ success: true, authenticated: true, user: req.adminUser, emailConfig });
-});
+};
+
+app.get('/api/admin/verify', requireAdminAuth, handleAdminVerify);
+app.get('/admin/verify', requireAdminAuth, handleAdminVerify);
 
 // Admin Get Email Config
-app.get('/api/admin/email-config', requireAdminAuth, (req, res) => {
+const handleGetEmailConfig = (req, res) => {
   res.status(200).json({
     success: true,
     config: {
@@ -151,10 +165,13 @@ app.get('/api/admin/email-config', requireAdminAuth, (req, res) => {
       web3FormsKey: emailConfig.web3FormsKey
     }
   });
-});
+};
+
+app.get('/api/admin/email-config', requireAdminAuth, handleGetEmailConfig);
+app.get('/admin/email-config', requireAdminAuth, handleGetEmailConfig);
 
 // Admin Update Email Config
-app.post('/api/admin/email-config', requireAdminAuth, (req, res) => {
+const handleUpdateEmailConfig = (req, res) => {
   const { recipientEmail, smtpHost, smtpPort, smtpSecure, smtpUser, smtpPass, web3FormsKey } = req.body;
 
   if (recipientEmail) emailConfig.recipientEmail = cleanEnvStr(recipientEmail);
@@ -178,10 +195,13 @@ app.post('/api/admin/email-config', requireAdminAuth, (req, res) => {
       hasSmtpPass: !!emailConfig.smtpPass
     }
   });
-});
+};
+
+app.post('/api/admin/email-config', requireAdminAuth, handleUpdateEmailConfig);
+app.post('/admin/email-config', requireAdminAuth, handleUpdateEmailConfig);
 
 // Admin Test Email Delivery Endpoint
-app.post('/api/admin/test-email', requireAdminAuth, async (req, res) => {
+const handleTestEmail = async (req, res) => {
   try {
     const { testEmail } = req.body;
     const targetEmail = testEmail || emailConfig.recipientEmail;
@@ -238,15 +258,21 @@ app.post('/api/admin/test-email', requireAdminAuth, async (req, res) => {
       error: `Email delivery failed: ${err.message}`
     });
   }
-});
+};
+
+app.post('/api/admin/test-email', requireAdminAuth, handleTestEmail);
+app.post('/admin/test-email', requireAdminAuth, handleTestEmail);
 
 // Admin Logout Endpoint
-app.post('/api/admin/logout', requireAdminAuth, (req, res) => {
+const handleAdminLogout = (req, res) => {
   res.status(200).json({ success: true, message: 'Logged out successfully.' });
-});
+};
+
+app.post('/api/admin/logout', requireAdminAuth, handleAdminLogout);
+app.post('/admin/logout', requireAdminAuth, handleAdminLogout);
 
 // Contact Form Endpoint (Public API)
-app.post('/api/contact', async (req, res) => {
+const handleContactForm = async (req, res) => {
   try {
     const { name, email, subject, message, serviceRequested, budget } = req.body;
 
@@ -361,7 +387,6 @@ app.post('/api/contact', async (req, res) => {
       }
     }
 
-    // If delivery failed or SMTP pass is not configured, inform the user clearly
     if (!delivered && !emailConfig.smtpPass && !emailConfig.web3FormsKey) {
       console.warn(`[Contact Form Warning] Message stored in inbox, but live email requires Gmail App Password in Admin or .env.`);
       return res.status(200).json({
@@ -388,16 +413,22 @@ app.post('/api/contact', async (req, res) => {
       error: 'An unexpected server error occurred while processing your message.'
     });
   }
-});
+};
+
+app.post('/api/contact', handleContactForm);
+app.post('/contact', handleContactForm);
 
 // Healthcheck
-app.get('/api/health', (req, res) => {
+const handleHealth = (req, res) => {
   res.json({
     status: 'ok',
     recipient: emailConfig.recipientEmail,
     hasSmtpPass: !!emailConfig.smtpPass
   });
-});
+};
+
+app.get('/api/health', handleHealth);
+app.get('/health', handleHealth);
 
 if (process.env.NETLIFY !== 'true' && process.env.NODE_ENV !== 'test') {
   app.listen(PORT, () => {
