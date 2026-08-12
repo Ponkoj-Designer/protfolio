@@ -4,70 +4,59 @@ import { initialPortfolioData } from '../data/portfolioData';
 const DataContext = createContext();
 
 export const DataProvider = ({ children }) => {
-  // Initialize state from local persistent storage first for instant render
-  const [data, setData] = useState(() => {
-    const savedData = localStorage.getItem('ponkoj_portfolio_data');
-    if (savedData) {
-      try {
-        const parsed = JSON.parse(savedData);
-        if (parsed && parsed.personalInfo) {
-          return parsed;
-        }
-      } catch (err) {
-        console.error('Failed to parse saved portfolio data', err);
-      }
-    }
-    return initialPortfolioData;
-  });
-
+  // Pure Server Database Source of Truth (no browser-only localStorage for content)
+  const [data, setData] = useState(initialPortfolioData);
   const [loaded, setLoaded] = useState(false);
 
-  // On mount: fetch from production server database (JSONBin / db.json) and update state & localStorage
+  // ── On mount: fetch latest portfolio data directly from persistent server database ──
   useEffect(() => {
-    const loadFromServer = async () => {
+    const loadFromServerDatabase = async () => {
       try {
         const res = await fetch('/api/data');
         if (res.ok) {
           const json = await res.json();
           if (json.success && json.data && json.data.personalInfo) {
             setData(json.data);
-            try {
-              localStorage.setItem('ponkoj_portfolio_data', JSON.stringify(json.data));
-            } catch (e) {}
             setLoaded(true);
             return;
           }
         }
       } catch (err) {
-        console.warn('[DataContext] Server fetch failed, using cached state:', err.message);
+        console.warn('[DataContext] Server database fetch error:', err.message);
       }
       setLoaded(true);
     };
 
-    loadFromServer();
+    loadFromServerDatabase();
   }, []);
 
-  // Persist dataset to React state, localStorage, AND server production database
+  // ── Persist dataset directly to production server database ───────────────────────
   const persistDataset = async (newDataset) => {
-    setData(newDataset);
-    try {
-      localStorage.setItem('ponkoj_portfolio_data', JSON.stringify(newDataset));
-    } catch (e) {
-      console.warn('localStorage save warning:', e);
-    }
-
     const token = localStorage.getItem('ponkoj_admin_token');
+
+    // Optimistically update React state
+    setData(newDataset);
+
+    if (!token) return;
+
     try {
-      await fetch('/api/admin/data', {
+      const response = await fetch('/api/admin/data', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          ...(token ? { Authorization: `Bearer ${token}` } : {})
+          Authorization: `Bearer ${token}`
         },
         body: JSON.stringify({ data: newDataset })
       });
+
+      if (response.ok) {
+        const resJson = await response.json();
+        if (resJson.success && resJson.data) {
+          setData(resJson.data);
+        }
+      }
     } catch (err) {
-      console.error('[DataContext] Server persistence sync notice:', err.message);
+      console.error('[DataContext] Failed to persist dataset to production server database:', err.message);
     }
   };
 
@@ -109,7 +98,7 @@ export const DataProvider = ({ children }) => {
   const addTestimonial = (testimonial) =>
     persistDataset({ ...data, testimonials: [{ ...testimonial, id: `test-${Date.now()}` }, ...data.testimonials] });
 
-  // Personal Info (includes cropped images, social links, contact, bio)
+  // Personal Info (includes cropped images, social links, contact info, bio, stats)
   const updatePersonalInfo = (info) =>
     persistDataset({
       ...data,
@@ -123,7 +112,6 @@ export const DataProvider = ({ children }) => {
 
   // Reset to initial defaults ONLY when explicitly triggered by Admin button
   const resetToDefaultData = () => {
-    localStorage.removeItem('ponkoj_portfolio_data');
     persistDataset(initialPortfolioData);
   };
 

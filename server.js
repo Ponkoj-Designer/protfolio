@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
+import { initialPortfolioData } from './src/data/portfolioData.js';
 
 dotenv.config();
 
@@ -27,15 +28,18 @@ const DB_FILE = process.env.NETLIFY === 'true'
   ? path.join('/tmp', 'portfolio_db.json')
   : path.join(process.cwd(), 'data', 'db.json');
 
-// Server In-Memory & File Persistence Store
-let serverMemoryDb = null;
+// Server Database Memory Store (seeded with initialPortfolioData if uninitialized)
+let serverMemoryDb = initialPortfolioData;
 
 const loadLocalFileDb = () => {
   try {
     if (fs.existsSync(DB_FILE)) {
       const fileData = fs.readFileSync(DB_FILE, 'utf-8');
-      serverMemoryDb = JSON.parse(fileData);
-      console.log('[Database] Loaded persistent portfolio data from local disk file.');
+      const parsed = JSON.parse(fileData);
+      if (parsed && parsed.personalInfo) {
+        serverMemoryDb = parsed;
+        console.log('[Database] Loaded persistent portfolio data from local disk file.');
+      }
     }
   } catch (err) {
     console.warn('[Database] Failed to read local db.json file:', err.message);
@@ -52,7 +56,7 @@ const saveLocalFileDb = (newData) => {
     fs.writeFileSync(DB_FILE, JSON.stringify(newData, null, 2), 'utf-8');
     console.log('[Database] Saved portfolio data to local disk file.');
   } catch (err) {
-    console.warn('[Database] Saved to in-memory store (file write warning):', err.message);
+    console.warn('[Database] File write warning:', err.message);
   }
 };
 
@@ -87,7 +91,7 @@ const fetchFromJsonBin = async () => {
           return record;
         }
       } else {
-        console.warn('[JSONBin] Fetch failed, falling back to local database:', res.status);
+        console.warn('[JSONBin] Fetch failed, using local database:', res.status);
       }
     } catch (err) {
       console.warn('[JSONBin] fetchFromJsonBin error, using local fallback:', err.message);
@@ -120,6 +124,9 @@ const saveToJsonBin = async (data) => {
   }
   return cloudSaved || !!serverMemoryDb;
 };
+
+// Seed initial dataset if database is brand new
+fetchFromJsonBin();
 
 // ─── Email Config (env-seeded) ──────────────────────────────────────────────────
 
@@ -209,17 +216,17 @@ const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 const handleGetData = async (req, res) => {
   try {
     const data = await fetchFromJsonBin();
-    return res.status(200).json({ success: true, data: data || serverMemoryDb });
+    return res.status(200).json({ success: true, data: data || serverMemoryDb || initialPortfolioData });
   } catch (err) {
     console.error('[GET /api/data] Error:', err);
-    return res.status(200).json({ success: true, data: serverMemoryDb });
+    return res.status(200).json({ success: true, data: serverMemoryDb || initialPortfolioData });
   }
 };
 
 app.get('/api/data', handleGetData);
 app.get('/data', handleGetData);
 
-// ── Protected: Admin saves portfolio data ──────────────────────────────────────
+// ── Protected: Admin saves portfolio data to server database ──────────────────
 const handleSaveData = async (req, res) => {
   const { data } = req.body;
   if (!data) {
@@ -230,7 +237,7 @@ const handleSaveData = async (req, res) => {
   if (saved) {
     return res.status(200).json({
       success: true,
-      message: 'Portfolio data saved to persistent production database. All devices will see updated data.',
+      message: 'Portfolio data saved permanently to production database. All devices will see updated data.',
       data: serverMemoryDb
     });
   }
