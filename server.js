@@ -23,7 +23,32 @@ const cleanEnvStr = (val, defaultVal = '') => {
   return str.trim();
 };
 
-// ─── Persistent Storage File Path (handles local and Netlify /tmp writable directory) ──
+// Portfolio Dataset Normalizer (ensures all fields are complete and valid)
+const normalizePortfolioData = (incoming) => {
+  if (!incoming || typeof incoming !== 'object') return initialPortfolioData;
+  return {
+    personalInfo: {
+      ...initialPortfolioData.personalInfo,
+      ...(incoming.personalInfo || {}),
+      socials: {
+        ...initialPortfolioData.personalInfo.socials,
+        ...(incoming.personalInfo?.socials || {})
+      },
+      stats: {
+        ...initialPortfolioData.personalInfo.stats,
+        ...(incoming.personalInfo?.stats || {})
+      }
+    },
+    projects: Array.isArray(incoming.projects) && incoming.projects.length > 0 ? incoming.projects : initialPortfolioData.projects,
+    services: Array.isArray(incoming.services) && incoming.services.length > 0 ? incoming.services : initialPortfolioData.services,
+    experience: Array.isArray(incoming.experience) && incoming.experience.length > 0 ? incoming.experience : initialPortfolioData.experience,
+    skills: Array.isArray(incoming.skills) && incoming.skills.length > 0 ? incoming.skills : initialPortfolioData.skills,
+    testimonials: Array.isArray(incoming.testimonials) && incoming.testimonials.length > 0 ? incoming.testimonials : initialPortfolioData.testimonials,
+    inboxMessages: Array.isArray(incoming.inboxMessages) ? incoming.inboxMessages : []
+  };
+};
+
+// ─── Persistent Storage File Path ──────────────────────────────────────────────
 const DB_FILE = process.env.NETLIFY === 'true'
   ? path.join('/tmp', 'portfolio_db.json')
   : path.join(process.cwd(), 'data', 'db.json');
@@ -37,7 +62,7 @@ const loadLocalFileDb = () => {
       const fileData = fs.readFileSync(DB_FILE, 'utf-8');
       const parsed = JSON.parse(fileData);
       if (parsed && parsed.personalInfo) {
-        serverMemoryDb = parsed;
+        serverMemoryDb = normalizePortfolioData(parsed);
         console.log('[Database] Loaded persistent portfolio data from local disk file.');
       }
     }
@@ -47,13 +72,14 @@ const loadLocalFileDb = () => {
 };
 
 const saveLocalFileDb = (newData) => {
-  serverMemoryDb = newData;
+  const normalized = normalizePortfolioData(newData);
+  serverMemoryDb = normalized;
   try {
     const dir = path.dirname(DB_FILE);
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
     }
-    fs.writeFileSync(DB_FILE, JSON.stringify(newData, null, 2), 'utf-8');
+    fs.writeFileSync(DB_FILE, JSON.stringify(normalized, null, 2), 'utf-8');
     console.log('[Database] Saved portfolio data to local disk file.');
   } catch (err) {
     console.warn('[Database] File write warning:', err.message);
@@ -86,9 +112,10 @@ const fetchFromJsonBin = async () => {
         const record = json.record || json;
         if (record && record.personalInfo) {
           console.log('[JSONBin] Loaded persistent portfolio data from JSONBin cloud database.');
-          serverMemoryDb = record;
-          saveLocalFileDb(record);
-          return record;
+          const normalized = normalizePortfolioData(record);
+          serverMemoryDb = normalized;
+          saveLocalFileDb(normalized);
+          return normalized;
         }
       } else {
         console.warn('[JSONBin] Fetch failed, using local database:', res.status);
@@ -102,7 +129,8 @@ const fetchFromJsonBin = async () => {
 
 // Save portfolio data to JSONBin & local file
 const saveToJsonBin = async (data) => {
-  saveLocalFileDb(data);
+  const normalized = normalizePortfolioData(data);
+  saveLocalFileDb(normalized);
   let cloudSaved = false;
 
   if (JSONBIN_BIN_ID && JSONBIN_MASTER_KEY) {
@@ -110,7 +138,7 @@ const saveToJsonBin = async (data) => {
       const res = await fetch(`${JSONBIN_BASE}/${JSONBIN_BIN_ID}`, {
         method: 'PUT',
         headers: jsonbinHeaders(),
-        body: JSON.stringify(data)
+        body: JSON.stringify(normalized)
       });
       if (res.ok) {
         console.log('[JSONBin] Successfully saved portfolio data to JSONBin cloud database.');
@@ -125,7 +153,7 @@ const saveToJsonBin = async (data) => {
   return cloudSaved || !!serverMemoryDb;
 };
 
-// Seed initial dataset if database is brand new
+// Seed/Migrate full dataset to JSONBin if new
 fetchFromJsonBin();
 
 // ─── Email Config (env-seeded) ──────────────────────────────────────────────────
