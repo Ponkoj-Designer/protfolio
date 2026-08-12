@@ -1,0 +1,237 @@
+export const initialPortfolioData = {
+  personalInfo: {
+    name: "Ponkoj Das",
+    title: "Graphics Designer & Web Designer",
+    tagline: "Crafting Digital Experiences with Editorial Elegance",
+    bio: "I am Ponkoj Das, a passionate Graphics Designer & Web Designer focused on creating intentional, editorial, and premium digital solutions that elevate brands. With over 5 years of industry experience, I combine strategic visual design with clean modern web development.",
+    location: "Dhaka, Bangladesh (Available Worldwide)",
+    email: "ponkojdas6586@gmail.com",
+    phone: "+8801741783521",
+    availability: "Available for Freelance & Contract Projects",
+    heroImage: "https://lh3.googleusercontent.com/aida-public/AB6AXuAZcJsniiLEsvlnkht-UJyO0b0G0a_JPGLlbfDs0NXM5Z42RJa4caagDv-elIHO9CM2_yL_8TJisVHnEJ65IfIZsB2ryXxiz5DtGb-P_09gfnWpVxVguCBzASTt9D9D6KSd7quiDFU-S3m_AzTYHMyxYxom1IkYkdl0eVDLYzjJQL9PrXC9Ft_lBmVS-RFM3hcvy3Zwm1V4Nmo2b5J63FLx7HHTiOfvTD7jO0RWWozsw8LYCgmgyXmb4Q",
+    aboutImage: "https://lh3.googleusercontent.com/aida-public/AB6AXuAZcJsniiLEsvlnkht-UJyO0b0G0a_JPGLlbfDs0NXM5Z42RJa4caagDv-elIHO9CM2_yL_8TJisVHnEJ65IfIZsB2ryXxiz5DtGb-P_09gfnWpVxVguCBzASTt9D9D6KSd7quiDFU-S3m_AzTYHMyxYxom1IkYkdl0eVDLYzjJQL9PrXC9Ft_lBmVS-RFM3hcvy3Zwm1V4Nmo2b5J63FLx7HHTiOfvTD7jO0RWWozsw8LYCgmgyXmb4Q",
+    adminAvatar: "https://lh3.googleusercontent.com/aida-public/AB6AXuDnJ82zwk2t-Ypklw9prSCNIZGLdHoLe_lNRhd1GXGrGuWuzjlkrdPj5yUPQo7q_xYa-KGQsLkILaiCQalcYZ5520GEjMEGMGUjRr_Ikf2sB-kAmJdVlnR0_pB_TusXGyExVHjR0acS2IMcHfWuOi2dQDNgfyMTkyoTJTl9b0M0BECZ4HKD13pISgB1rgWqrliaUI7UTzzFEPDV28xlmANSszEQpmooF5QkBjGDxgBzdUmyTXQ3n_jB9A",
+    stats: {
+      projectsCompleted: 45,
+      happyClients: 30,
+      yearsExperience: 5,
+      satisfactionRate: "99%"
+    },
+    socials: {
+      facebook: "https://facebook.com",
+      instagram: "https://instagram.com",
+      linkedin: "https://linkedin.com",
+      github: "https://github.com",
+      dribbble: "https://dribbble.com",
+      behance: "https://behance.com",
+      twitter: "https://twitter.com"
+    }
+  },
+  projects: [
+    {
+      id: "aethelred-design-system",
+      title: "Aethelred Portfolio & Design System",
+      category: "UI/UX Design",
+      shortDescription: "A high-end editorial portfolio system and cohesive design component collection built for modern creatives.",
+      fullDescription: "Aethelred is a comprehensive design system and portfolio framework developed to establish a timeless visual identity across web applications. It emphasizes high-contrast typography, warm neutral surfaces, fluid micro-interactions, and accessible UI component patterns.",
+      thumbnail: "https://lh3.googleusercontent.com/aida-public/AB6AXuAZcJsniiLEsvlnkht-UJyO0b0G0a_JPGLlbfDs0NXM5Z42RJa4caagDv-elIHO9CM2_yL_8TJisVHnEJ65IfIZsB2ryXxiz5DtGb-P_09gfnWpVxVguCBzASTt9D9D6KSd7quiDFU-S3m_AzTYHMyxYxom1IkYkdl0eVDLYzjJQL9PrXC9Ft_lBmVS-RFM3hcvy3Zwm1V4Nmo2b5J63FLx7HHTiOfvTD7jO0RWWozsw8LYCgmgyXmb4Q",
+      heroImage: "https://lh3.googleusercontent.com/aida-public/AB6AXuAZcJsniiLEsvlnkht-UJyO0b0G0a_JPGLlbfDs0NXM5Z42RJa4caagDv-elIHO9CM2_yL_8TJisVHnEJ65IfIZsB2ryXxiz5DtGb-P_09gfnWpVxVguCBzASTt9D9D6KSd7quiDFU-S3m_AzTYHMyxYxom1IkYkdl0eVDLYzjJQL9PrXC9Ft_lBmVS-RFM3hcvy3Zwm1V4Nmo2b5J63FLx7HHTiOfvTD7jO0RWWozsw8LYCgmgyXmb4Q",
+      gallery: [
+        "https://lh3.googleusercontent.com/aida-public/AB6AXuAZcJsniiLEsvlnkht-UJyO0b0G0a_JPGLlbfDs0NXM5Z42RJa4caagDv-elIHO9CM2_yL_8TJisVHnEJ65IfIZsB2ryXxiz5DtGb-P_09gfnWpVxVguCBzASTt9D9D6KSd7quiDFU-S3m_AzTYHMyxYxom1IkYkdl0eVDLYzjJQL9PrXC9Ft_lBmVS-RFM3hcvy3Zwm1V4Nmo2b5J63FLx7HHTiOfvTD7jO0RWWozsw8LYCgmgyXmb4Q"
+      ],
+      client: "Aethelred Global",
+      year: "2025",
+      role: "Lead UI Designer & Design Systems Architect",
+      tags: ["UI/UX", "Design Systems", "Editorial", "Web Design"],
+      featured: true,
+      challenge: "Creating a cohesive design language that satisfies both minimalism and high visual impact across all screen sizes while maintaining optimal web performance.",
+      solution: "Developed an atomic token system with fluid Playfair Display headers, Inter body text, custom glassmorphism utilities, and dark-mode native color scales.",
+      results: "Increased user session duration by 42% and reduced design implementation handoff time for developers by 60%."
+    },
+    {
+      id: "lumina-brand-identity",
+      title: "Lumina Studio Brand Identity",
+      category: "Branding",
+      shortDescription: "Editorial brand identity, visual guidelines, and packaging suite for a luxury architectural studio.",
+      fullDescription: "Lumina Studio required an elevated identity overhaul reflecting modern architectural minimalism. The identity system spans luxury stationery, print lookbooks, digital asset guidelines, and responsive web presences.",
+      thumbnail: "https://lh3.googleusercontent.com/aida-public/AB6AXuDnJ82zwk2t-Ypklw9prSCNIZGLdHoLe_lNRhd1GXGrGuWuzjlkrdPj5yUPQo7q_xYa-KGQsLkILaiCQalcYZ5520GEjMEGMGUjRr_Ikf2sB-kAmJdVlnR0_pB_TusXGyExVHjR0acS2IMcHfWuOi2dQDNgfyMTkyoTJTl9b0M0BECZ4HKD13pISgB1rgWqrliaUI7UTzzFEPDV28xlmANSszEQpmooF5QkBjGDxgBzdUmyTXQ3n_jB9A",
+      heroImage: "https://lh3.googleusercontent.com/aida-public/AB6AXuDnJ82zwk2t-Ypklw9prSCNIZGLdHoLe_lNRhd1GXGrGuWuzjlkrdPj5yUPQo7q_xYa-KGQsLkILaiCQalcYZ5520GEjMEGMGUjRr_Ikf2sB-kAmJdVlnR0_pB_TusXGyExVHjR0acS2IMcHfWuOi2dQDNgfyMTkyoTJTl9b0M0BECZ4HKD13pISgB1rgWqrliaUI7UTzzFEPDV28xlmANSszEQpmooF5QkBjGDxgBzdUmyTXQ3n_jB9A",
+      gallery: [],
+      client: "Lumina Architecture Group",
+      year: "2024",
+      role: "Creative Director & Brand Designer",
+      tags: ["Branding", "Graphic Design", "Typography", "Packaging"],
+      featured: true,
+      challenge: "Standing out in a saturated high-end architectural market without resorting to generic luxury tropes.",
+      solution: "Crafted custom typographic pairings, tactile stationery textures, and minimalist monogram imagery inspired by architectural beams.",
+      results: "Lumina secured $4.5M in new client contracts within 6 months of launching the refreshed brand identity."
+    },
+    {
+      id: "nexus-fintech-app",
+      title: "Nexus Financial Dashboard & Web App",
+      category: "Web Development",
+      shortDescription: "A real-time financial tracking dashboard with dark mode UI, analytical charts, and transaction management.",
+      fullDescription: "Nexus is an intuitive financial management web dashboard enabling users to visualize revenue streams, portfolio assets, and automated billing in real time.",
+      thumbnail: "https://lh3.googleusercontent.com/aida-public/AB6AXuAZcJsniiLEsvlnkht-UJyO0b0G0a_JPGLlbfDs0NXM5Z42RJa4caagDv-elIHO9CM2_yL_8TJisVHnEJ65IfIZsB2ryXxiz5DtGb-P_09gfnWpVxVguCBzASTt9D9D6KSd7quiDFU-S3m_AzTYHMyxYxom1IkYkdl0eVDLYzjJQL9PrXC9Ft_lBmVS-RFM3hcvy3Zwm1V4Nmo2b5J63FLx7HHTiOfvTD7jO0RWWozsw8LYCgmgyXmb4Q",
+      heroImage: "https://lh3.googleusercontent.com/aida-public/AB6AXuAZcJsniiLEsvlnkht-UJyO0b0G0a_JPGLlbfDs0NXM5Z42RJa4caagDv-elIHO9CM2_yL_8TJisVHnEJ65IfIZsB2ryXxiz5DtGb-P_09gfnWpVxVguCBzASTt9D9D6KSd7quiDFU-S3m_AzTYHMyxYxom1IkYkdl0eVDLYzjJQL9PrXC9Ft_lBmVS-RFM3hcvy3Zwm1V4Nmo2b5J63FLx7HHTiOfvTD7jO0RWWozsw8LYCgmgyXmb4Q",
+      gallery: [],
+      client: "Nexus Capital Inc.",
+      year: "2024",
+      role: "Frontend Engineer & UI Specialist",
+      tags: ["Web Development", "UI/UX", "Fintech", "React"],
+      featured: true,
+      challenge: "Transforming dense financial data streams into an accessible, responsive dashboard layout.",
+      solution: "Implemented modular bento grid layouts, high-contrast chart visualizations, and micro-interactions for instant transaction updates.",
+      results: "User onboarding completion rate improved from 48% to 85%."
+    },
+    {
+      id: "vogue-editorial-magazine",
+      title: "Verde Magazine Digital & Print Suite",
+      category: "Graphic Design",
+      shortDescription: "A modern editorial layout, print magazine typography design, and interactive web publication platform.",
+      fullDescription: "Verde Magazine highlights sustainable design, contemporary art, and slow fashion through beautifully curated editorial spreads and digital articles.",
+      thumbnail: "https://lh3.googleusercontent.com/aida-public/AB6AXuDnJ82zwk2t-Ypklw9prSCNIZGLdHoLe_lNRhd1GXGrGuWuzjlkrdPj5yUPQo7q_xYa-KGQsLkILaiCQalcYZ5520GEjMEGMGUjRr_Ikf2sB-kAmJdVlnR0_pB_TusXGyExVHjR0acS2IMcHfWuOi2dQDNgfyMTkyoTJTl9b0M0BECZ4HKD13pISgB1rgWqrliaUI7UTzzFEPDV28xlmANSszEQpmooF5QkBjGDxgBzdUmyTXQ3n_jB9A",
+      heroImage: "https://lh3.googleusercontent.com/aida-public/AB6AXuDnJ82zwk2t-Ypklw9prSCNIZGLdHoLe_lNRhd1GXGrGuWuzjlkrdPj5yUPQo7q_xYa-KGQsLkILaiCQalcYZ5520GEjMEGMGUjRr_Ikf2sB-kAmJdVlnR0_pB_TusXGyExVHjR0acS2IMcHfWuOi2dQDNgfyMTkyoTJTl9b0M0BECZ4HKD13pISgB1rgWqrliaUI7UTzzFEPDV28xlmANSszEQpmooF5QkBjGDxgBzdUmyTXQ3n_jB9A",
+      gallery: [],
+      client: "Verde Media House",
+      year: "2023",
+      role: "Lead Graphic Designer",
+      tags: ["Graphic Design", "Editorial", "Typography", "Print"],
+      featured: false,
+      challenge: "Balancing traditional print magazine layout rules with responsive digital reader expectations.",
+      solution: "Created dual design templates optimized for both high-resolution offset printing and responsive mobile readers.",
+      results: "Digital edition readership reached over 120,000 monthly active subscribers."
+    }
+  ],
+  services: [
+    {
+      id: "ui-ux-design",
+      icon: "design_services",
+      title: "UI/UX & Product Design",
+      description: "User-centered visual interfaces, wireframing, high-fidelity interactive prototyping, and design systems for web and mobile apps.",
+      deliverables: ["User Journey Mapping", "Wireframes & Prototypes", "High-Fidelity UI Design", "Interactive Design Systems"],
+      pricing: "Starting at $1,500"
+    },
+    {
+      id: "graphic-design",
+      icon: "palette",
+      title: "Graphic Design & Editorial",
+      description: "Editorial layouts, marketing collaterals, poster design, typography, and visual assets crafted to captivate and engage audiences.",
+      deliverables: ["Editorial & Layout Design", "Print & Packaging", "Social Media Graphics", "Vector Illustrations"],
+      pricing: "Starting at $800"
+    },
+    {
+      id: "web-development",
+      icon: "code",
+      title: "Frontend Web Development",
+      description: "Clean, responsive, fast-loading web applications built using HTML5, CSS3, Tailwind CSS, JavaScript, and React.",
+      deliverables: ["Responsive React Applications", "Tailwind CSS Design Systems", "SEO & Performance Optimization", "CMS Integration"],
+      pricing: "Starting at $1,200"
+    },
+    {
+      id: "brand-identity",
+      icon: "auto_awesome",
+      title: "Brand Identity & Strategy",
+      description: "Comprehensive logo design, visual style guides, color palettes, and typographic identities that build strong, memorable brands.",
+      deliverables: ["Logo Design & Icons", "Brand Style Guidelines", "Color & Typography Specs", "Stationery & Collateral"],
+      pricing: "Starting at $1,000"
+    }
+  ],
+  experience: [
+    {
+      id: "exp-1",
+      role: "Senior UI/UX & Web Designer",
+      company: "Studio Aethelred",
+      duration: "2022 - Present",
+      location: "Remote",
+      details: "Leading visual design and frontend UI development for global luxury, architectural, and fintech clients. Establishing component-driven design systems.",
+      highlights: ["Mentored 4 junior designers", "Architected 10+ web apps", "Reduced UI production cycles by 35%"]
+    },
+    {
+      id: "exp-2",
+      role: "Lead Graphic Designer",
+      company: "Creative Vision Media",
+      duration: "2020 - 2022",
+      location: "Dhaka, Bangladesh",
+      details: "Overseeing brand identity creation, editorial layouts, marketing materials, and digital advertising campaigns for over 30 enterprise clients.",
+      highlights: ["Designed 50+ brand identity suites", "Won Regional Design Excellence Award 2021"]
+    },
+    {
+      id: "exp-3",
+      role: "UI & Graphic Design Specialist",
+      company: "Pixel Craft Studio",
+      duration: "2019 - 2020",
+      location: "Dhaka, Bangladesh",
+      details: "Crafted interactive web prototypes, promotional graphics, landing pages, and client presentation decks.",
+      highlights: ["Increased client landing page conversion rate by 28%"]
+    }
+  ],
+  skills: [
+    { name: "UI/UX Design & Wireframing", category: "Design", percentage: 95 },
+    { name: "Brand Identity & Logo Design", category: "Design", percentage: 92 },
+    { name: "Graphic Design & Typography", category: "Design", percentage: 94 },
+    { name: "HTML5 / CSS3 / Tailwind CSS", category: "Development", percentage: 96 },
+    { name: "JavaScript (ES6+) & React", category: "Development", percentage: 88 },
+    { name: "Design Systems & Figma", category: "Tools", percentage: 95 },
+    { name: "Photoshop & Illustrator", category: "Tools", percentage: 90 },
+    { name: "Responsive & Mobile First UI", category: "Development", percentage: 98 }
+  ],
+  testimonials: [
+    {
+      id: "test-1",
+      name: "Marcus Vance",
+      role: "Founder & Creative Director",
+      company: "Lumina Architecture",
+      avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200",
+      quote: "Ponkoj transformed our brand vision into an editorial masterpiece. His attention to typographic detail, color harmony, and seamless UI transition is unmatched.",
+      rating: 5,
+      project: "Lumina Brand Identity"
+    },
+    {
+      id: "test-2",
+      name: "Sophia Chen",
+      role: "Product Manager",
+      company: "Nexus Financial",
+      avatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&q=80&w=200",
+      quote: "Working with Ponkoj on our fintech dashboard was a breeze. He delivered responsive, performant React components that look breathtaking in both light and dark mode.",
+      rating: 5,
+      project: "Nexus Financial Dashboard"
+    },
+    {
+      id: "test-3",
+      name: "David Miller",
+      role: "Editor in Chief",
+      company: "Verde Magazine",
+      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200",
+      quote: "Ponkoj's editorial eye gave our publication a luxury feel that elevated reader engagement across both our print issues and online reader portal.",
+      rating: 5,
+      project: "Verde Magazine Suite"
+    }
+  ],
+  inboxMessages: [
+    {
+      id: "msg-1",
+      name: "Elena Rostova",
+      email: "elena@designhub.co",
+      subject: "New UI/UX Redesign Inquiry for E-Commerce App",
+      message: "Hi Ponkoj, we saw your Aethelred design system and were thoroughly impressed. We would like to discuss a complete UI redesign of our e-commerce web platform.",
+      date: "2026-08-10 14:30",
+      serviceRequested: "UI/UX Design",
+      budget: "$2,500 - $5,000",
+      read: false,
+      starred: true
+    },
+    {
+      id: "msg-2",
+      name: "James Thorne",
+      email: "j.thorne@apexventures.io",
+      subject: "Brand Identity & Web Development Project",
+      message: "Hello Ponkoj, we need a complete visual identity and responsive frontend website for our fintech startup. Let us know your availability for Q3.",
+      date: "2026-08-08 09:15",
+      serviceRequested: "Brand Identity & Strategy",
+      budget: "$5,000+",
+      read: true,
+      starred: false
+    }
+  ]
+};

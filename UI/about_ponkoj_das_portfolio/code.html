@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>About - Ponkoj Das</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-tint": "#625d5b",
+                      "surface": "#fdf8f7",
+                      "background": "#fdf8f7",
+                      "on-secondary-fixed": "#002117",
+                      "on-error-container": "#93000a",
+                      "surface-container": "#f1edec",
+                      "surface-bright": "#fdf8f7",
+                      "error-container": "#ffdad6",
+                      "secondary": "#2b6954",
+                      "surface-container-low": "#f7f3f1",
+                      "secondary-fixed": "#b0f0d6",
+                      "inverse-surface": "#313030",
+                      "on-error": "#ffffff",
+                      "tertiary": "#000000",
+                      "error": "#ba1a1a",
+                      "primary-fixed-dim": "#ccc5c2",
+                      "surface-container-lowest": "#ffffff",
+                      "on-primary": "#ffffff",
+                      "tertiary-fixed": "#e2e2e2",
+                      "on-tertiary-fixed-variant": "#454747",
+                      "on-surface": "#1c1b1b",
+                      "primary": "#000000",
+                      "outline-variant": "#d0c4be",
+                      "surface-dim": "#ddd9d8",
+                      "outline": "#7e7570",
+                      "surface-variant": "#e6e1e0",
+                      "surface-container-highest": "#e6e1e0",
+                      "primary-fixed": "#e9e1dd",
+                      "on-tertiary-fixed": "#1a1c1c",
+                      "on-surface-variant": "#4d4540",
+                      "on-tertiary": "#ffffff",
+                      "on-primary-fixed-variant": "#4a4643",
+                      "on-primary-fixed": "#1e1b19",
+                      "secondary-fixed-dim": "#95d3ba",
+                      "secondary-container": "#adedd3",
+                      "on-secondary-container": "#306d58",
+                      "on-tertiary-container": "#838484",
+                      "on-primary-container": "#888380",
+                      "primary-container": "#1e1b19",
+                      "inverse-primary": "#ccc5c2",
+                      "inverse-on-surface": "#f4f0ef",
+                      "tertiary-container": "#1a1c1c",
+                      "tertiary-fixed-dim": "#c6c6c6",
+                      "surface-container-high": "#ece7e6",
+                      "on-secondary-fixed-variant": "#0b513d",
+                      "on-background": "#1c1b1b",
+                      "on-secondary": "#ffffff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "stack-md": "48px",
+                      "container-max": "1440px",
+                      "stack-sm": "24px",
+                      "unit": "4px",
+                      "stack-lg": "80px",
+                      "margin-mobile": "20px",
+                      "gutter": "32px",
+                      "margin-desktop": "64px"
+              },
+              "fontFamily": {
+                      "headline-md": [
+                              "Playfair Display"
+                      ],
+                      "display-lg": [
+                              "Playfair Display"
+                      ],
+                      "label-caps": [
+                              "Inter"
+                      ],
+                      "display-lg-mobile": [
+                              "Playfair Display"
+                      ],
+                      "headline-sm": [
+                              "Playfair Display"
+                      ],
+                      "label-sm": [
+                              "Inter"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "headline-md": [
+                              "40px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display-lg": [
+                              "72px",
+                              {
+                                      "lineHeight": "1.1",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "label-caps": [
+                              "12px",
+                              {
+                                      "lineHeight": "1.0",
+                                      "letterSpacing": "0.1em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display-lg-mobile": [
+                              "48px",
+                              {
+                                      "lineHeight": "1.15",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-sm": [
+                              "24px",
+                              {
+                                      "lineHeight": "1.3",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "label-sm": [
+                              "13px",
+                              {
+                                      "lineHeight": "1.4",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+        body {
+            background-color: theme('colors.background');
+            color: theme('colors.on-surface');
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        .magnetic-btn {
+            transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        
+        .ambient-shadow {
+            box-shadow: 0 20px 40px rgba(28, 25, 23, 0.05);
+        }
+        
+        .soft-border {
+            border: 1px solid theme('colors.surface-variant');
+        }
+        
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Image hover scale */
+        .img-scale-container {
+            overflow: hidden;
+        }
+        .img-scale-container img {
+            transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        .img-scale-container:hover img {
+            transform: scale(1.05);
+        }
+        
+        /* Stats counter animation */
+        @keyframes countUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .stat-item {
+            animation: countUp 0.6s ease-out forwards;
+            opacity: 0;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<nav class="docked full-width top-0 sticky bg-white/80 dark:bg-black/80 backdrop-blur-xl flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto h-20 z-50 flat no shadows">
+<div class="font-display-lg-mobile text-display-lg-mobile tracking-tighter text-on-surface dark:text-surface-bright">
+            Ponkoj Das
+        </div>
+<!-- Desktop Nav -->
+<div class="hidden md:flex gap-gutter items-center">
+<a class="text-on-surface-variant dark:text-surface-variant transition-colors duration-300 font-label-caps text-label-caps hover:text-primary dark:hover:text-on-primary hover:opacity-80" href="#">Home</a>
+<a class="text-primary dark:text-on-primary border-b-2 border-primary dark:border-on-primary pb-1 font-label-caps text-label-caps scale-[1.02] transition-transform duration-200 magnetic-pull" href="#">About</a>
+<a class="text-on-surface-variant dark:text-surface-variant transition-colors duration-300 font-label-caps text-label-caps hover:text-primary dark:hover:text-on-primary hover:opacity-80" href="#">Services</a>
+<a class="text-on-surface-variant dark:text-surface-variant transition-colors duration-300 font-label-caps text-label-caps hover:text-primary dark:hover:text-on-primary hover:opacity-80" href="#">Portfolio</a>
+<a class="text-on-surface-variant dark:text-surface-variant transition-colors duration-300 font-label-caps text-label-caps hover:text-primary dark:hover:text-on-primary hover:opacity-80" href="#">Experience</a>
+</div>
+<button class="hidden md:flex bg-primary text-on-primary font-label-caps text-label-caps px-6 py-3 rounded-DEFAULT hover:scale-[1.02] magnetic-btn transition-transform">
+            Contact Me
+        </button>
+<!-- Mobile Menu Icon (simplified for layout) -->
+<div class="md:hidden">
+<span class="material-symbols-outlined text-primary cursor-pointer">menu</span>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-grow w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop pt-stack-lg pb-stack-lg flex flex-col gap-stack-lg">
+<!-- Section 1: Hero Identity & Bio (Asymmetric) -->
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
+<!-- Left Column: Biography (7 cols) -->
+<div class="lg:col-span-7 flex flex-col gap-stack-sm order-2 lg:order-1 pt-8 lg:pt-16 lg:pr-12">
+<div>
+<h1 class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-primary mb-4">
+                        Designing for purpose, crafting with intent.
+                    </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">
+                        I am a multidisciplinary designer based in London, specializing in creating high-end digital experiences that blend minimalism with robust functionality. My approach is rooted in understanding human behavior and translating complex requirements into elegant, intuitive interfaces.
+                    </p>
+</div>
+<div class="mt-8 flex gap-4">
+<button class="bg-primary text-on-primary font-label-caps text-label-caps px-8 py-4 rounded-DEFAULT hover:scale-[1.02] magnetic-btn flex items-center gap-2">
+                        Download Resume
+                        <span class="material-symbols-outlined" style="font-size: 16px;">download</span>
+</button>
+<button class="bg-transparent border border-primary text-primary font-label-caps text-label-caps px-8 py-4 rounded-DEFAULT hover:bg-surface-container transition-colors magnetic-btn">
+                        View Work
+                    </button>
+</div>
+</div>
+<!-- Right Column: Interactive Portrait (5 cols) -->
+<div class="lg:col-span-5 order-1 lg:order-2 relative group cursor-pointer w-full aspect-[3/4] img-scale-container rounded-lg overflow-hidden bg-surface-container-low soft-border">
+<img class="w-full h-full object-cover" data-alt="A striking, high-end professional portrait of a modern designer in a minimalist, light-flooded studio setting. The subject is looking thoughtfully off-camera, wearing sophisticated dark clothing that contrasts elegantly with the bright, white and pale stone architectural background. The lighting is soft and cinematic, emphasizing a premium, editorial aesthetic with deep blacks and pristine whites." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAoqrMcIhag5lOWnb4ofhIhwLU7k6oPHnzJ_ZB46zSYaNJaWJEnnk1AAG11O1LRb1tA8f25XTHkilkYXLI1eHjK8RHWleVBFfVeMPrY4SyWfVgoUkcaXyUiXmJYtbvevuzS--v3mQAKhOzETmdx7H18FDAV2Dh8uGiXGzp0TAOiizqCmNqg3kJA_B9Uh2465XFHYu_25-6UNbWCh_J3nf8QiW9z7ku2YWm0YOsFzgisTXFHu2ylU6h_xA"/>
+<!-- Upload Overlay -->
+<div class="absolute inset-0 bg-primary/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-sm">
+<div class="bg-surface text-primary px-6 py-3 rounded-full font-label-sm text-label-sm flex items-center gap-2 shadow-lg">
+<span class="material-symbols-outlined">upload</span>
+                        Replace Photo
+                    </div>
+</div>
+</div>
+</section>
+<!-- Section 2: Creative Philosophy (Bento-ish Grid) -->
+<section class="grid grid-cols-1 md:grid-cols-2 gap-gutter mt-stack-lg">
+<div class="bg-surface-container-lowest p-8 rounded-lg soft-border ambient-shadow hover:ambient-shadow transition-shadow">
+<h3 class="font-headline-sm text-headline-sm text-primary mb-4">Philosophy</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">
+                    Design is not just what it looks like and feels like; design is how it works. I believe in reductive design—stripping away the non-essential until only the pure, necessary function remains, presented in its most beautiful form. Every pixel must serve a purpose.
+                </p>
+</div>
+<div class="grid grid-cols-2 gap-gutter">
+<div class="bg-surface-container-lowest p-6 rounded-lg soft-border flex flex-col justify-center items-center text-center stat-item" style="animation-delay: 0.1s;">
+<span class="font-headline-md text-headline-md text-primary mb-2">12+</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant">Years Experience</span>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-lg soft-border flex flex-col justify-center items-center text-center stat-item" style="animation-delay: 0.2s;">
+<span class="font-headline-md text-headline-md text-primary mb-2">150</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant">Projects Delivered</span>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-lg soft-border flex flex-col justify-center items-center text-center stat-item" style="animation-delay: 0.3s;">
+<span class="font-headline-md text-headline-md text-primary mb-2">24</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant">Industry Awards</span>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-lg soft-border flex flex-col justify-center items-center text-center stat-item" style="animation-delay: 0.4s;">
+<span class="font-headline-md text-headline-md text-primary mb-2">99%</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant">Client Satisfaction</span>
+</div>
+</div>
+</section>
+<!-- Section 3: Timeline & Accolades (Vertical flow) -->
+<section class="mt-stack-lg">
+<h2 class="font-headline-md text-headline-md text-primary mb-stack-sm border-b border-surface-variant pb-4">Career Highlights</h2>
+<div class="flex flex-col gap-6">
+<!-- Highlight Item -->
+<div class="group flex flex-col md:flex-row justify-between items-start md:items-center p-6 bg-surface-container-lowest soft-border rounded-lg hover:ambient-shadow transition-shadow cursor-pointer">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-primary group-hover:text-secondary transition-colors">Design Director</span>
+<span class="font-body-md text-body-md text-on-surface-variant mt-1">Creative Agency Alpha — London, UK</span>
+</div>
+<div class="mt-4 md:mt-0 font-label-caps text-label-caps text-outline bg-surface-container px-3 py-1 rounded-full">
+                        2020 — Present
+                    </div>
+</div>
+<!-- Highlight Item -->
+<div class="group flex flex-col md:flex-row justify-between items-start md:items-center p-6 bg-surface-container-lowest soft-border rounded-lg hover:ambient-shadow transition-shadow cursor-pointer">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-primary group-hover:text-secondary transition-colors">Senior Product Designer</span>
+<span class="font-body-md text-body-md text-on-surface-variant mt-1">Tech Solutions Beta — New York, USA</span>
+</div>
+<div class="mt-4 md:mt-0 font-label-caps text-label-caps text-outline bg-surface-container px-3 py-1 rounded-full">
+                        2016 — 2020
+                    </div>
+</div>
+<!-- Highlight Item -->
+<div class="group flex flex-col md:flex-row justify-between items-start md:items-center p-6 bg-surface-container-lowest soft-border rounded-lg hover:ambient-shadow transition-shadow cursor-pointer">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-primary group-hover:text-secondary transition-colors">UI/UX Designer</span>
+<span class="font-body-md text-body-md text-on-surface-variant mt-1">Startup Gamma — Berlin, DE</span>
+</div>
+<div class="mt-4 md:mt-0 font-label-caps text-label-caps text-outline bg-surface-container px-3 py-1 rounded-full">
+                        2012 — 2016
+                    </div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="full-width bottom bg-surface dark:bg-tertiary-container border-t border-outline-variant dark:border-outline flat no shadows">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-stack-md px-margin-mobile md:px-margin-desktop py-stack-lg max-w-container-max mx-auto">
+<div class="flex flex-col gap-4">
+<span class="font-headline-sm text-headline-sm text-primary dark:text-on-primary">Ponkoj Das</span>
+<span class="font-body-md text-body-md text-on-surface dark:text-on-tertiary-container">
+                    © 2024 Ponkoj Das. All rights reserved.
+                </span>
+</div>
+<div class="flex gap-6 md:justify-end items-center flex-wrap">
+<a class="font-label-caps text-label-caps text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-on-primary transition-all" href="#">Instagram</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-on-primary transition-all" href="#">LinkedIn</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-on-primary transition-all" href="#">Behance</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-on-primary transition-all" href="#">Dribbble</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-on-primary transition-all" href="#">Twitter</a>
+</div>
+</div>
+</footer>
+<script>
+        // Simple magnetic button effect
+        document.querySelectorAll('.magnetic-btn').forEach(btn => {
+            btn.addEventListener('mousemove', function(e) {
+                const rect = this.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+                
+                // Max displacement 5px as per guidelines
+                const displacementX = Math.max(-5, Math.min(5, x * 0.1));
+                const displacementY = Math.max(-5, Math.min(5, y * 0.1));
+                
+                this.style.transform = `translate(${displacementX}px, ${displacementY}px) scale(1.02)`;
+            });
+
+            btn.addEventListener('mouseleave', function() {
+                this.style.transform = 'translate(0px, 0px) scale(1)';
+            });
+        });
+    </script>
+</body></html>

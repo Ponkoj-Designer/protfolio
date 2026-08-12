@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Portfolio - Ponkoj Das</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "secondary-fixed": "#b0f0d6",
+                      "inverse-surface": "#313030",
+                      "background": "#121212",
+                      "tertiary": "#000000",
+                      "tertiary-fixed-dim": "#c6c6c6",
+                      "outline-variant": "#3f3f3f",
+                      "on-secondary-fixed": "#002117",
+                      "secondary": "#2b6954",
+                      "on-primary": "#121212",
+                      "on-primary-fixed": "#1e1b19",
+                      "on-secondary-container": "#306d58",
+                      "on-tertiary-container": "#838484",
+                      "surface-container-lowest": "#000000",
+                      "tertiary-container": "#1a1c1c",
+                      "primary": "#e0e0e0",
+                      "surface-container-low": "#1a1a1a",
+                      "primary-container": "#1e1b19",
+                      "primary-fixed": "#e9e1dd",
+                      "on-tertiary-fixed": "#1a1c1c",
+                      "on-surface-variant": "#a0a0a0",
+                      "inverse-primary": "#ccc5c2",
+                      "on-background": "#e0e0e0",
+                      "surface-bright": "#2c2c2c",
+                      "secondary-fixed-dim": "#95d3ba",
+                      "primary-fixed-dim": "#ccc5c2",
+                      "surface": "#121212",
+                      "on-tertiary": "#ffffff",
+                      "on-primary-container": "#888380",
+                      "error": "#ba1a1a",
+                      "surface-container-high": "#2c2c2c",
+                      "surface-variant": "#242424",
+                      "tertiary-fixed": "#e2e2e2",
+                      "error-container": "#ffdad6",
+                      "on-secondary": "#ffffff",
+                      "inverse-on-surface": "#f4f0ef",
+                      "outline": "#7e7570",
+                      "on-surface": "#e0e0e0",
+                      "surface-tint": "#b0b0b0",
+                      "secondary-container": "#adedd3",
+                      "surface-container": "#1e1e1e",
+                      "on-secondary-fixed-variant": "#0b513d",
+                      "on-primary-fixed-variant": "#4a4643",
+                      "surface-dim": "#0a0a0a",
+                      "surface-container-highest": "#333333",
+                      "on-error": "#ffffff",
+                      "on-tertiary-fixed-variant": "#454747",
+                      "on-error-container": "#93000a"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "margin-desktop": "64px",
+                      "stack-md": "48px",
+                      "margin-mobile": "20px",
+                      "stack-sm": "24px",
+                      "gutter": "32px",
+                      "stack-lg": "80px",
+                      "unit": "4px",
+                      "container-max": "1440px"
+              },
+              "fontFamily": {
+                      "label-sm": [
+                              "Inter"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "label-caps": [
+                              "Inter"
+                      ],
+                      "display-lg": [
+                              "Playfair Display"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "headline-sm": [
+                              "Playfair Display"
+                      ],
+                      "display-lg-mobile": [
+                              "Playfair Display"
+                      ],
+                      "headline-md": [
+                              "Playfair Display"
+                      ]
+              },
+              "fontSize": {
+                      "label-sm": [
+                              "13px",
+                              {
+                                      "lineHeight": "1.4",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-caps": [
+                              "12px",
+                              {
+                                      "lineHeight": "1.0",
+                                      "letterSpacing": "0.1em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display-lg": [
+                              "72px",
+                              {
+                                      "lineHeight": "1.1",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-sm": [
+                              "24px",
+                              {
+                                      "lineHeight": "1.3",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display-lg-mobile": [
+                              "48px",
+                              {
+                                      "lineHeight": "1.15",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-md": [
+                              "40px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+    </script>
+<style>
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background antialiased selection:bg-surface-variant selection:text-primary">
+<!-- TopNavBar Mobile (Derived from JSON but adapted for mobile constraints per prompt) -->
+<header class="bg-[#121212]/80 backdrop-blur-xl docked full-width top-0 sticky flex justify-between items-center w-full px-margin-mobile h-20 z-50 flat no shadows border-b border-outline-variant">
+<a class="font-display-lg-mobile text-headline-sm tracking-tighter text-on-surface" href="#">Ponkoj Das</a>
+<button aria-label="Toggle Dark Mode" class="md:hidden text-primary flex items-center justify-center p-2 hover:bg-surface-container rounded-full transition-colors">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">light_mode</span>
+</button><button aria-label="Menu" class="md:hidden text-primary flex items-center justify-center p-2">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">menu</span>
+</button>
+<!-- Desktop Nav (Hidden on Mobile) -->
+<nav class="hidden md:flex items-center gap-gutter">
+<a class="text-on-surface-variant transition-colors duration-300 hover:text-primary hover:opacity-80 font-label-caps text-label-caps" href="#">Home</a>
+<a class="text-on-surface-variant transition-colors duration-300 hover:text-primary hover:opacity-80 font-label-caps text-label-caps" href="#">About</a>
+<a class="text-on-surface-variant transition-colors duration-300 hover:text-primary hover:opacity-80 font-label-caps text-label-caps" href="#">Services</a>
+<a class="text-primary border-b-2 border-primary pb-1 scale-[1.02] transition-transform duration-200 font-label-caps text-label-caps" href="#">Portfolio</a>
+<a class="text-on-surface-variant transition-colors duration-300 hover:text-primary hover:opacity-80 font-label-caps text-label-caps" href="#">Experience</a>
+<a class="bg-primary text-on-primary px-6 py-3 rounded-DEFAULT hover:scale-[1.02] transition-transform duration-200 font-label-caps text-label-caps ml-4" href="#">Contact Me</a>
+</nav>
+</header>
+<main class="w-full">
+<!-- Page Header -->
+<section class="px-margin-mobile pt-stack-md pb-stack-sm w-full">
+<div class="flex flex-col items-start gap-4 mb-stack-sm">
+<h1 class="font-display-lg-mobile text-display-lg-mobile text-primary">Selected Works</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-prose">A curated collection of digital experiences, brand identities, and product designs created for visionary clients.</p>
+</div>
+<!-- Portfolio Controls: Filter & Manage -->
+<div class="flex flex-col gap-4 w-full border-b border-outline-variant pb-stack-sm">
+<!-- Scrollable Filter -->
+<div class="w-full overflow-x-auto hide-scrollbar">
+<div class="flex gap-4 min-w-max pb-2">
+<button class="font-label-caps text-label-caps px-4 py-2 bg-primary text-on-primary rounded-full transition-all">All</button>
+<button class="font-label-caps text-label-caps px-4 py-2 border border-outline-variant text-on-surface-variant rounded-full hover:bg-surface-container transition-all">Branding</button>
+<button class="font-label-caps text-label-caps px-4 py-2 border border-outline-variant text-on-surface-variant rounded-full hover:bg-surface-container transition-all">Digital App</button>
+<button class="font-label-caps text-label-caps px-4 py-2 border border-outline-variant text-on-surface-variant rounded-full hover:bg-surface-container transition-all">Web Design</button>
+<button class="font-label-caps text-label-caps px-4 py-2 border border-outline-variant text-on-surface-variant rounded-full hover:bg-surface-container transition-all">E-commerce</button>
+</div>
+</div>
+<!-- Manage Projects Button (Admin/Creator view implied by prompt) -->
+<div class="flex justify-end w-full">
+<button class="flex items-center gap-2 font-label-sm text-label-sm text-primary hover:bg-surface-container px-3 py-2 rounded-DEFAULT transition-colors">
+<span class="material-symbols-outlined text-[18px]">edit_document</span>
+                        Manage Projects
+                    </button>
+</div>
+</div>
+</section>
+<!-- Project Grid (Single Column for Mobile) -->
+<section class="px-margin-mobile pb-stack-lg w-full flex flex-col gap-stack-md">
+<!-- Project 1: Aura Beauty Flagship -->
+<article class="group w-full flex flex-col gap-4 cursor-pointer">
+<div class="w-full aspect-[4/5] bg-surface-container overflow-hidden rounded-lg relative">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.05]" data-alt="A minimalist and premium e-commerce website design for a beauty brand. The interface features large, high-resolution photography of elegant skincare bottles against a warm off-white background. The typography is a mix of sophisticated serif and clean sans-serif. The overall aesthetic is highly editorial, bright, and luxurious, matching a modern light-mode design system with deep charcoal text accents." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBUk4_2KLIa0Fmpa540oTnxjofGV6DM5mJsKxVoM9e6vooczMeIvVuSUM2GVml4VbBQeqJcTloUnBJtOfqh1ufMInJ_2hC5O4v5OHfi1q-gTNqVynbRy7HdVEGyy8r9LKHt_QZVjUtfXO3cBhYRNmhIJYkMSeBP7wk-5Usbk2j756t-JQrXKKAR5Xv28lmwPuHnnH-Ky4HRtcAcHhmA5xJjXOemhoIu73RXZ6apgbpTQeSV9CdVjkZtzA"/>
+<div class="absolute top-4 left-4 flex gap-2">
+<span class="bg-[#121212]/80 backdrop-blur-sm px-3 py-1 rounded-full font-label-caps text-[10px] text-primary tracking-widest uppercase">Web Design</span>
+<span class="bg-[#121212]/80 backdrop-blur-sm px-3 py-1 rounded-full font-label-caps text-[10px] text-primary tracking-widest uppercase">E-Commerce</span>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<h2 class="font-headline-sm text-headline-sm text-primary group-hover:text-surface-tint transition-colors">Aura Beauty Flagship</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Elevating digital retail for a premium skincare brand through immersive storytelling and seamless commerce.</p>
+</div>
+</article>
+<!-- Project 2: Kite Roasters Identity -->
+<article class="group w-full flex flex-col gap-4 cursor-pointer">
+<div class="w-full aspect-[4/5] bg-surface-container overflow-hidden rounded-lg relative">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.05]" data-alt="A collection of branding materials for a modern coffee roaster. The image showcases sleek, minimalist coffee bags, a simple yet striking logo design, and business cards scattered on a clean, light-colored concrete surface. The lighting is soft and natural, emphasizing the high-end, artisanal feel of the brand. The color palette is muted with warm off-white, deep espresso brown, and subtle accents." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCKjjvPK2aXHjg5j8t5alTf0heJEjmi_fLoKSdx5g8ni-Rc8Mbxgo0PBXkFK6qTBHb_-YdMQCu7bBgyeY93MxmeMBbdeTxHc-rM-yxGjwHkWTiJCxIsBlbltVkaYklYqX8gMlThmqGKRdBWWX1oANu21ea5WervHmwjUUHzFgjd_p6rd2I7Mms_BZ_4CEcliDrlPRnl6b8m9rojBcvMvnuHGy07dsFM_VMJcyVIN9UqoZ9jlexi5N71bQ"/>
+<div class="absolute top-4 left-4 flex gap-2">
+<span class="bg-[#121212]/80 backdrop-blur-sm px-3 py-1 rounded-full font-label-caps text-[10px] text-primary tracking-widest uppercase">Branding</span>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<h2 class="font-headline-sm text-headline-sm text-primary group-hover:text-surface-tint transition-colors">Kite Roasters Identity</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">A comprehensive visual identity and packaging system for an artisanal coffee roaster focused on sustainable sourcing.</p>
+</div>
+</article>
+<!-- Project 3: Nova Financial App -->
+<article class="group w-full flex flex-col gap-4 cursor-pointer">
+<div class="w-full aspect-[4/5] bg-surface-container overflow-hidden rounded-lg relative">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.05]" data-alt="A sleek, modern mobile banking application interface displayed on a tilted smartphone. The UI is clean and minimalist, using a light mode aesthetic with a warm off-white background and stark charcoal text for high contrast. It features clear data visualizations, elegant typography, and subtle emerald green accents for positive financial indicators. The setting is bright and professional." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBp2TAjc8cX1UxfCNiqKSBC89g5Hu5gbXbrsuC8o4cE3JOJ0CxsLAvyVNg8l7HsWxskwh1KRiQL_zI2XyHTyhQpnJEkvT6-tYDGQRkvv0zGVw4GrEVJc7rzO6u7xYeI7u6KI-2uB-akMe0NiCygy4LBSuk21x9eND5eYPju211EgysbfEWcVuZNWDTRXIuw77KNVgBJP-4QYNUZRRh7k4VNTP7BY_CtTdZIewaV72D3hVADQycqTU00ig"/>
+<div class="absolute top-4 left-4 flex gap-2">
+<span class="bg-[#121212]/80 backdrop-blur-sm px-3 py-1 rounded-full font-label-caps text-[10px] text-primary tracking-widest uppercase">Digital App</span>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<h2 class="font-headline-sm text-headline-sm text-primary group-hover:text-surface-tint transition-colors">Nova Financial App</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Redefining personal finance with a clean, intuitive mobile experience that simplifies complex wealth management.</p>
+</div>
+</article>
+<!-- Load More Action -->
+<div class="w-full flex justify-center pt-stack-sm">
+<button class="bg-surface-container text-primary font-label-sm text-label-sm px-8 py-4 rounded-DEFAULT hover:bg-surface-variant transition-colors flex items-center gap-2">
+                    Load More Projects
+                    <span class="material-symbols-outlined text-[18px]">expand_more</span>
+</button>
+</div>
+</section>
+</main>
+<!-- Footer Mobile (Derived from JSON) -->
+<footer class="bg-surface border-t border-outline-variant full-width bottom grid grid-cols-1 gap-stack-md px-margin-mobile py-stack-md w-full">
+<div class="flex flex-col items-center gap-4 text-center">
+<span class="font-headline-sm text-headline-sm text-primary">Ponkoj Das</span>
+<div class="flex flex-wrap justify-center gap-4 mt-2">
+<a class="text-on-surface-variant hover:text-primary transition-all font-label-caps text-label-caps" href="#">Instagram</a>
+<a class="text-on-surface-variant hover:text-primary transition-all font-label-caps text-label-caps" href="#">LinkedIn</a>
+<a class="text-on-surface-variant hover:text-primary transition-all font-label-caps text-label-caps" href="#">Behance</a>
+<a class="text-on-surface-variant hover:text-primary transition-all font-label-caps text-label-caps" href="#">Dribbble</a>
+<a class="text-on-surface-variant hover:text-primary transition-all font-label-caps text-label-caps" href="#">Twitter</a>
+</div>
+<p class="font-body-md text-[14px] text-on-surface-variant mt-4">© 2024 Ponkoj Das. All rights reserved.</p>
+</div>
+</footer>
+</body></html>

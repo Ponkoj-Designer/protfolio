@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Portfolio Gallery - Ponkoj Das</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-tint": "#625d5b",
+                    "surface": "#fdf8f7",
+                    "background": "#fdf8f7",
+                    "on-secondary-fixed": "#002117",
+                    "on-error-container": "#93000a",
+                    "surface-container": "#f1edec",
+                    "surface-bright": "#fdf8f7",
+                    "error-container": "#ffdad6",
+                    "secondary": "#2b6954",
+                    "surface-container-low": "#f7f3f1",
+                    "secondary-fixed": "#b0f0d6",
+                    "inverse-surface": "#313030",
+                    "on-error": "#ffffff",
+                    "tertiary": "#000000",
+                    "error": "#ba1a1a",
+                    "primary-fixed-dim": "#ccc5c2",
+                    "surface-container-lowest": "#ffffff",
+                    "on-primary": "#ffffff",
+                    "tertiary-fixed": "#e2e2e2",
+                    "on-tertiary-fixed-variant": "#454747",
+                    "on-surface": "#1c1b1b",
+                    "primary": "#000000",
+                    "outline-variant": "#d0c4be",
+                    "surface-dim": "#ddd9d8",
+                    "outline": "#7e7570",
+                    "surface-variant": "#e6e1e0",
+                    "surface-container-highest": "#e6e1e0",
+                    "primary-fixed": "#e9e1dd",
+                    "on-tertiary-fixed": "#1a1c1c",
+                    "on-surface-variant": "#4d4540",
+                    "on-tertiary": "#ffffff",
+                    "on-primary-fixed-variant": "#4a4643",
+                    "on-primary-fixed": "#1e1b19",
+                    "secondary-fixed-dim": "#95d3ba",
+                    "secondary-container": "#adedd3",
+                    "on-secondary-container": "#306d58",
+                    "on-tertiary-container": "#838484",
+                    "on-primary-container": "#888380",
+                    "primary-container": "#1e1b19",
+                    "inverse-primary": "#ccc5c2",
+                    "inverse-on-surface": "#f4f0ef",
+                    "tertiary-container": "#1a1c1c",
+                    "tertiary-fixed-dim": "#c6c6c6",
+                    "surface-container-high": "#ece7e6",
+                    "on-secondary-fixed-variant": "#0b513d",
+                    "on-background": "#1c1b1b",
+                    "on-secondary": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "stack-md": "48px",
+                    "container-max": "1440px",
+                    "stack-sm": "24px",
+                    "unit": "4px",
+                    "stack-lg": "80px",
+                    "margin-mobile": "20px",
+                    "gutter": "32px",
+                    "margin-desktop": "64px"
+            },
+            "fontFamily": {
+                    "headline-md": ["Playfair Display"],
+                    "display-lg": ["Playfair Display"],
+                    "label-caps": ["Inter"],
+                    "display-lg-mobile": ["Playfair Display"],
+                    "headline-sm": ["Playfair Display"],
+                    "label-sm": ["Inter"],
+                    "body-md": ["Inter"],
+                    "body-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-md": ["40px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                    "display-lg": ["72px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "label-caps": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.1em", "fontWeight": "600"}],
+                    "display-lg-mobile": ["48px", {"lineHeight": "1.15", "fontWeight": "700"}],
+                    "headline-sm": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "label-sm": ["13px", {"lineHeight": "1.4", "fontWeight": "500"}],
+                    "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        body {
+            background-color: #fdf8f7; /* background */
+            color: #1c1b1b; /* on-background */
+        }
+        
+        .magnetic-btn {
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .magnetic-btn:hover {
+            transform: scale(1.02);
+        }
+
+        .project-card:hover .project-image {
+            transform: scale(1.05);
+        }
+        
+        .project-image {
+            transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .soft-shadow-hover:hover {
+            box-shadow: 0 20px 40px rgba(28, 25, 23, 0.05);
+        }
+        
+        .grid-view .project-list-item { display: none; }
+        .list-view .project-grid-item { display: none; }
+        .list-view .gallery-container {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+    </style>
+</head>
+<body class="antialiased font-body-md text-body-md selection:bg-primary selection:text-on-primary">
+<!-- TopNavBar -->
+<header class="bg-white/80 dark:bg-black/80 backdrop-blur-xl flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto h-20 z-50 sticky top-0 full-width flat no shadows">
+<div class="font-display-lg-mobile text-display-lg-mobile tracking-tighter text-on-surface dark:text-surface-bright md:font-display-lg md:text-display-lg md:text-[32px]">
+            Ponkoj Das
+        </div>
+<nav class="hidden md:flex items-center gap-8">
+<a class="font-label-caps text-label-caps text-on-surface-variant dark:text-surface-variant transition-colors duration-300 hover:text-primary dark:hover:text-on-primary hover:opacity-80" href="#">Home</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant dark:text-surface-variant transition-colors duration-300 hover:text-primary dark:hover:text-on-primary hover:opacity-80" href="#">About</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant dark:text-surface-variant transition-colors duration-300 hover:text-primary dark:hover:text-on-primary hover:opacity-80" href="#">Services</a>
+<a class="font-label-caps text-label-caps text-primary dark:text-on-primary border-b-2 border-primary dark:border-on-primary pb-1 hover:text-primary dark:hover:text-on-primary hover:opacity-80" href="#">Portfolio</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant dark:text-surface-variant transition-colors duration-300 hover:text-primary dark:hover:text-on-primary hover:opacity-80" href="#">Experience</a>
+</nav>
+<button class="hidden md:flex bg-primary text-on-primary px-6 py-3 rounded-DEFAULT font-label-caps text-label-caps magnetic-btn hover:scale-[1.02] transition-transform duration-200">
+            Contact Me
+        </button>
+<button class="md:hidden text-primary flex items-center justify-center p-2">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</header>
+<!-- Main Content -->
+<main class="w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop pt-stack-md pb-stack-lg min-h-screen">
+<!-- Header Section -->
+<section class="mb-stack-lg flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div class="max-w-2xl">
+<h1 class="font-display-lg-mobile text-display-lg-mobile md:font-display-lg md:text-display-lg text-on-surface mb-4">Selected Works</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">A curated collection of digital experiences, branding, and interface designs crafted with intention and precision.</p>
+</div>
+<div class="flex items-center gap-4">
+<button class="bg-surface-variant text-on-surface px-4 py-2 rounded-DEFAULT font-label-caps text-label-caps border border-outline-variant hover:bg-surface-container transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">settings</span>
+                    Manage Projects
+                </button>
+</div>
+</section>
+<!-- Controls: Filters, Search, View Toggle -->
+<section class="mb-stack-md flex flex-col md:flex-row justify-between items-center gap-6 sticky top-[80px] z-40 bg-background/95 backdrop-blur py-4 border-b border-surface-variant">
+<!-- Filters -->
+<div class="flex overflow-x-auto w-full md:w-auto pb-2 md:pb-0 hide-scrollbar gap-2">
+<button class="whitespace-nowrap px-4 py-2 rounded-full font-label-sm text-label-sm bg-primary text-on-primary transition-all">All Projects</button>
+<button class="whitespace-nowrap px-4 py-2 rounded-full font-label-sm text-label-sm bg-surface-container text-on-surface-variant hover:bg-surface-variant transition-all">Graphic Design</button>
+<button class="whitespace-nowrap px-4 py-2 rounded-full font-label-sm text-label-sm bg-surface-container text-on-surface-variant hover:bg-surface-variant transition-all">Branding</button>
+<button class="whitespace-nowrap px-4 py-2 rounded-full font-label-sm text-label-sm bg-surface-container text-on-surface-variant hover:bg-surface-variant transition-all">UI/UX</button>
+<button class="whitespace-nowrap px-4 py-2 rounded-full font-label-sm text-label-sm bg-surface-container text-on-surface-variant hover:bg-surface-variant transition-all">Web Design</button>
+<button class="whitespace-nowrap px-4 py-2 rounded-full font-label-sm text-label-sm bg-surface-container text-on-surface-variant hover:bg-surface-variant transition-all">E-commerce</button>
+</div>
+<!-- Search & View Toggle -->
+<div class="flex items-center w-full md:w-auto gap-4">
+<div class="relative w-full md:w-64">
+<input class="w-full bg-surface-container border-none rounded-DEFAULT pl-10 pr-4 py-2 font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant focus:ring-1 focus:ring-primary focus:bg-surface" placeholder="Search projects..." type="text"/>
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+</div>
+<div class="flex bg-surface-container rounded-DEFAULT p-1">
+<button aria-label="Grid View" class="p-2 rounded-DEFAULT bg-surface text-on-surface shadow-sm transition-all" id="grid-view-btn">
+<span class="material-symbols-outlined text-[20px]">grid_view</span>
+</button>
+<button aria-label="List View" class="p-2 rounded-DEFAULT text-on-surface-variant hover:text-on-surface transition-all" id="list-view-btn">
+<span class="material-symbols-outlined text-[20px]">view_list</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Gallery -->
+<section class="grid-view" id="gallery-container">
+<div class="gallery-container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-gutter">
+<!-- Project 1 -->
+<div class="project-card project-grid-item group cursor-pointer soft-shadow-hover rounded-DEFAULT overflow-hidden bg-white border border-surface-variant transition-all duration-300">
+<div class="relative aspect-[4/3] overflow-hidden bg-surface-container">
+<img alt="Project Cover" class="project-image w-full h-full object-cover" data-alt="A highly detailed 50-100 word prompt describing a sophisticated e-commerce website interface displayed on an angled sleek silver laptop mockup. The interface features a minimalist, editorial design with deep black text on pristine white backgrounds, high-end fashion photography, and crisp geometric layouts. The lighting is soft and natural, casting subtle ambient shadows on the light gray surface beneath the laptop. The overall mood is premium, modern, and aligned with luxury retail digital experiences." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDH_Zi-BB2u_RFckwkqAyWcYAswJCOG0rhb3SKZNb5PvES9AVDRDc9EdQsf9Dp4ZrabuQ0BbYdKYvLH9mqZcgM7_xCT6AUfxnxriRmBCZJ5wxZEG5kZI0cs_TDNOwvJqG-4TUg-6C-aSTz_RY6p26eRl-En-OcgriD7vIvblQ9qSOpCiw1O7X2gqUMrtP8qR2A9py6ROUAhXeYTdBJ2FuEX7EYw9RFOBIGQoMcTjkcv770Tb-1AteMX5A"/>
+<div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300"></div>
+<div class="absolute top-4 left-4 flex gap-2">
+<span class="bg-white/90 backdrop-blur text-primary px-3 py-1 rounded-full font-label-caps text-[10px] tracking-wider uppercase">E-commerce</span>
+<span class="bg-white/90 backdrop-blur text-primary px-3 py-1 rounded-full font-label-caps text-[10px] tracking-wider uppercase">UI/UX</span>
+</div>
+</div>
+<div class="p-6">
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-2 group-hover:text-secondary transition-colors">Aura Beauty Flagship</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6 line-clamp-2">A complete digital overhaul for a premium skincare brand, focusing on seamless user journeys and editorial product presentation.</p>
+<div class="flex items-center text-primary font-label-caps text-label-caps uppercase tracking-wider group-hover:translate-x-2 transition-transform">
+                            View Case Study <span class="material-symbols-outlined ml-2 text-[16px]">arrow_forward</span>
+</div>
+</div>
+</div>
+<!-- Project 2 -->
+<div class="project-card project-grid-item group cursor-pointer soft-shadow-hover rounded-DEFAULT overflow-hidden bg-white border border-surface-variant transition-all duration-300">
+<div class="relative aspect-[4/3] overflow-hidden bg-surface-container">
+<img alt="Project Cover" class="project-image w-full h-full object-cover" data-alt="A highly detailed 50-100 word prompt describing a cohesive brand identity presentation for a modern artisan coffee roaster. The scene includes neatly arranged letterpress business cards, a textured paper coffee bag with elegant typography, and a minimalist ceramic cup, all set against a soft warm white background. The lighting is directional, creating soft, elongated shadows that emphasize the tactile quality of the paper and ceramics. The mood is sophisticated, earthy, and meticulously crafted." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9PM1c12ZdL-suArnKqMEpa-ZCF64I2yzHRGEXTiM-yhiOVyGOlqWh_qkJ2jPmvirNzTf_sruR2r0j7jeWGVpdZgoJH_PkWGW73eYWXEzvzVdSC1_JfKr2WkOvWm4Wt0nBoSDgrXOXAMmUrvQJHoWpUBmcExtq4_BhR9jwmgL94HGjtBt4s1wDSpgawY27J77y3yCOwYvO7-SysGngoI81TvH2PAfU_k46tC6ClT8IXzj8R5PoB_t9rQ"/>
+<div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300"></div>
+<div class="absolute top-4 left-4 flex gap-2">
+<span class="bg-white/90 backdrop-blur text-primary px-3 py-1 rounded-full font-label-caps text-[10px] tracking-wider uppercase">Branding</span>
+<span class="bg-white/90 backdrop-blur text-primary px-3 py-1 rounded-full font-label-caps text-[10px] tracking-wider uppercase">Graphic Design</span>
+</div>
+</div>
+<div class="p-6">
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-2 group-hover:text-secondary transition-colors">Kite Roasters Identity</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6 line-clamp-2">Developing a tactile and narrative-driven visual identity system for a specialty coffee roaster based in Portland.</p>
+<div class="flex items-center text-primary font-label-caps text-label-caps uppercase tracking-wider group-hover:translate-x-2 transition-transform">
+                            View Case Study <span class="material-symbols-outlined ml-2 text-[16px]">arrow_forward</span>
+</div>
+</div>
+</div>
+<!-- Project 3 -->
+<div class="project-card project-grid-item group cursor-pointer soft-shadow-hover rounded-DEFAULT overflow-hidden bg-white border border-surface-variant transition-all duration-300">
+<div class="relative aspect-[4/3] overflow-hidden bg-surface-container">
+<img alt="Project Cover" class="project-image w-full h-full object-cover" data-alt="A highly detailed 50-100 word prompt describing a sleek mobile banking application displayed on three floating modern smartphones. The UI features an airy, minimalist aesthetic with crisp black typography on white backgrounds, accented by subtle vibrant green highlights for data visualization charts. The background is a very pale, warm gray, allowing the devices to stand out cleanly. The lighting is studio-quality, producing soft reflections on the glass screens, conveying a premium, trustworthy financial tech experience." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCVDXOqXMwoloLKsBeRSZ1EBSk4K0xmNk-9E9Zq9GtivVaUbERZI7GKoBRPXsOxjJJ6fs8VAsmkHd4rBpEqt8bG-dX_CqSZa6XmZDNZHDiya1NUkrQIARJyk1YLpXLYDBNI8DiSsLK8Hb71z-ArI2kLf4GAKmrdgkYFnTEjPcFhhbhXKojBwDVZ9pZL9fmmRoWd29R33rJHuk0cZ3z9VNZGDwVw_O4j3-NmVCUFNCmi5HSzsC0NQUYibA"/>
+<div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300"></div>
+<div class="absolute top-4 left-4 flex gap-2">
+<span class="bg-white/90 backdrop-blur text-primary px-3 py-1 rounded-full font-label-caps text-[10px] tracking-wider uppercase">UI/UX</span>
+<span class="bg-white/90 backdrop-blur text-primary px-3 py-1 rounded-full font-label-caps text-[10px] tracking-wider uppercase">App Design</span>
+</div>
+</div>
+<div class="p-6">
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-2 group-hover:text-secondary transition-colors">Nova Financial App</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6 line-clamp-2">A clean, intuitive mobile banking interface designed to simplify complex financial data into digestible, actionable insights.</p>
+<div class="flex items-center text-primary font-label-caps text-label-caps uppercase tracking-wider group-hover:translate-x-2 transition-transform">
+                            View Case Study <span class="material-symbols-outlined ml-2 text-[16px]">arrow_forward</span>
+</div>
+</div>
+</div>
+<!-- List View Items (Hidden by default) -->
+<div class="project-list-item w-full flex flex-col md:flex-row gap-6 p-4 rounded-DEFAULT hover:bg-white border border-transparent hover:border-surface-variant soft-shadow-hover transition-all group cursor-pointer">
+<div class="w-full md:w-1/3 aspect-[16/9] md:aspect-[4/3] overflow-hidden rounded-sm bg-surface-container">
+<img alt="Project Cover" class="project-image w-full h-full object-cover" data-alt="A highly detailed 50-100 word prompt describing a sophisticated e-commerce website interface displayed on an angled sleek silver laptop mockup. The interface features a minimalist, editorial design with deep black text on pristine white backgrounds, high-end fashion photography, and crisp geometric layouts. The lighting is soft and natural, casting subtle ambient shadows on the light gray surface beneath the laptop. The overall mood is premium, modern, and aligned with luxury retail digital experiences." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA3TXmbART9Y6jH_imX8TD_O8L6OgfvgaXUXn29eMemm3Y4ZTRt9YiLHBQo4ROOxUAFG3tcru3UPQ6p3vsKg5oic-KZRN8rtzgjYdSmXr7ft3TzoPws8y1B9arBQorVeBa9AqZsffA6Q1SgCI2PXEUBOhgP2L5SQ72wWq8IeNP4bjpt3PAHvmcJLf9pLsVUVj32btR_LTm_UbSMCWYuex3HRdacM2L8o3LOYTDsZHWuQxjib_hvAyIWGw"/>
+</div>
+<div class="w-full md:w-2/3 flex flex-col justify-center py-2">
+<div class="flex gap-2 mb-3">
+<span class="text-on-surface-variant font-label-caps text-[10px] tracking-wider uppercase">E-commerce</span>
+<span class="text-on-surface-variant font-label-caps text-[10px] tracking-wider uppercase">•</span>
+<span class="text-on-surface-variant font-label-caps text-[10px] tracking-wider uppercase">UI/UX</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-3 group-hover:text-secondary transition-colors">Aura Beauty Flagship</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6 max-w-2xl">A complete digital overhaul for a premium skincare brand, focusing on seamless user journeys and editorial product presentation. Built with Headless Shopify and Next.js.</p>
+<div class="flex items-center text-primary font-label-caps text-label-caps uppercase tracking-wider mt-auto group-hover:translate-x-2 transition-transform">
+                            View Case Study <span class="material-symbols-outlined ml-2 text-[16px]">arrow_forward</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Pagination / Load More -->
+<section class="mt-stack-lg flex justify-center">
+<button class="border border-primary text-primary px-8 py-3 rounded-DEFAULT font-label-caps text-label-caps hover:bg-surface-container transition-colors magnetic-btn">
+                Load More Projects
+            </button>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface dark:bg-tertiary-container full-width bottom border-t border-outline-variant dark:border-outline flat no shadows grid grid-cols-1 md:grid-cols-2 gap-stack-md px-margin-mobile md:px-margin-desktop py-stack-lg max-w-container-max mx-auto mt-stack-lg">
+<div class="flex flex-col gap-4">
+<div class="font-headline-sm text-headline-sm text-primary dark:text-on-primary">
+                Ponkoj Das
+            </div>
+<p class="font-body-md text-body-md text-on-surface dark:text-on-tertiary-container">
+                © 2024 Ponkoj Das. All rights reserved.
+            </p>
+</div>
+<div class="flex flex-col md:items-end gap-4">
+<div class="flex flex-wrap gap-6">
+<a class="font-label-caps text-label-caps text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-on-primary transition-all" href="#">Instagram</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-on-primary transition-all" href="#">LinkedIn</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-on-primary transition-all" href="#">Behance</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-on-primary transition-all" href="#">Dribbble</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-on-primary transition-all" href="#">Twitter</a>
+</div>
+</div>
+</footer>
+<style>
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<script>
+        // Simple view toggle logic
+        const gridBtn = document.getElementById('grid-view-btn');
+        const listBtn = document.getElementById('list-view-btn');
+        const container = document.getElementById('gallery-container');
+
+        gridBtn.addEventListener('click', () => {
+            container.classList.remove('list-view');
+            container.classList.add('grid-view');
+            
+            gridBtn.classList.add('bg-surface', 'shadow-sm', 'text-on-surface');
+            gridBtn.classList.remove('text-on-surface-variant');
+            
+            listBtn.classList.remove('bg-surface', 'shadow-sm', 'text-on-surface');
+            listBtn.classList.add('text-on-surface-variant');
+        });
+
+        listBtn.addEventListener('click', () => {
+            container.classList.remove('grid-view');
+            container.classList.add('list-view');
+            
+            listBtn.classList.add('bg-surface', 'shadow-sm', 'text-on-surface');
+            listBtn.classList.remove('text-on-surface-variant');
+            
+            gridBtn.classList.remove('bg-surface', 'shadow-sm', 'text-on-surface');
+            gridBtn.classList.add('text-on-surface-variant');
+        });
+    </script>
+</body></html>

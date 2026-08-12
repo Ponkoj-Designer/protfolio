@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Ponkoj Das - Resume</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Playfair+Display:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-tint": "#625d5b",
+                        "surface": "#fdf8f7",
+                        "background": "#fdf8f7",
+                        "on-secondary-fixed": "#002117",
+                        "on-error-container": "#93000a",
+                        "surface-container": "#f1edec",
+                        "surface-bright": "#fdf8f7",
+                        "error-container": "#ffdad6",
+                        "secondary": "#2b6954",
+                        "surface-container-low": "#f7f3f1",
+                        "secondary-fixed": "#b0f0d6",
+                        "inverse-surface": "#313030",
+                        "on-error": "#ffffff",
+                        "tertiary": "#000000",
+                        "error": "#ba1a1a",
+                        "primary-fixed-dim": "#ccc5c2",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "tertiary-fixed": "#e2e2e2",
+                        "on-tertiary-fixed-variant": "#454747",
+                        "on-surface": "#1c1b1b",
+                        "primary": "#000000",
+                        "outline-variant": "#d0c4be",
+                        "surface-dim": "#ddd9d8",
+                        "outline": "#7e7570",
+                        "surface-variant": "#e6e1e0",
+                        "surface-container-highest": "#e6e1e0",
+                        "primary-fixed": "#e9e1dd",
+                        "on-tertiary-fixed": "#1a1c1c",
+                        "on-surface-variant": "#4d4540",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-fixed-variant": "#4a4643",
+                        "on-primary-fixed": "#1e1b19",
+                        "secondary-fixed-dim": "#95d3ba",
+                        "secondary-container": "#adedd3",
+                        "on-secondary-container": "#306d58",
+                        "on-tertiary-container": "#838484",
+                        "on-primary-container": "#888380",
+                        "primary-container": "#1e1b19",
+                        "inverse-primary": "#ccc5c2",
+                        "inverse-on-surface": "#f4f0ef",
+                        "tertiary-container": "#1a1c1c",
+                        "tertiary-fixed-dim": "#c6c6c6",
+                        "surface-container-high": "#ece7e6",
+                        "on-secondary-fixed-variant": "#0b513d",
+                        "on-background": "#1c1b1b",
+                        "on-secondary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "stack-md": "48px",
+                        "container-max": "1440px",
+                        "stack-sm": "24px",
+                        "unit": "4px",
+                        "stack-lg": "80px",
+                        "margin-mobile": "20px",
+                        "gutter": "32px",
+                        "margin-desktop": "64px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Playfair Display"],
+                        "display-lg": ["Playfair Display"],
+                        "label-caps": ["Inter"],
+                        "display-lg-mobile": ["Playfair Display"],
+                        "headline-sm": ["Playfair Display"],
+                        "label-sm": ["Inter"],
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["40px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "display-lg": ["72px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-caps": ["12px", { "lineHeight": "1.0", "letterSpacing": "0.1em", "fontWeight": "600" }],
+                        "display-lg-mobile": ["48px", { "lineHeight": "1.15", "fontWeight": "700" }],
+                        "headline-sm": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "label-sm": ["13px", { "lineHeight": "1.4", "fontWeight": "500" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: theme('colors.background');
+            color: theme('colors.on-background');
+        }
+        .magnetic-pull {
+            transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        .magnetic-pull:hover {
+            transform: scale(1.02);
+        }
+        .ambient-shadow {
+            box-shadow: 0 20px 40px rgba(28, 25, 23, 0.05);
+        }
+        .glass-panel {
+            background-color: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .print-only { display: none; }
+        @media print {
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            body { background: white !important; }
+            .page-break { page-break-before: always; }
+        }
+    </style>
+</head>
+<body class="antialiased font-body-md text-body-md selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopNavBar -->
+<nav class="bg-white/80 dark:bg-black/80 backdrop-blur-xl docked full-width top-0 sticky flat no shadows z-50 transition-all duration-300 no-print" id="navbar">
+<div class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto h-20">
+<a class="font-display-lg-mobile text-display-lg-mobile tracking-tighter text-on-surface dark:text-surface-bright magnetic-pull" href="#">Ponkoj Das</a>
+<div class="hidden md:flex items-center gap-gutter font-label-caps text-label-caps">
+<a class="text-on-surface-variant dark:text-surface-variant transition-colors duration-300 hover:text-primary dark:hover:text-on-primary hover:opacity-80" href="#">Home</a>
+<a class="text-on-surface-variant dark:text-surface-variant transition-colors duration-300 hover:text-primary dark:hover:text-on-primary hover:opacity-80" href="#">About</a>
+<a class="text-on-surface-variant dark:text-surface-variant transition-colors duration-300 hover:text-primary dark:hover:text-on-primary hover:opacity-80" href="#">Services</a>
+<a class="text-on-surface-variant dark:text-surface-variant transition-colors duration-300 hover:text-primary dark:hover:text-on-primary hover:opacity-80" href="#">Portfolio</a>
+<a class="text-primary dark:text-on-primary border-b-2 border-primary dark:border-on-primary pb-1 magnetic-pull" href="#">Experience</a>
+</div>
+<a class="hidden md:inline-flex items-center justify-center px-6 py-3 bg-primary text-on-primary font-label-caps text-label-caps rounded hover:scale-[1.02] transition-transform duration-200 magnetic-pull" href="#">
+                Contact Me
+            </a>
+<button aria-label="Menu" class="md:hidden text-on-surface material-symbols-outlined">menu</button>
+</div>
+</nav>
+<main class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop pt-stack-md pb-stack-lg">
+<!-- Header Section -->
+<header class="mb-stack-lg flex flex-col md:flex-row gap-stack-md items-start md:items-center">
+<div class="flex-1">
+<h1 class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface mb-4">Senior Digital Product Designer</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
+                    Crafting sophisticated digital experiences with a focus on minimalism, editorial design, and intuitive interactions. Based in London, available globally.
+                </p>
+<div class="mt-8 flex gap-4 no-print">
+<button class="inline-flex items-center gap-2 px-6 py-3 bg-primary text-on-primary font-label-caps text-label-caps rounded magnetic-pull">
+<span class="material-symbols-outlined text-[18px]">download</span>
+                        Download PDF
+                    </button>
+<button class="inline-flex items-center gap-2 px-6 py-3 border border-primary text-primary font-label-caps text-label-caps rounded hover:bg-surface-container transition-colors magnetic-pull" onclick="window.print()">
+<span class="material-symbols-outlined text-[18px]">print</span>
+                        Print Resume
+                    </button>
+</div>
+</div>
+<div class="w-48 h-48 md:w-64 md:h-64 rounded-full overflow-hidden shrink-0 border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A highly professional and modern portrait of a digital product designer in a bright, minimalist studio setting. The lighting is soft and cinematic, emphasizing a clean, sophisticated aesthetic typical of high-end editorial photography. The subject exudes confidence and creativity, set against a pristine white background with subtle architectural shadows." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBTzydDKcrAPFYuVBASegH7tDbEst2H6BMwV1jWLegl6nexgHxmIkN5V3IZCeH6aiL3c3yZCMPXNm_ueNx1yw_mgL0SbxJpcGxOPMwBt9SDRCKGwr8C7RLxcMywR7VxUTbB9cG9915oMMu8gb4ee65BFt4T3Py773uDD9zVFFC7m_dGwRlKvHuEYUTxIqWHCpowtsMXt6DO-0k1eQT5EqBqlg9ZYfslM6g6FWMocxpDZvJhRJO_FKMA1Q"/>
+</div>
+</header>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<!-- Sidebar / Left Column -->
+<aside class="lg:col-span-4 flex flex-col gap-stack-md">
+<!-- Contact Info -->
+<section class="bg-surface-container-lowest p-stack-sm rounded-lg border border-outline-variant ambient-shadow">
+<h2 class="font-headline-sm text-headline-sm text-on-surface mb-6">Contact</h2>
+<ul class="flex flex-col gap-4 font-body-md text-body-md text-on-surface-variant">
+<li class="flex items-center gap-3">
+<span class="material-symbols-outlined text-outline">mail</span>
+                            hello@ponkojdas.com
+                        </li>
+<li class="flex items-center gap-3">
+<span class="material-symbols-outlined text-outline">phone</span>
+                            +44 7700 900077
+                        </li>
+<li class="flex items-center gap-3">
+<span class="material-symbols-outlined text-outline">location_on</span>
+                            London, UK
+                        </li>
+<li class="flex items-center gap-3">
+<span class="material-symbols-outlined text-outline">language</span>
+                            www.ponkojdas.com
+                        </li>
+</ul>
+</section>
+<!-- Skills -->
+<section class="bg-surface-container-lowest p-stack-sm rounded-lg border border-outline-variant ambient-shadow">
+<h2 class="font-headline-sm text-headline-sm text-on-surface mb-6">Core Skills</h2>
+<div class="flex flex-wrap gap-2">
+<span class="px-3 py-1 bg-surface-container-low text-on-surface font-label-sm text-label-sm rounded-full border border-outline-variant">UI/UX Design</span>
+<span class="px-3 py-1 bg-surface-container-low text-on-surface font-label-sm text-label-sm rounded-full border border-outline-variant">Design Systems</span>
+<span class="px-3 py-1 bg-surface-container-low text-on-surface font-label-sm text-label-sm rounded-full border border-outline-variant">Prototyping</span>
+<span class="px-3 py-1 bg-surface-container-low text-on-surface font-label-sm text-label-sm rounded-full border border-outline-variant">Interaction Design</span>
+<span class="px-3 py-1 bg-surface-container-low text-on-surface font-label-sm text-label-sm rounded-full border border-outline-variant">User Research</span>
+<span class="px-3 py-1 bg-surface-container-low text-on-surface font-label-sm text-label-sm rounded-full border border-outline-variant">Front-end (HTML/CSS)</span>
+</div>
+</section>
+<!-- Education -->
+<section class="bg-surface-container-lowest p-stack-sm rounded-lg border border-outline-variant ambient-shadow">
+<h2 class="font-headline-sm text-headline-sm text-on-surface mb-6">Education</h2>
+<div class="flex flex-col gap-6">
+<div>
+<h3 class="font-label-caps text-label-caps text-on-surface font-bold">MA Interaction Design</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Royal College of Art, London</p>
+<p class="font-label-sm text-label-sm text-outline mt-1">2016 - 2018</p>
+</div>
+<div>
+<h3 class="font-label-caps text-label-caps text-on-surface font-bold">BA Graphic Design</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Central Saint Martins</p>
+<p class="font-label-sm text-label-sm text-outline mt-1">2012 - 2015</p>
+</div>
+</div>
+</section>
+</aside>
+<!-- Main Content / Right Column -->
+<div class="lg:col-span-8 flex flex-col gap-stack-md">
+<!-- Summary -->
+<section>
+<h2 class="font-headline-md text-headline-md text-on-surface mb-4">Professional Summary</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">
+                        An award-winning digital product designer with over 8 years of experience leading design initiatives for luxury brands and high-growth tech startups. I specialize in bridging the gap between elegant aesthetic form and highly functional user experience. My approach is deeply rooted in editorial design principles, resulting in digital products that feel premium, intuitive, and enduring.
+                    </p>
+</section>
+<hr class="border-t border-outline-variant"/>
+<!-- Experience -->
+<section>
+<h2 class="font-headline-md text-headline-md text-on-surface mb-8">Experience</h2>
+<div class="flex flex-col gap-stack-sm">
+<!-- Job 1 -->
+<article class="group">
+<div class="flex flex-col md:flex-row md:justify-between md:items-baseline mb-2">
+<h3 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors">Design Director</h3>
+<span class="font-label-caps text-label-caps text-outline">2021 - Present</span>
+</div>
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-4 font-bold">Studio Blanc, London</p>
+<ul class="font-body-md text-body-md text-on-surface-variant list-disc pl-5 space-y-2">
+<li>Led a team of 6 designers to completely overhaul the digital presence of three major luxury fashion houses.</li>
+<li>Established and maintained comprehensive design systems that reduced development hand-off time by 40%.</li>
+<li>Pioneered the integration of motion design into core interactive components, elevating the overall brand perception.</li>
+</ul>
+</article>
+<!-- Job 2 -->
+<article class="group">
+<div class="flex flex-col md:flex-row md:justify-between md:items-baseline mb-2">
+<h3 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors">Senior Product Designer</h3>
+<span class="font-label-caps text-label-caps text-outline">2018 - 2021</span>
+</div>
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-4 font-bold">Fintech Innovate, London</p>
+<ul class="font-body-md text-body-md text-on-surface-variant list-disc pl-5 space-y-2">
+<li>Redesigned the primary investment dashboard, leading to a 25% increase in daily active user engagement.</li>
+<li>Conducted extensive user research sessions to identify pain points in the onboarding flow, improving conversion by 15%.</li>
+<li>Collaborated closely with engineering to implement a new responsive grid system.</li>
+</ul>
+</article>
+<!-- Job 3 -->
+<article class="group">
+<div class="flex flex-col md:flex-row md:justify-between md:items-baseline mb-2">
+<h3 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors">UI/UX Designer</h3>
+<span class="font-label-caps text-label-caps text-outline">2015 - 2018</span>
+</div>
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-4 font-bold">Creative Agency X, Manchester</p>
+<ul class="font-body-md text-body-md text-on-surface-variant list-disc pl-5 space-y-2">
+<li>Designed award-winning marketing sites for boutique hospitality clients.</li>
+<li>Created wireframes, interactive prototypes, and high-fidelity mockups for various web applications.</li>
+</ul>
+</article>
+</div>
+</section>
+<hr class="border-t border-outline-variant"/>
+<!-- Tools & Software -->
+<section>
+<h2 class="font-headline-sm text-headline-sm text-on-surface mb-6">Tools &amp; Technologies</h2>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<div class="flex items-center gap-3 p-3 bg-surface-container-lowest border border-outline-variant rounded ambient-shadow hover:-translate-y-1 transition-transform">
+<span class="material-symbols-outlined text-primary">design_services</span>
+<span class="font-label-caps text-label-caps">Figma</span>
+</div>
+<div class="flex items-center gap-3 p-3 bg-surface-container-lowest border border-outline-variant rounded ambient-shadow hover:-translate-y-1 transition-transform">
+<span class="material-symbols-outlined text-primary">layers</span>
+<span class="font-label-caps text-label-caps">Adobe CC</span>
+</div>
+<div class="flex items-center gap-3 p-3 bg-surface-container-lowest border border-outline-variant rounded ambient-shadow hover:-translate-y-1 transition-transform">
+<span class="material-symbols-outlined text-primary">animation</span>
+<span class="font-label-caps text-label-caps">Protopie</span>
+</div>
+<div class="flex items-center gap-3 p-3 bg-surface-container-lowest border border-outline-variant rounded ambient-shadow hover:-translate-y-1 transition-transform">
+<span class="material-symbols-outlined text-primary">code</span>
+<span class="font-label-caps text-label-caps">Webflow</span>
+</div>
+</div>
+</section>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-surface dark:bg-tertiary-container full-width bottom border-t border-outline-variant dark:border-outline flat no shadows mt-stack-lg no-print">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-stack-md px-margin-mobile md:px-margin-desktop py-stack-lg max-w-container-max mx-auto">
+<div>
+<p class="font-headline-sm text-headline-sm text-primary dark:text-on-primary mb-4">Ponkoj Das</p>
+<p class="font-body-md text-body-md text-on-surface dark:text-on-tertiary-container">© 2024 Ponkoj Das. All rights reserved.</p>
+</div>
+<div class="flex gap-6 font-label-caps text-label-caps md:justify-end">
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-on-primary transition-all" href="#">Instagram</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-on-primary transition-all" href="#">LinkedIn</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-on-primary transition-all" href="#">Behance</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-on-primary transition-all" href="#">Dribbble</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-on-primary transition-all" href="#">Twitter</a>
+</div>
+</div>
+</footer>
+<!-- Floating Action Button (Mobile Print/Download) -->
+<div class="fixed bottom-6 right-6 md:hidden flex flex-col gap-3 z-40 no-print">
+<button aria-label="Download PDF" class="w-14 h-14 bg-primary text-on-primary rounded-full shadow-lg flex items-center justify-center magnetic-pull">
+<span class="material-symbols-outlined">download</span>
+</button>
+</div>
+<script>
+        // Simple magnetic effect for buttons
+        document.querySelectorAll('.magnetic-pull').forEach(btn => {
+            btn.addEventListener('mousemove', (e) => {
+                const rect = btn.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+                
+                // Max displacement
+                const moveX = x * 0.1;
+                const moveY = y * 0.1;
+                
+                btn.style.transform = `translate(${moveX}px, ${moveY}px) scale(1.02)`;
+            });
+
+            btn.addEventListener('mouseleave', () => {
+                btn.style.transform = 'translate(0px, 0px) scale(1)';
+            });
+        });
+
+        // Navbar blur effect on scroll
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 20) {
+                navbar.classList.add('shadow-sm');
+                navbar.classList.replace('bg-white/80', 'bg-white/95');
+            } else {
+                navbar.classList.remove('shadow-sm');
+                navbar.classList.replace('bg-white/95', 'bg-white/80');
+            }
+        });
+    </script>
+</body></html>

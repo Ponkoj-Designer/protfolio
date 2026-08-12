@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Testimonials - Ponkoj Das</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-tint": "#625d5b",
+                        "surface": "#fdf8f7",
+                        "background": "#fdf8f7",
+                        "on-secondary-fixed": "#002117",
+                        "on-error-container": "#93000a",
+                        "surface-container": "#f1edec",
+                        "surface-bright": "#fdf8f7",
+                        "error-container": "#ffdad6",
+                        "secondary": "#2b6954",
+                        "surface-container-low": "#f7f3f1",
+                        "secondary-fixed": "#b0f0d6",
+                        "inverse-surface": "#313030",
+                        "on-error": "#ffffff",
+                        "tertiary": "#000000",
+                        "error": "#ba1a1a",
+                        "primary-fixed-dim": "#ccc5c2",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "tertiary-fixed": "#e2e2e2",
+                        "on-tertiary-fixed-variant": "#454747",
+                        "on-surface": "#1c1b1b",
+                        "primary": "#000000",
+                        "outline-variant": "#d0c4be",
+                        "surface-dim": "#ddd9d8",
+                        "outline": "#7e7570",
+                        "surface-variant": "#e6e1e0",
+                        "surface-container-highest": "#e6e1e0",
+                        "primary-fixed": "#e9e1dd",
+                        "on-tertiary-fixed": "#1a1c1c",
+                        "on-surface-variant": "#4d4540",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-fixed-variant": "#4a4643",
+                        "on-primary-fixed": "#1e1b19",
+                        "secondary-fixed-dim": "#95d3ba",
+                        "secondary-container": "#adedd3",
+                        "on-secondary-container": "#306d58",
+                        "on-tertiary-container": "#838484",
+                        "on-primary-container": "#888380",
+                        "primary-container": "#1e1b19",
+                        "inverse-primary": "#ccc5c2",
+                        "inverse-on-surface": "#f4f0ef",
+                        "tertiary-container": "#1a1c1c",
+                        "tertiary-fixed-dim": "#c6c6c6",
+                        "surface-container-high": "#ece7e6",
+                        "on-secondary-fixed-variant": "#0b513d",
+                        "on-background": "#1c1b1b",
+                        "on-secondary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "stack-md": "48px",
+                        "container-max": "1440px",
+                        "stack-sm": "24px",
+                        "unit": "4px",
+                        "stack-lg": "80px",
+                        "margin-mobile": "20px",
+                        "gutter": "32px",
+                        "margin-desktop": "64px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Playfair Display"],
+                        "display-lg": ["Playfair Display"],
+                        "label-caps": ["Inter"],
+                        "display-lg-mobile": ["Playfair Display"],
+                        "headline-sm": ["Playfair Display"],
+                        "label-sm": ["Inter"],
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["40px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "display-lg": ["72px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-caps": ["12px", { "lineHeight": "1.0", "letterSpacing": "0.1em", "fontWeight": "600" }],
+                        "display-lg-mobile": ["48px", { "lineHeight": "1.15", "fontWeight": "700" }],
+                        "headline-sm": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "label-sm": ["13px", { "lineHeight": "1.4", "fontWeight": "500" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .magnetic-pull { transition: transform 0.2s cubic-bezier(0.33, 1, 0.68, 1); }
+        .magnetic-pull:hover { transform: scale(1.02); }
+        .soft-shadow-hover:hover { box-shadow: 0 20px 40px rgba(28, 25, 23, 0.05); }
+        .hide-scroll::-webkit-scrollbar { display: none; }
+        .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<nav class="bg-white/80 dark:bg-black/80 backdrop-blur-xl docked full-width top-0 sticky flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto h-20 z-50">
+<div class="font-display-lg-mobile text-display-lg-mobile tracking-tighter text-on-surface dark:text-surface-bright">
+            Ponkoj Das
+        </div>
+<div class="hidden md:flex gap-gutter items-center">
+<a class="font-label-caps text-label-caps text-on-surface-variant dark:text-surface-variant transition-colors duration-300 hover:text-primary dark:hover:text-on-primary hover:opacity-80" href="#">Home</a>
+<a class="font-label-caps text-label-caps text-primary dark:text-on-primary border-b-2 border-primary dark:border-on-primary pb-1 scale-[1.02] transition-transform duration-200 magnetic-pull" href="#">About</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant dark:text-surface-variant transition-colors duration-300 hover:text-primary dark:hover:text-on-primary hover:opacity-80" href="#">Services</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant dark:text-surface-variant transition-colors duration-300 hover:text-primary dark:hover:text-on-primary hover:opacity-80" href="#">Portfolio</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant dark:text-surface-variant transition-colors duration-300 hover:text-primary dark:hover:text-on-primary hover:opacity-80" href="#">Experience</a>
+</div>
+<button class="bg-primary text-on-primary px-6 py-3 rounded-full font-label-caps text-label-caps magnetic-pull hover:scale-[1.02] hidden md:block">
+            Contact Me
+        </button>
+<button class="md:hidden text-primary">
+<span class="material-symbols-outlined" data-icon="menu" style="font-variation-settings: 'FILL' 0;">menu</span>
+</button>
+</nav>
+<!-- Main Content -->
+<main class="flex-grow w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-stack-lg flex flex-col gap-stack-lg">
+<!-- Header Section -->
+<section class="flex flex-col items-center text-center gap-stack-sm max-w-3xl mx-auto">
+<h1 class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-primary">Client Perspectives</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">A curated selection of thoughts and experiences from partners, collaborators, and clients who have engaged with my editorial and digital design practice.</p>
+</section>
+<!-- Controls Section -->
+<section class="flex flex-col md:flex-row justify-between items-center gap-stack-sm border-b border-surface-variant pb-stack-sm">
+<!-- Filters -->
+<div class="flex flex-wrap gap-4 items-center">
+<span class="font-label-caps text-label-caps text-on-surface-variant mr-2">Filter By:</span>
+<button class="px-4 py-2 rounded-full border border-primary text-primary font-label-sm text-label-sm bg-surface transition-colors hover:bg-surface-variant">All Work</button>
+<button class="px-4 py-2 rounded-full border border-surface-variant text-on-surface-variant font-label-sm text-label-sm hover:border-primary hover:text-primary transition-colors">Editorial Design</button>
+<button class="px-4 py-2 rounded-full border border-surface-variant text-on-surface-variant font-label-sm text-label-sm hover:border-primary hover:text-primary transition-colors">Digital Product</button>
+<button class="px-4 py-2 rounded-full border border-surface-variant text-on-surface-variant font-label-sm text-label-sm hover:border-primary hover:text-primary transition-colors">Brand Identity</button>
+</div>
+<!-- View Toggles -->
+<div class="flex gap-2 items-center bg-surface-container rounded-full p-1">
+<button class="p-2 rounded-full bg-primary text-on-primary shadow-sm transition-all flex items-center justify-center" id="gridViewBtn">
+<span class="material-symbols-outlined" data-icon="grid_view" style="font-variation-settings: 'FILL' 1;">grid_view</span>
+</button>
+<button class="p-2 rounded-full text-on-surface-variant hover:text-primary transition-all flex items-center justify-center" id="carouselViewBtn">
+<span class="material-symbols-outlined" data-icon="view_carousel" style="font-variation-settings: 'FILL' 0;">view_carousel</span>
+</button>
+</div>
+</section>
+<!-- Testimonials Grid View -->
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter transition-opacity duration-300" id="testimonialsGrid">
+<!-- Card 1 -->
+<div class="bg-surface border border-surface-variant rounded-xl p-8 flex flex-col gap-6 soft-shadow-hover transition-all duration-300">
+<div class="flex justify-between items-start">
+<div class="flex gap-1 text-primary">
+<span class="material-symbols-outlined text-sm" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<span class="material-symbols-outlined text-surface-variant text-4xl opacity-50" data-icon="format_quote">format_quote</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface flex-grow">"Ponkoj possesses a rare ability to translate complex conceptual ideas into striking, minimalist visual narratives. The editorial redesign he executed for our quarterly publication elevated our brand perception instantly. His attention to typographic detail is simply unmatched in the current digital space."</p>
+<div class="flex items-center gap-4 pt-4 border-t border-surface-variant">
+<img class="w-12 h-12 rounded-full object-cover grayscale" data-alt="A sophisticated black and white portrait of a middle-aged female creative director with short silver hair and modern glasses. She is wearing a minimalist dark turtleneck. The lighting is soft and directional, typical of high-end editorial photography, set against a pristine, light-mode white studio background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAN4Md0N7lZJZJPnRbyc88liEft8C0wt8paOrkAysLSkSvvnT-Zhez0SpPPyty8weI3bAm5dc7HCw87jNnFQ_XTybzPetPI2g7ErVDol3feZruEfUtKgvjjYcdPO5_w2CixNOunwn8j9ZRx_zetVUNlwkje7ObhTIiuLe_VH9Ml-OPS3wAa0v8WeQYBIyh5d2ZCp73rx_JRvy5jIVTpv7KX1_3zVHGVj5HT1wVHMNB17MAOCD_esghBuQ"/>
+<div>
+<h4 class="font-headline-sm text-[16px] font-semibold text-primary">Eleanor Vance</h4>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Creative Director, KINDA Studio</p>
+</div>
+</div>
+<a class="text-primary font-label-sm text-label-sm flex items-center gap-1 hover:underline mt-2" href="#">
+                    View Project <span class="material-symbols-outlined text-[16px]" data-icon="arrow_forward">arrow_forward</span>
+</a>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface border border-surface-variant rounded-xl p-8 flex flex-col gap-6 soft-shadow-hover transition-all duration-300">
+<div class="flex justify-between items-start">
+<div class="flex gap-1 text-primary">
+<span class="material-symbols-outlined text-sm" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<span class="material-symbols-outlined text-surface-variant text-4xl opacity-50" data-icon="format_quote">format_quote</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface flex-grow">"Working on our digital product experience was seamless. The design system provided was not only visually stunning but technically robust. The integration of high-end aesthetic principles into functional UI components has completely transformed how our users interact with our platform."</p>
+<div class="flex items-center gap-4 pt-4 border-t border-surface-variant">
+<img class="w-12 h-12 rounded-full object-cover grayscale" data-alt="A clean, professional portrait of a male tech founder in his late 30s. He has neat dark hair and a short beard, wearing a casual but premium tailored dark grey t-shirt. The setting is bright and minimal, evoking a modern, high-end light-mode corporate aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDCwOZh30JQkiq9FQPCkTdLjMkT1J9sIcIRhogh3s1ic_A50V9xQy8v8Ks3OA1_7U4AUg1WZmsUWfAEzXP_2JS7jLYjncTSHLVRqw1oQkUXwPCX7-YzuOJYKMwAqRKiGQhKdmLWNDq4Im7KQtSQuP4AEolOW7iAetk6Oy483C069mYkt2mhx5oqdNBbhjGJ7tdre8uIyB5k5y7lLreYi_DwT8VNzLRlvbqxuuPDlT7CXmgrozvPoaq3lA"/>
+<div>
+<h4 class="font-headline-sm text-[16px] font-semibold text-primary">Julian Hayes</h4>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Founder, Altura Tech</p>
+</div>
+</div>
+<a class="text-primary font-label-sm text-label-sm flex items-center gap-1 hover:underline mt-2" href="#">
+                    View Project <span class="material-symbols-outlined text-[16px]" data-icon="arrow_forward">arrow_forward</span>
+</a>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface border border-surface-variant rounded-xl p-8 flex flex-col gap-6 soft-shadow-hover transition-all duration-300">
+<div class="flex justify-between items-start">
+<div class="flex gap-1 text-primary">
+<span class="material-symbols-outlined text-sm" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" data-icon="star" style="font-variation-settings: 'FILL' 0;">star_half</span>
+</div>
+<span class="material-symbols-outlined text-surface-variant text-4xl opacity-50" data-icon="format_quote">format_quote</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface flex-grow">"An absolute masterclass in brand identity execution. The final deliverables felt less like traditional brand guidelines and more like a curated art monograph. The strategic use of whitespace and typography has given our brand a sophisticated edge we didn't know we needed."</p>
+<div class="flex items-center gap-4 pt-4 border-t border-surface-variant">
+<img class="w-12 h-12 rounded-full object-cover grayscale" data-alt="An elegant portrait of a young female art director with sleek pulled-back hair. She is wearing a structured white blazer. The image has a high-contrast, modern editorial feel, shot in a minimalist studio environment with clean white lighting, fitting a sophisticated light-mode design." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBphzv5RKydWpkTrFtJ5Q5iA8Me4tq_umkfkoYElsmUZYyktIw86_YxCItDq9UEqiBnt2XY4GzsCyjdZPy4QdIvtej5Es2_wcCMl9FG-Bw7KXx4mYYgI6RxlgFh0TqrEMFPB8CRFz_Hdijopw0TF_wcHhONzmONxk4ola2hmbJDF55YmSl-YHm2xsoSWK-IqiYpXfJqyp96gCOXcRNfsLyARku_83jSUi9mTLl14Wl6Bh9F4YYqF2Pxeg"/>
+<div>
+<h4 class="font-headline-sm text-[16px] font-semibold text-primary">Sophia Chen</h4>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Art Director, Vellum Gallery</p>
+</div>
+</div>
+<a class="text-primary font-label-sm text-label-sm flex items-center gap-1 hover:underline mt-2" href="#">
+                    View Project <span class="material-symbols-outlined text-[16px]" data-icon="arrow_forward">arrow_forward</span>
+</a>
+</div>
+</section>
+<!-- Testimonials Carousel View (Hidden by default) -->
+<section class="hidden relative w-full overflow-hidden transition-opacity duration-300" id="testimonialsCarousel">
+<div class="flex hide-scroll overflow-x-auto snap-x snap-mandatory gap-6 pb-8 pt-4 px-4">
+<!-- Carousel Card 1 -->
+<div class="min-w-[85vw] md:min-w-[60vw] lg:min-w-[40vw] snap-center bg-surface border border-surface-variant rounded-xl p-10 flex flex-col gap-8 soft-shadow-hover transition-all duration-300 shrink-0">
+<div class="flex justify-between items-start">
+<div class="flex gap-1 text-primary">
+<span class="material-symbols-outlined text-lg" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-lg" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-lg" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-lg" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-lg" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</div>
+<p class="font-headline-sm text-headline-sm text-primary flex-grow italic leading-relaxed">"Ponkoj possesses a rare ability to translate complex conceptual ideas into striking, minimalist visual narratives. The editorial redesign he executed for our quarterly publication elevated our brand perception instantly."</p>
+<div class="flex items-center justify-between pt-6 border-t border-surface-variant">
+<div class="flex items-center gap-4">
+<img class="w-16 h-16 rounded-full object-cover grayscale" data-alt="A sophisticated black and white portrait of a middle-aged female creative director with short silver hair and modern glasses. She is wearing a minimalist dark turtleneck. The lighting is soft and directional, typical of high-end editorial photography, set against a pristine, light-mode white studio background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAYSlZzBNRiJbtdsYi_LilMiwkl1BFF6t7ZdZhIJ5SpRhiaTf5vawdAb4zf5mEQvhHQgKxAiQBz6Cly_nfdcrvh8V6XZFhvV1_BU47ML202Jfy3OoeiCB4665xS7CyhDCBAa91dzK2lwNXVPEIXk9ATPB15muExapjcvVoK-JOzHGCc1NCfLXmkDa7fcyOLUHnHbD9epJg2M61eIiosJyJw5NcIoKK6LgdKn9EGvtQbfOUGXjdMNj_XQA"/>
+<div>
+<h4 class="font-headline-sm text-[18px] font-semibold text-primary">Eleanor Vance</h4>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Creative Director, KINDA Studio</p>
+</div>
+</div>
+<a class="w-12 h-12 rounded-full border border-primary flex items-center justify-center text-primary hover:bg-primary hover:text-on-primary transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="arrow_outward">arrow_outward</span>
+</a>
+</div>
+</div>
+<!-- Carousel Card 2 -->
+<div class="min-w-[85vw] md:min-w-[60vw] lg:min-w-[40vw] snap-center bg-surface border border-surface-variant rounded-xl p-10 flex flex-col gap-8 soft-shadow-hover transition-all duration-300 shrink-0">
+<div class="flex justify-between items-start">
+<div class="flex gap-1 text-primary">
+<span class="material-symbols-outlined text-lg" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-lg" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-lg" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-lg" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-lg" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</div>
+<p class="font-headline-sm text-headline-sm text-primary flex-grow italic leading-relaxed">"Working on our digital product experience was seamless. The integration of high-end aesthetic principles into functional UI components has completely transformed how our users interact with our platform."</p>
+<div class="flex items-center justify-between pt-6 border-t border-surface-variant">
+<div class="flex items-center gap-4">
+<img class="w-16 h-16 rounded-full object-cover grayscale" data-alt="A clean, professional portrait of a male tech founder in his late 30s. He has neat dark hair and a short beard, wearing a casual but premium tailored dark grey t-shirt. The setting is bright and minimal, evoking a modern, high-end light-mode corporate aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDtBYLIzkdEd-5jR6BciPTPAvMLyTbMEjcL01jWr_HWJfJcWsLtgbqAXjwV6lusb1iT6N7Ql1dTsAOrn7-eOC_QXKvLyjSM6xwU1gRwXPdcH3uPDcFb0acOeoqwyj4RAYH6Cbr3joqrNrrqVcJAPOOqitcJtHGBywJBgckgQ5CwaM-n8TaQOiyPYB3Egl0UGonkfQ-aUjWffdjB2_j5GOCRyB-Cx_t9MPQejn6viFFMTNpiTstZXDQ9uA"/>
+<div>
+<h4 class="font-headline-sm text-[18px] font-semibold text-primary">Julian Hayes</h4>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Founder, Altura Tech</p>
+</div>
+</div>
+<a class="w-12 h-12 rounded-full border border-primary flex items-center justify-center text-primary hover:bg-primary hover:text-on-primary transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="arrow_outward">arrow_outward</span>
+</a>
+</div>
+</div>
+</div>
+<!-- Carousel Indicators -->
+<div class="flex justify-center gap-2 mt-4">
+<button class="w-2 h-2 rounded-full bg-primary"></button>
+<button class="w-2 h-2 rounded-full bg-surface-variant hover:bg-outline transition-colors"></button>
+<button class="w-2 h-2 rounded-full bg-surface-variant hover:bg-outline transition-colors"></button>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface dark:bg-tertiary-container text-on-surface dark:text-on-tertiary-container full-width bottom border-t border-outline-variant dark:border-outline grid grid-cols-1 md:grid-cols-2 gap-stack-md px-margin-mobile md:px-margin-desktop py-stack-lg max-w-container-max mx-auto w-full">
+<div class="flex flex-col gap-4">
+<span class="font-headline-sm text-headline-sm text-primary dark:text-on-primary">Ponkoj Das</span>
+<p class="font-body-md text-body-md text-on-surface-variant dark:text-surface-variant">© 2024 Ponkoj Das. All rights reserved.</p>
+</div>
+<div class="flex flex-wrap gap-x-8 gap-y-4 md:justify-end items-start">
+<a class="font-label-caps text-label-caps text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-on-primary transition-all" href="#">Instagram</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-on-primary transition-all" href="#">LinkedIn</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-on-primary transition-all" href="#">Behance</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-on-primary transition-all" href="#">Dribbble</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-on-primary transition-all" href="#">Twitter</a>
+</div>
+</footer>
+<script>
+        // Simple View Toggle Logic
+        const gridViewBtn = document.getElementById('gridViewBtn');
+        const carouselViewBtn = document.getElementById('carouselViewBtn');
+        const gridView = document.getElementById('testimonialsGrid');
+        const carouselView = document.getElementById('testimonialsCarousel');
+
+        gridViewBtn.addEventListener('click', () => {
+            gridViewBtn.classList.add('bg-primary', 'text-on-primary');
+            gridViewBtn.classList.remove('text-on-surface-variant');
+            
+            carouselViewBtn.classList.remove('bg-primary', 'text-on-primary');
+            carouselViewBtn.classList.add('text-on-surface-variant');
+
+            gridView.classList.remove('hidden');
+            carouselView.classList.add('hidden');
+        });
+
+        carouselViewBtn.addEventListener('click', () => {
+            carouselViewBtn.classList.add('bg-primary', 'text-on-primary');
+            carouselViewBtn.classList.remove('text-on-surface-variant');
+            
+            gridViewBtn.classList.remove('bg-primary', 'text-on-primary');
+            gridViewBtn.classList.add('text-on-surface-variant');
+
+            carouselView.classList.remove('hidden');
+            gridView.classList.add('hidden');
+        });
+    </script>
+</body></html>

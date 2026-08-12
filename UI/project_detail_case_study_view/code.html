@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Case Study - Ponkoj Das</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&amp;family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-tint": "#625d5b",
+                        "surface": "#fdf8f7",
+                        "background": "#fdf8f7",
+                        "on-secondary-fixed": "#002117",
+                        "on-error-container": "#93000a",
+                        "surface-container": "#f1edec",
+                        "surface-bright": "#fdf8f7",
+                        "error-container": "#ffdad6",
+                        "secondary": "#2b6954",
+                        "surface-container-low": "#f7f3f1",
+                        "secondary-fixed": "#b0f0d6",
+                        "inverse-surface": "#313030",
+                        "on-error": "#ffffff",
+                        "tertiary": "#000000",
+                        "error": "#ba1a1a",
+                        "primary-fixed-dim": "#ccc5c2",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "tertiary-fixed": "#e2e2e2",
+                        "on-tertiary-fixed-variant": "#454747",
+                        "on-surface": "#1c1b1b",
+                        "primary": "#000000",
+                        "outline-variant": "#d0c4be",
+                        "surface-dim": "#ddd9d8",
+                        "outline": "#7e7570",
+                        "surface-variant": "#e6e1e0",
+                        "surface-container-highest": "#e6e1e0",
+                        "primary-fixed": "#e9e1dd",
+                        "on-tertiary-fixed": "#1a1c1c",
+                        "on-surface-variant": "#4d4540",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-fixed-variant": "#4a4643",
+                        "on-primary-fixed": "#1e1b19",
+                        "secondary-fixed-dim": "#95d3ba",
+                        "secondary-container": "#adedd3",
+                        "on-secondary-container": "#306d58",
+                        "on-tertiary-container": "#838484",
+                        "on-primary-container": "#888380",
+                        "primary-container": "#1e1b19",
+                        "inverse-primary": "#ccc5c2",
+                        "inverse-on-surface": "#f4f0ef",
+                        "tertiary-container": "#1a1c1c",
+                        "tertiary-fixed-dim": "#c6c6c6",
+                        "surface-container-high": "#ece7e6",
+                        "on-secondary-fixed-variant": "#0b513d",
+                        "on-background": "#1c1b1b",
+                        "on-secondary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "stack-md": "48px",
+                        "container-max": "1440px",
+                        "stack-sm": "24px",
+                        "unit": "4px",
+                        "stack-lg": "80px",
+                        "margin-mobile": "20px",
+                        "gutter": "32px",
+                        "margin-desktop": "64px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Playfair Display"],
+                        "display-lg": ["Playfair Display"],
+                        "label-caps": ["Inter"],
+                        "display-lg-mobile": ["Playfair Display"],
+                        "headline-sm": ["Playfair Display"],
+                        "label-sm": ["Inter"],
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["40px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "display-lg": ["72px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-caps": ["12px", { "lineHeight": "1.0", "letterSpacing": "0.1em", "fontWeight": "600" }],
+                        "display-lg-mobile": ["48px", { "lineHeight": "1.15", "fontWeight": "700" }],
+                        "headline-sm": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "label-sm": ["13px", { "lineHeight": "1.4", "fontWeight": "500" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .magnetic-pull:hover {
+            transform: translate(calc(var(--tx, 0) * 1px), calc(var(--ty, 0) * 1px)) scale(1.02);
+        }
+        .soft-ambient-shadow:hover {
+            box-shadow: 0 20px 40px rgba(28, 25, 23, 0.05);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background antialiased selection:bg-primary-container selection:text-on-primary-container">
+<!-- Top Navigation (Shared Component) -->
+<nav class="bg-white/80 dark:bg-black/80 backdrop-blur-xl w-full top-0 sticky z-50 transition-all duration-300 border-b border-transparent hover:border-outline-variant/30">
+<div class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto h-20">
+<a class="font-display-lg-mobile text-display-lg-mobile tracking-tighter text-on-surface dark:text-surface-bright" href="#">Ponkoj Das</a>
+<div class="hidden md:flex items-center space-x-gutter">
+<a class="font-label-caps text-label-caps text-on-surface-variant dark:text-surface-variant transition-colors duration-300 hover:text-primary dark:hover:text-on-primary hover:opacity-80" href="#">Home</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant dark:text-surface-variant transition-colors duration-300 hover:text-primary dark:hover:text-on-primary hover:opacity-80" href="#">About</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant dark:text-surface-variant transition-colors duration-300 hover:text-primary dark:hover:text-on-primary hover:opacity-80" href="#">Services</a>
+<a class="font-label-caps text-label-caps text-primary dark:text-on-primary border-b-2 border-primary dark:border-on-primary pb-1 hover:text-primary dark:hover:text-on-primary hover:opacity-80 transition-transform duration-200 magnetic-pull" href="#">Portfolio</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant dark:text-surface-variant transition-colors duration-300 hover:text-primary dark:hover:text-on-primary hover:opacity-80" href="#">Experience</a>
+</div>
+<a class="hidden md:inline-flex items-center justify-center bg-primary text-on-primary font-label-caps text-label-caps px-6 py-3 rounded magnetic-pull transition-all duration-200" href="#">
+                Contact Me
+            </a>
+<button class="md:hidden text-on-surface p-2">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+</div>
+</nav>
+<main>
+<!-- Hero Section -->
+<header class="pt-stack-md pb-stack-lg px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto text-center">
+<h1 class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface mb-stack-sm max-w-4xl mx-auto leading-tight">Elevating Digital Commerce for Artisanal Brands</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto mb-stack-md">A comprehensive redesign of the e-commerce experience, focusing on high-end typography, minimal layouts, and immersive product storytelling.</p>
+<!-- Hero Image -->
+<div class="w-full aspect-[21/9] md:aspect-[16/6] relative rounded-xl overflow-hidden mb-stack-lg bg-surface-variant">
+<img alt="Hero Project Image" class="w-full h-full object-cover" data-alt="A massive ultra-wide panoramic digital mockup of a sleek, minimalist e-commerce website on a pristine white background. The mockup shows elegant serif typography and muted, sophisticated earth-tone product photography. The scene is lit with soft, diffused studio lighting casting faint ambient shadows, reinforcing a premium, high-end editorial aesthetic typical of modern art monographs." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBdQmkcAnVOgXnqxiT7TlVpp0qnZssPeGALAa7JwILNbXwcuTtErgfg0wsuJweMLq_SUgynwc1wvGXBs2GuZaw8kVbw0irM1TLuiTyL2s88Xxx2j-Au8UPq8ngX--SHHJYflW4OKJnNhTrCeMYmRQxgH9Nyp4Umv5bfuTI_8gfz2FqOs1dAtFSb5VP4yf0w-5R3Sl1Zxtw4FC_w-wjs5egoBKWfB7qJe-nlLi8ThWioSxVB5z6dKrnUHQ"/>
+</div>
+<!-- Metadata Grid -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-gutter text-left border-y border-outline-variant/30 py-stack-sm max-w-5xl mx-auto">
+<div>
+<h3 class="font-label-caps text-label-caps text-on-surface-variant mb-unit">Client</h3>
+<p class="font-body-md text-body-md text-on-surface font-medium">Lumina Atelier</p>
+</div>
+<div>
+<h3 class="font-label-caps text-label-caps text-on-surface-variant mb-unit">Role</h3>
+<p class="font-body-md text-body-md text-on-surface font-medium">Lead Product Designer</p>
+</div>
+<div>
+<h3 class="font-label-caps text-label-caps text-on-surface-variant mb-unit">Timeline</h3>
+<p class="font-body-md text-body-md text-on-surface font-medium">Q3 2023 - 12 Weeks</p>
+</div>
+<div>
+<h3 class="font-label-caps text-label-caps text-on-surface-variant mb-unit">Deliverables</h3>
+<p class="font-body-md text-body-md text-on-surface font-medium">UX/UI, Design System</p>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<article class="px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto space-y-stack-lg pb-stack-lg">
+<!-- Overview & Challenge -->
+<section class="grid grid-cols-1 md:grid-cols-12 gap-gutter">
+<div class="md:col-span-4">
+<h2 class="font-headline-md text-headline-md text-on-surface sticky top-32">The Challenge</h2>
+</div>
+<div class="md:col-span-8 space-y-stack-sm">
+<p class="font-body-lg text-body-lg text-on-surface-variant">Lumina Atelier, a boutique ceramics brand, struggled with a digital presence that felt disconnected from the tactile, premium quality of their physical products. The existing site suffered from cluttered navigation, inconsistent branding, and a checkout process that hindered conversion rates.</p>
+<p class="font-body-md text-body-md text-on-surface-variant">The goal was to create a digital experience that mirrors the feeling of walking into a high-end gallery space—minimalist, deliberate, and entirely focused on the craftsmanship of the objects.</p>
+</div>
+</section>
+<!-- Full Width Image -->
+<section class="w-full aspect-video md:aspect-[21/9] rounded-xl overflow-hidden bg-surface-variant">
+<img alt="Mobile mockups" class="w-full h-full object-cover" data-alt="A dynamic, angled flat-lay mockup of several mobile screens showcasing a minimalist e-commerce app interface. The screens feature elegant typography and large, beautiful product imagery of ceramics. The composition sits on a soft, warm stone-colored surface with subtle, diffused lighting and soft ambient shadows, emphasizing a sophisticated, modern editorial brand identity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCc7wnfJsUNEDUKO95miQPpqhgh5L2IYhEeVOXQ1LTfK75X8CRDrWHmv3jZ3gWXgY999jNRI8MQTa7jAuJQqE6dCYQWfs0gZYX5Dif3FOm9vDbqi1ONAqDhgGIon0h_BZH9GNbjiCVN2BWd3QNOHOUUp-PMcB74tMSgPQnTKtTxdgZ1LLef4LF5QXjPQUZUqa1IdJ-PtnGnt-rPQHkUEb-QX6P3ExYewZHF0Mrpz0K5J_8JDL4XDzv89w"/>
+</section>
+<!-- Strategy -->
+<section class="grid grid-cols-1 md:grid-cols-12 gap-gutter">
+<div class="md:col-span-4 md:col-start-9 order-1 md:order-2">
+<h2 class="font-headline-md text-headline-md text-on-surface sticky top-32">Strategic Approach</h2>
+</div>
+<div class="md:col-span-8 md:col-start-1 order-2 md:order-1 space-y-stack-sm">
+<p class="font-body-lg text-body-lg text-on-surface-variant">We adopted an 'editorial-first' approach. By treating product pages less like standard e-commerce listings and more like articles in a high-end design magazine, we could tell a richer story.</p>
+<ul class="space-y-4 font-body-md text-body-md text-on-surface-variant mt-8">
+<li class="flex items-start">
+<span class="material-symbols-outlined mr-3 text-secondary mt-1" data-icon="check" data-weight="fill">check</span>
+                            Implemented a fluid grid system to ensure perfect breathing room for imagery across all devices.
+                        </li>
+<li class="flex items-start">
+<span class="material-symbols-outlined mr-3 text-secondary mt-1" data-icon="check" data-weight="fill">check</span>
+                            Reduced the cognitive load in the checkout flow by removing unnecessary fields and introducing a single-page, stepped process.
+                        </li>
+<li class="flex items-start">
+<span class="material-symbols-outlined mr-3 text-secondary mt-1" data-icon="check" data-weight="fill">check</span>
+                            Developed a monochromatic core palette punctuated by deep, organic accent colors to reflect the ceramic glazes.
+                        </li>
+</ul>
+</div>
+</section>
+<!-- Bento Gallery -->
+<section class="space-y-gutter">
+<h2 class="font-headline-sm text-headline-sm text-on-surface text-center mb-stack-md">Visual Exploration</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-unit">
+<div class="md:col-span-2 aspect-[4/3] rounded bg-surface-variant overflow-hidden group cursor-pointer">
+<img alt="Detail shot 1" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="A close-up, highly detailed shot of a digital interface showing a refined product detail page for a ceramic vase. The UI relies on stark contrast, vast whitespace, and elegant serif typography. The lighting is pristine and high-key, creating a crisp, premium digital aesthetic with soft edges and subtle drop shadows." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCc68lz8XJi0e3-3xDHQKiAS-YAp_yQG_SKizpwPlnR4UXF9tvUlrNCxAW1iWkm6eR8y7dEbkh9lWYLc1YOY1-rX8d-ks5vOJjaDVUFSa0U5e2M2Te8HUOEsUTB0v1Y1Kd70vaX4tJJGmxGL-ATStJDuZfJoy1ghzuFsRXXfBmRP3a5SzuI2lC3IE5Gy3vpolidItIdJEyDhZ__4u66IzjTau7OhzPUd9NjQf9VFmykn9RBkqbRMUYFAg"/>
+</div>
+<div class="aspect-[4/3] rounded bg-surface-variant overflow-hidden group cursor-pointer">
+<img alt="Typography layout" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="A minimalist layout showing a sophisticated typography hierarchy using Playfair Display and Inter. The text is arranged neatly on a warm, off-white background (#fdf8f7) with subtle grey text (#625d5b). The composition is clean, highly editorial, and focuses on pure typographic form without imagery." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAR4W84JOlTYY-qb75cQgdN5yPgL4SnUsHAXKOt7HujWHQKRx9xsUE3duojeMYjKTopY5OfVjTnDCSZt9dBEKkReOKnvo1ZJ6h4dhMZuiyaBz3EZ7WodTu8msgD0ylXpXzuJguXC6R4FdkKG7uUQ2D4MB_bhhRAxugF2prrlfRSlYfayfrXiGVfAAx-6HrAplkx23Hsp-TU-q3KJzz62AeN3rF20cWWh3ARehJO728rkf63CDJ9DrLIsw"/>
+</div>
+<div class="aspect-[4/3] rounded bg-surface-variant overflow-hidden group cursor-pointer">
+<img alt="Cart UI" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="A sleek digital UI card showing a minimalist shopping cart summary. The background is a stark white on a soft stone-grey surface, employing subtle tonal layering and very soft ambient shadows to create depth. The design is hyper-clean, sophisticated, and devoid of heavy borders." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCBgoKqr79krkDcOPimRp59tUv-I9p-TLwFUKuFMTCE1n7B5-1OXJF7bsTwXbTECjkgQQ-kNTzlh7WKWdMwX_Uic8Sdk3yuZkg0Gj2No6g2Vx1bzFXPGAK0GH5ypfMgzV8ziqAgCQfBei_yvx0CfyhJE0l_1AHb1mrsm_VncCZwnYffloPZBNJTl4sLcDrnlEvelM19aJhmWRwdo0F52XmXPdHCRtS7mn8cSq38T0iPD68tiEZ2B1yG3A"/>
+</div>
+<div class="md:col-span-2 aspect-[4/3] rounded bg-surface-variant overflow-hidden group cursor-pointer">
+<img alt="Moodboard" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="A beautifully arranged digital moodboard featuring a collection of ceramic objects, color swatches in deep emerald and warm stone, and elegant UI components. The composition is highly intentional and balanced, resembling a page from an art monograph. Lit with soft, bright studio lighting to enhance the sophisticated, minimal mood." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBdv--H4al_JDLhsKypHwaeUUu_A08C5D5LmXpwn4wRHuuXNeI1r8uO0h7sh1Fwi8u9i7aZf4mmkyY9xDzdSLQh06nXsyT7hLGMzBeUFdeVVKvRYBhbf4j-recFrmNvBroyY7ByZiVt19TPn_pqKawXESCzbdFLfL-W9K66BOIg_kp8msL_zWfOIdW3g47WnY6bkteQhsQlFQcV7Xj7BgbHp61AH3ntiQ8gRmo8PGeK7a1s04cqHX9Eyg"/>
+</div>
+</div>
+</section>
+</article>
+<!-- Project Navigation -->
+<section class="border-t border-outline-variant/30">
+<div class="grid grid-cols-2 max-w-container-max mx-auto">
+<a class="group p-stack-sm md:p-stack-md border-r border-outline-variant/30 hover:bg-surface-container-low transition-colors duration-300" href="#">
+<span class="font-label-caps text-label-caps text-on-surface-variant block mb-2">Previous Project</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors">Archival Studio Identity</h3>
+</a>
+<a class="group p-stack-sm md:p-stack-md text-right hover:bg-surface-container-low transition-colors duration-300" href="#">
+<span class="font-label-caps text-label-caps text-on-surface-variant block mb-2">Next Project</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors">Nova FinTech App</h3>
+</a>
+</div>
+</section>
+</main>
+<!-- Footer (Shared Component) -->
+<footer class="bg-surface dark:bg-tertiary-container w-full bottom-0 border-t border-outline-variant dark:border-outline">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-stack-md px-margin-mobile md:px-margin-desktop py-stack-lg max-w-container-max mx-auto">
+<div class="space-y-4">
+<a class="font-headline-sm text-headline-sm text-primary dark:text-on-primary" href="#">Ponkoj Das</a>
+<p class="font-body-md text-body-md text-on-surface dark:text-on-tertiary-container max-w-xs">Crafting digital experiences with intention, clarity, and an editorial eye.</p>
+<p class="font-body-md text-body-md text-on-surface-variant dark:text-surface-variant pt-4">© 2024 Ponkoj Das. All rights reserved.</p>
+</div>
+<div class="md:text-right">
+<h4 class="font-label-caps text-label-caps text-on-surface dark:text-on-tertiary-container mb-4">Connect</h4>
+<ul class="space-y-2">
+<li><a class="font-body-md text-body-md text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-on-primary transition-all" href="#">Instagram</a></li>
+<li><a class="font-body-md text-body-md text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-on-primary transition-all" href="#">LinkedIn</a></li>
+<li><a class="font-body-md text-body-md text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-on-primary transition-all" href="#">Behance</a></li>
+<li><a class="font-body-md text-body-md text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-on-primary transition-all" href="#">Dribbble</a></li>
+<li><a class="font-body-md text-body-md text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-on-primary transition-all" href="#">Twitter</a></li>
+</ul>
+</div>
+</div>
+</footer>
+<script>
+        // Simple Magnetic Button Effect
+        document.querySelectorAll('.magnetic-pull').forEach(btn => {
+            btn.addEventListener('mousemove', (e) => {
+                const rect = btn.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+                
+                // Max displacement
+                const multiplier = 0.1;
+                btn.style.setProperty('--tx', x * multiplier);
+                btn.style.setProperty('--ty', y * multiplier);
+            });
+            
+            btn.addEventListener('mouseleave', () => {
+                btn.style.setProperty('--tx', 0);
+                btn.style.setProperty('--ty', 0);
+            });
+        });
+    </script>
+</body></html>

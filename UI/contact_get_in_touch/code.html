@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Contact - Ponkoj Das</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-tint": "#625d5b",
+                        "surface": "#fdf8f7",
+                        "background": "#fdf8f7",
+                        "on-secondary-fixed": "#002117",
+                        "on-error-container": "#93000a",
+                        "surface-container": "#f1edec",
+                        "surface-bright": "#fdf8f7",
+                        "error-container": "#ffdad6",
+                        "secondary": "#2b6954",
+                        "surface-container-low": "#f7f3f1",
+                        "secondary-fixed": "#b0f0d6",
+                        "inverse-surface": "#313030",
+                        "on-error": "#ffffff",
+                        "tertiary": "#000000",
+                        "error": "#ba1a1a",
+                        "primary-fixed-dim": "#ccc5c2",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "tertiary-fixed": "#e2e2e2",
+                        "on-tertiary-fixed-variant": "#454747",
+                        "on-surface": "#1c1b1b",
+                        "primary": "#000000",
+                        "outline-variant": "#d0c4be",
+                        "surface-dim": "#ddd9d8",
+                        "outline": "#7e7570",
+                        "surface-variant": "#e6e1e0",
+                        "surface-container-highest": "#e6e1e0",
+                        "primary-fixed": "#e9e1dd",
+                        "on-tertiary-fixed": "#1a1c1c",
+                        "on-surface-variant": "#4d4540",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-fixed-variant": "#4a4643",
+                        "on-primary-fixed": "#1e1b19",
+                        "secondary-fixed-dim": "#95d3ba",
+                        "secondary-container": "#adedd3",
+                        "on-secondary-container": "#306d58",
+                        "on-tertiary-container": "#838484",
+                        "on-primary-container": "#888380",
+                        "primary-container": "#1e1b19",
+                        "inverse-primary": "#ccc5c2",
+                        "inverse-on-surface": "#f4f0ef",
+                        "tertiary-container": "#1a1c1c",
+                        "tertiary-fixed-dim": "#c6c6c6",
+                        "surface-container-high": "#ece7e6",
+                        "on-secondary-fixed-variant": "#0b513d",
+                        "on-background": "#1c1b1b",
+                        "on-secondary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "stack-md": "48px",
+                        "container-max": "1440px",
+                        "stack-sm": "24px",
+                        "unit": "4px",
+                        "stack-lg": "80px",
+                        "margin-mobile": "20px",
+                        "gutter": "32px",
+                        "margin-desktop": "64px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Playfair Display"],
+                        "display-lg": ["Playfair Display"],
+                        "label-caps": ["Inter"],
+                        "display-lg-mobile": ["Playfair Display"],
+                        "headline-sm": ["Playfair Display"],
+                        "label-sm": ["Inter"],
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["40px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "display-lg": ["72px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-caps": ["12px", { "lineHeight": "1.0", "letterSpacing": "0.1em", "fontWeight": "600" }],
+                        "display-lg-mobile": ["48px", { "lineHeight": "1.15", "fontWeight": "700" }],
+                        "headline-sm": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "label-sm": ["13px", { "lineHeight": "1.4", "fontWeight": "500" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .magnetic-btn {
+            transition: transform 0.2s cubic-bezier(0.33, 1, 0.68, 1);
+        }
+        
+        .form-input-animated {
+            border: none;
+            border-bottom: 2px solid theme('colors.surface-variant');
+            background: transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .form-input-animated:focus {
+            outline: none;
+            border-bottom-color: theme('colors.primary');
+            box-shadow: none;
+        }
+        
+        .form-label-animated {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            transition: all 0.3s ease;
+            pointer-events: none;
+            color: theme('colors.on-surface-variant');
+        }
+        
+        .form-input-animated:focus ~ .form-label-animated,
+        .form-input-animated:not(:placeholder-shown) ~ .form-label-animated {
+            top: -10px;
+            font-size: 12px;
+            color: theme('colors.primary');
+        }
+
+        .upload-zone {
+            border: 1px dashed theme('colors.outline-variant');
+            transition: all 0.3s ease;
+        }
+
+        .upload-zone.drag-over {
+            background-color: theme('colors.surface-container');
+            border-color: theme('colors.primary');
+        }
+        
+        /* Ensure input placeholder is hidden so the label animation works smoothly */
+        .form-input-animated::placeholder {
+            color: transparent;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background antialiased min-h-screen flex flex-col selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopNavBar -->
+<nav class="docked full-width top-0 sticky bg-white/80 dark:bg-black/80 backdrop-blur-xl flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto h-20 z-50 shadow-none border-none">
+<a class="font-display-lg-mobile text-display-lg-mobile tracking-tighter text-on-surface dark:text-surface-bright" href="#">Ponkoj Das</a>
+<div class="hidden md:flex gap-gutter items-center font-label-caps text-label-caps">
+<a class="text-on-surface-variant dark:text-surface-variant transition-colors duration-300 hover:text-primary dark:hover:text-on-primary hover:opacity-80" href="#">Home</a>
+<a class="text-on-surface-variant dark:text-surface-variant transition-colors duration-300 hover:text-primary dark:hover:text-on-primary hover:opacity-80" href="#">About</a>
+<a class="text-on-surface-variant dark:text-surface-variant transition-colors duration-300 hover:text-primary dark:hover:text-on-primary hover:opacity-80" href="#">Services</a>
+<a class="text-on-surface-variant dark:text-surface-variant transition-colors duration-300 hover:text-primary dark:hover:text-on-primary hover:opacity-80" href="#">Portfolio</a>
+<a class="text-on-surface-variant dark:text-surface-variant transition-colors duration-300 hover:text-primary dark:hover:text-on-primary hover:opacity-80" href="#">Experience</a>
+<a class="text-primary dark:text-on-primary border-b-2 border-primary dark:border-on-primary pb-1 ml-4 magnetic-btn hover:scale-[1.02]" href="#">Contact Me</a>
+</div>
+<button class="md:hidden text-on-surface p-2">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+</nav>
+<!-- Main Content -->
+<main class="flex-grow w-full px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto py-stack-lg flex flex-col lg:flex-row gap-stack-md lg:gap-[120px]">
+<!-- Left Column: Info & Status -->
+<div class="lg:w-1/3 flex flex-col gap-stack-sm">
+<div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-container-high w-fit mb-stack-sm">
+<span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+<span class="font-label-sm text-label-sm text-on-surface">Currently accepting projects</span>
+</div>
+<h1 class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface mb-unit">Let's Talk.</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-stack-sm">Have a project in mind? Let's create something beautiful together. I typically respond within 24-48 hours.</p>
+<div class="flex flex-col gap-4 mt-auto">
+<div>
+<h3 class="font-label-caps text-label-caps text-on-surface-variant mb-1">Email</h3>
+<a class="font-body-lg text-body-lg text-on-surface hover:text-primary transition-colors" href="mailto:hello@ponkojdas.com">hello@ponkojdas.com</a>
+</div>
+<div>
+<h3 class="font-label-caps text-label-caps text-on-surface-variant mb-1">Local Time</h3>
+<p class="font-body-lg text-body-lg text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]" data-icon="schedule">schedule</span>
+                        New York, EST (GMT-5)
+                    </p>
+</div>
+</div>
+</div>
+<!-- Right Column: Form -->
+<div class="lg:w-2/3 bg-surface p-6 md:p-12 rounded-xl border border-outline-variant/30 shadow-[0_20px_40px_rgba(28,25,23,0.05)] relative overflow-hidden">
+<!-- Success State Overlay (Hidden by default) -->
+<div class="absolute inset-0 bg-surface/95 backdrop-blur-sm z-10 flex flex-col items-center justify-center text-center p-8 hidden opacity-0 transition-opacity duration-500" id="form-success">
+<div class="w-16 h-16 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center mb-stack-sm">
+<span class="material-symbols-outlined text-3xl" data-icon="check">check</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-unit">Message Sent</h3>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-md">Thank you for reaching out. I've received your message and will get back to you shortly.</p>
+<button class="mt-stack-sm px-6 py-3 border border-primary text-primary hover:bg-surface-container transition-colors rounded-lg font-label-caps text-label-caps" onclick="resetForm()">Send Another Message</button>
+</div>
+<!-- Form -->
+<form class="flex flex-col gap-stack-sm" id="contact-form" onsubmit="submitForm(event)">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-stack-sm">
+<div class="relative pt-4">
+<input class="form-input-animated w-full py-2 font-body-md text-body-md text-on-surface" id="name" name="name" placeholder="Name" required="" type="text"/>
+<label class="form-label-animated font-body-md" for="name">Your Name</label>
+</div>
+<div class="relative pt-4">
+<input class="form-input-animated w-full py-2 font-body-md text-body-md text-on-surface" id="email" name="email" placeholder="Email" required="" type="email"/>
+<label class="form-label-animated font-body-md" for="email">Email Address</label>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-stack-sm">
+<div class="relative pt-4">
+<select class="form-input-animated w-full py-2 font-body-md text-body-md text-on-surface appearance-none cursor-pointer bg-transparent" id="project-type" name="project-type">
+<option disabled="" hidden="" selected="" value=""></option>
+<option value="branding">Brand Identity</option>
+<option value="web">Web Design</option>
+<option value="app">App Design</option>
+<option value="consulting">Consulting</option>
+<option value="other">Other</option>
+</select>
+<label class="form-label-animated font-body-md" for="project-type">Project Type</label>
+<span class="material-symbols-outlined absolute right-0 top-[60%] -translate-y-1/2 pointer-events-none text-on-surface-variant" data-icon="expand_more">expand_more</span>
+</div>
+<div class="relative pt-4">
+<select class="form-input-animated w-full py-2 font-body-md text-body-md text-on-surface appearance-none cursor-pointer bg-transparent" id="budget" name="budget">
+<option disabled="" hidden="" selected="" value=""></option>
+<option value="5k">&lt; $5k</option>
+<option value="5k-10k">$5k - $10k</option>
+<option value="10k-20k">$10k - $20k</option>
+<option value="20k+">$20k+</option>
+</select>
+<label class="form-label-animated font-body-md" for="budget">Budget Range</label>
+<span class="material-symbols-outlined absolute right-0 top-[60%] -translate-y-1/2 pointer-events-none text-on-surface-variant" data-icon="expand_more">expand_more</span>
+</div>
+</div>
+<div class="relative pt-4 mt-2">
+<textarea class="form-input-animated w-full py-2 font-body-md text-body-md text-on-surface resize-none" id="message" name="message" placeholder="Message" required="" rows="4"></textarea>
+<label class="form-label-animated font-body-md" for="message" style="top: 24px;">Project Details</label>
+</div>
+<div class="upload-zone rounded-lg p-6 flex flex-col items-center justify-center gap-2 cursor-pointer mt-2 bg-surface hover:bg-surface-container transition-colors" id="file-upload">
+<input class="hidden" id="file" type="file"/>
+<span class="material-symbols-outlined text-outline" data-icon="upload_file">upload_file</span>
+<p class="font-body-md text-body-md text-on-surface-variant text-center">Drag &amp; drop or <span class="text-primary underline">browse</span> to attach files (Optional)</p>
+<p class="font-label-sm text-label-sm text-outline">Max size 10MB. PDF, JPG, PNG.</p>
+</div>
+<!-- Error Message Container -->
+<div class="hidden bg-error-container text-on-error-container p-4 rounded-lg font-body-md text-body-md items-center gap-2 mt-2" id="form-error">
+<span class="material-symbols-outlined" data-icon="error">error</span>
+<span>Something went wrong. Please check your inputs and try again.</span>
+</div>
+<button class="magnetic-btn bg-primary text-on-primary font-label-caps text-label-caps py-4 px-8 rounded-lg mt-stack-sm hover:scale-[1.02] flex items-center justify-center gap-2 w-full md:w-auto self-start shadow-[0_4px_14px_0_rgba(0,0,0,0.2)]" type="submit">
+<span>Send Message</span>
+<span class="material-symbols-outlined text-[18px]" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</form>
+</div>
+</main>
+<!-- Footer -->
+<footer class="full-width bottom bg-surface dark:bg-tertiary-container border-t border-outline-variant dark:border-outline flat no shadows grid grid-cols-1 md:grid-cols-2 gap-stack-md px-margin-mobile md:px-margin-desktop py-stack-lg max-w-container-max mx-auto w-full mt-auto">
+<div>
+<div class="font-headline-sm text-headline-sm text-primary dark:text-on-primary mb-4">Ponkoj Das</div>
+<p class="font-body-md text-body-md text-on-surface dark:text-on-tertiary-container">© 2024 Ponkoj Das. All rights reserved.</p>
+</div>
+<div class="flex gap-4 md:justify-end items-start font-label-caps text-label-caps">
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-on-primary transition-all" href="#">Instagram</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-on-primary transition-all" href="#">LinkedIn</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-on-primary transition-all" href="#">Behance</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-on-primary transition-all" href="#">Dribbble</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-on-primary transition-all" href="#">Twitter</a>
+</div>
+</footer>
+<script>
+        // Magnetic Button Effect
+        const magneticBtns = document.querySelectorAll('.magnetic-btn');
+        
+        magneticBtns.forEach(btn => {
+            btn.addEventListener('mousemove', function(e) {
+                const position = btn.getBoundingClientRect();
+                const x = e.pageX - position.left - position.width / 2;
+                const y = e.pageY - position.top - position.height / 2;
+                
+                btn.style.transform = `translate(${x * 0.1}px, ${y * 0.15}px) scale(1.02)`;
+            });
+            
+            btn.addEventListener('mouseout', function() {
+                btn.style.transform = 'translate(0px, 0px) scale(1)';
+            });
+        });
+
+        // File Upload Drag & Drop
+        const uploadZone = document.getElementById('file-upload');
+        const fileInput = document.getElementById('file');
+
+        uploadZone.addEventListener('click', () => fileInput.click());
+
+        uploadZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadZone.classList.add('drag-over');
+        });
+
+        uploadZone.addEventListener('dragleave', () => {
+            uploadZone.classList.remove('drag-over');
+        });
+
+        uploadZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadZone.classList.remove('drag-over');
+            if (e.dataTransfer.files.length) {
+                fileInput.files = e.dataTransfer.files;
+                updateUploadUI(e.dataTransfer.files[0].name);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length) {
+                updateUploadUI(e.target.files[0].name);
+            }
+        });
+
+        function updateUploadUI(filename) {
+            const textElement = uploadZone.querySelector('p');
+            textElement.innerHTML = `Selected: <span class="text-primary font-medium">${filename}</span>`;
+            uploadZone.querySelector('.material-symbols-outlined').setAttribute('data-icon', 'check_circle');
+            uploadZone.querySelector('.material-symbols-outlined').textContent = 'check_circle';
+            uploadZone.querySelector('.material-symbols-outlined').classList.replace('text-outline', 'text-secondary');
+        }
+
+        // Form Submission Simulation
+        function submitForm(e) {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalText = btn.innerHTML;
+            
+            // Simple validation simulation
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const errorContainer = document.getElementById('form-error');
+            
+            if(!name || !email) {
+                errorContainer.classList.remove('hidden');
+                errorContainer.classList.add('flex');
+                return;
+            }
+
+            errorContainer.classList.add('hidden');
+            errorContainer.classList.remove('flex');
+            
+            // Loading state
+            btn.innerHTML = `<span class="material-symbols-outlined animate-spin" data-icon="progress_activity">progress_activity</span> Sending...`;
+            btn.disabled = true;
+
+            // Simulate API call
+            setTimeout(() => {
+                const successOverlay = document.getElementById('form-success');
+                successOverlay.classList.remove('hidden');
+                // Small delay to allow display:block to apply before animating opacity
+                setTimeout(() => {
+                    successOverlay.classList.remove('opacity-0');
+                    successOverlay.classList.add('opacity-100');
+                }, 10);
+                
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }, 1500);
+        }
+
+        function resetForm() {
+            const form = document.getElementById('contact-form');
+            form.reset();
+            
+            // Reset upload UI
+            const uploadText = uploadZone.querySelector('p');
+            uploadText.innerHTML = `Drag & drop or <span class="text-primary underline">browse</span> to attach files (Optional)`;
+            const icon = uploadZone.querySelector('.material-symbols-outlined');
+            icon.setAttribute('data-icon', 'upload_file');
+            icon.textContent = 'upload_file';
+            icon.classList.replace('text-secondary', 'text-outline');
+
+            const successOverlay = document.getElementById('form-success');
+            successOverlay.classList.remove('opacity-100');
+            successOverlay.classList.add('opacity-0');
+            
+            setTimeout(() => {
+                successOverlay.classList.add('hidden');
+            }, 500);
+        }
+
+        // Handle select placeholders to trigger floating label
+        const selects = document.querySelectorAll('select.form-input-animated');
+        selects.forEach(select => {
+            select.addEventListener('change', function() {
+                if(this.value) {
+                    this.setAttribute('data-has-value', 'true');
+                    // Force CSS to treat it like it has a value for the label animation
+                    this.style.color = 'theme("colors.on-surface")'; 
+                }
+            });
+            // Initial check
+            if(select.value) {
+                select.setAttribute('data-has-value', 'true');
+            } else {
+                 select.style.color = 'transparent'; // hide the empty space before selection
+            }
+        });
+    </script>
+</body></html>
