@@ -315,7 +315,18 @@ const saveDatabaseData = async (data) => {
   const supabaseSaved = await saveToSupabase(normalized);
   const jsonbinSaved = await saveToJsonBin(normalized);
 
-  return supabaseSaved || jsonbinSaved || !!serverMemoryDb;
+  // Netlify Functions have an ephemeral filesystem. A write to /tmp (or the
+  // in-memory object above) is only useful for the current warm invocation,
+  // so it must never be reported as a permanent production save.
+  if (supabaseSaved || jsonbinSaved) return true;
+
+  if (process.env.NETLIFY === 'true') {
+    console.error('[Database] No persistent cloud database is configured; refusing to report a temporary Netlify save as permanent.');
+    return false;
+  }
+
+  // The local data/db.json fallback is persistent while running locally.
+  return !!serverMemoryDb;
 };
 
 // Seed/Migrate full dataset to Database on startup
@@ -440,7 +451,7 @@ const handleSaveData = async (req, res) => {
   }
   return res.status(500).json({
     success: false,
-    error: 'Failed to save portfolio data to production database.'
+    error: 'No persistent production database is available. Configure Supabase or JSONBin environment variables in Netlify before saving changes.'
   });
 };
 
@@ -633,6 +644,8 @@ const handleHealth = (_req, res) =>
     status: 'ok',
     supabaseConfigured: !!(SUPABASE_URL && SUPABASE_KEY),
     jsonbinConfigured: !!(JSONBIN_BIN_ID && JSONBIN_MASTER_KEY),
+    persistentStorageConfigured: !!(SUPABASE_URL && SUPABASE_KEY) || !!(JSONBIN_BIN_ID && JSONBIN_MASTER_KEY),
+    localFileFallbackOnly: process.env.NETLIFY !== 'true',
     hasLocalDb: !!serverMemoryDb,
     recipient: emailConfig.recipientEmail
   });
