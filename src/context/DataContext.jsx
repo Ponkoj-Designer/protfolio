@@ -4,11 +4,25 @@ import { initialPortfolioData } from '../data/portfolioData';
 const DataContext = createContext();
 
 export const DataProvider = ({ children }) => {
-  // Start with initial defaults — server is the source of truth
-  const [data, setData] = useState(initialPortfolioData);
+  // Initialize state from local persistent storage first for instant render
+  const [data, setData] = useState(() => {
+    const savedData = localStorage.getItem('ponkoj_portfolio_data');
+    if (savedData) {
+      try {
+        const parsed = JSON.parse(savedData);
+        if (parsed && parsed.personalInfo) {
+          return parsed;
+        }
+      } catch (err) {
+        console.error('Failed to parse saved portfolio data', err);
+      }
+    }
+    return initialPortfolioData;
+  });
+
   const [loaded, setLoaded] = useState(false);
 
-  // ── On mount: fetch from server (JSONBin) — the single global source of truth ──
+  // On mount: fetch from production server database (JSONBin / db.json) and update state & localStorage
   useEffect(() => {
     const loadFromServer = async () => {
       try {
@@ -17,42 +31,47 @@ export const DataProvider = ({ children }) => {
           const json = await res.json();
           if (json.success && json.data && json.data.personalInfo) {
             setData(json.data);
+            try {
+              localStorage.setItem('ponkoj_portfolio_data', JSON.stringify(json.data));
+            } catch (e) {}
             setLoaded(true);
             return;
           }
         }
       } catch (err) {
-        console.warn('[DataContext] Server fetch failed, using initial data:', err.message);
+        console.warn('[DataContext] Server fetch failed, using cached state:', err.message);
       }
-      // Server not available (first deploy before any save) — use initial defaults
       setLoaded(true);
     };
 
     loadFromServer();
   }, []);
 
-  // ── Persist to server (JSONBin) immediately on every Admin change ──────────────
+  // Persist dataset to React state, localStorage, AND server production database
   const persistDataset = async (newDataset) => {
     setData(newDataset);
+    try {
+      localStorage.setItem('ponkoj_portfolio_data', JSON.stringify(newDataset));
+    } catch (e) {
+      console.warn('localStorage save warning:', e);
+    }
 
     const token = localStorage.getItem('ponkoj_admin_token');
-    if (!token) return;
-
     try {
       await fetch('/api/admin/data', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
+          ...(token ? { Authorization: `Bearer ${token}` } : {})
         },
         body: JSON.stringify({ data: newDataset })
       });
     } catch (err) {
-      console.error('[DataContext] Failed to persist to server:', err.message);
+      console.error('[DataContext] Server persistence sync notice:', err.message);
     }
   };
 
-  // ── Project CRUD ───────────────────────────────────────────────────────────────
+  // Project CRUD Actions
   const addProject = (newProject) => {
     const p = { ...newProject, id: newProject.id || `proj-${Date.now()}`, year: newProject.year || String(new Date().getFullYear()) };
     persistDataset({ ...data, projects: [p, ...data.projects] });
@@ -64,7 +83,7 @@ export const DataProvider = ({ children }) => {
   const deleteProject = (id) =>
     persistDataset({ ...data, projects: data.projects.filter((p) => p.id !== id) });
 
-  // ── Inbox / Messages ───────────────────────────────────────────────────────────
+  // Inbox & Messages Actions
   const addMessage = (msg) => {
     const newMsg = {
       ...msg,
@@ -86,11 +105,11 @@ export const DataProvider = ({ children }) => {
   const deleteMessage = (id) =>
     persistDataset({ ...data, inboxMessages: (data.inboxMessages || []).filter((m) => m.id !== id) });
 
-  // ── Testimonials ───────────────────────────────────────────────────────────────
+  // Testimonials Actions
   const addTestimonial = (testimonial) =>
     persistDataset({ ...data, testimonials: [{ ...testimonial, id: `test-${Date.now()}` }, ...data.testimonials] });
 
-  // ── Personal Info (includes images, socials, contact, bio) ────────────────────
+  // Personal Info (includes cropped images, social links, contact, bio)
   const updatePersonalInfo = (info) =>
     persistDataset({
       ...data,
@@ -102,8 +121,11 @@ export const DataProvider = ({ children }) => {
       }
     });
 
-  // ── Reset (only on explicit admin button press) ────────────────────────────────
-  const resetToDefaultData = () => persistDataset(initialPortfolioData);
+  // Reset to initial defaults ONLY when explicitly triggered by Admin button
+  const resetToDefaultData = () => {
+    localStorage.removeItem('ponkoj_portfolio_data');
+    persistDataset(initialPortfolioData);
+  };
 
   return (
     <DataContext.Provider

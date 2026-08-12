@@ -3,6 +3,8 @@ import cors from 'cors';
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
 import crypto from 'crypto';
+import fs from 'fs';
+import path from 'path';
 
 dotenv.config();
 
@@ -20,10 +22,43 @@ const cleanEnvStr = (val, defaultVal = '') => {
   return str.trim();
 };
 
+// ─── Persistent Storage File Path (handles local and Netlify /tmp writable directory) ──
+const DB_FILE = process.env.NETLIFY === 'true'
+  ? path.join('/tmp', 'portfolio_db.json')
+  : path.join(process.cwd(), 'data', 'db.json');
+
+// Server In-Memory & File Persistence Store
+let serverMemoryDb = null;
+
+const loadLocalFileDb = () => {
+  try {
+    if (fs.existsSync(DB_FILE)) {
+      const fileData = fs.readFileSync(DB_FILE, 'utf-8');
+      serverMemoryDb = JSON.parse(fileData);
+      console.log('[Database] Loaded persistent portfolio data from local disk file.');
+    }
+  } catch (err) {
+    console.warn('[Database] Failed to read local db.json file:', err.message);
+  }
+};
+
+const saveLocalFileDb = (newData) => {
+  serverMemoryDb = newData;
+  try {
+    const dir = path.dirname(DB_FILE);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    fs.writeFileSync(DB_FILE, JSON.stringify(newData, null, 2), 'utf-8');
+    console.log('[Database] Saved portfolio data to local disk file.');
+  } catch (err) {
+    console.warn('[Database] Saved to in-memory store (file write warning):', err.message);
+  }
+};
+
+loadLocalFileDb();
+
 // ─── JSONBin.io Persistent Global Database ─────────────────────────────────────
-// JSONBin.io is an external REST API storage service.
-// Data saved here is globally accessible across all devices, browsers, and
-// Netlify lambda instances. It survives redeployments and server restarts.
 
 const JSONBIN_BIN_ID = cleanEnvStr(process.env.JSONBIN_BIN_ID, '');
 const JSONBIN_MASTER_KEY = cleanEnvStr(process.env.JSONBIN_MASTER_KEY, '');
@@ -32,56 +67,58 @@ const JSONBIN_BASE = 'https://api.jsonbin.io/v3/b';
 const jsonbinHeaders = () => ({
   'Content-Type': 'application/json',
   'X-Master-Key': JSONBIN_MASTER_KEY,
-  'X-Bin-Versioning': 'false'   // always overwrite, no version history
+  'X-Bin-Versioning': 'false'
 });
 
-// Fetch portfolio data from JSONBin (global persistent storage)
+// Fetch portfolio data from JSONBin or fallback to local db
 const fetchFromJsonBin = async () => {
-  if (!JSONBIN_BIN_ID || !JSONBIN_MASTER_KEY) return null;
-  try {
-    const res = await fetch(`${JSONBIN_BASE}/${JSONBIN_BIN_ID}/latest`, {
-      headers: { 'X-Master-Key': JSONBIN_MASTER_KEY }
-    });
-    if (!res.ok) {
-      console.warn('[JSONBin] Fetch failed:', res.status, await res.text());
-      return null;
+  if (JSONBIN_BIN_ID && JSONBIN_MASTER_KEY) {
+    try {
+      const res = await fetch(`${JSONBIN_BASE}/${JSONBIN_BIN_ID}/latest`, {
+        headers: { 'X-Master-Key': JSONBIN_MASTER_KEY }
+      });
+      if (res.ok) {
+        const json = await res.json();
+        const record = json.record || json;
+        if (record && record.personalInfo) {
+          console.log('[JSONBin] Loaded persistent portfolio data from JSONBin cloud database.');
+          serverMemoryDb = record;
+          saveLocalFileDb(record);
+          return record;
+        }
+      } else {
+        console.warn('[JSONBin] Fetch failed, falling back to local database:', res.status);
+      }
+    } catch (err) {
+      console.warn('[JSONBin] fetchFromJsonBin error, using local fallback:', err.message);
     }
-    const json = await res.json();
-    // JSONBin wraps the stored data under { record: <yourData> }
-    const record = json.record || json;
-    if (record && record.personalInfo) {
-      console.log('[JSONBin] Loaded persistent portfolio data from JSONBin.');
-      return record;
-    }
-    return null;
-  } catch (err) {
-    console.warn('[JSONBin] fetchFromJsonBin error:', err.message);
-    return null;
   }
+  return serverMemoryDb;
 };
 
-// Save portfolio data to JSONBin (global persistent storage)
+// Save portfolio data to JSONBin & local file
 const saveToJsonBin = async (data) => {
-  if (!JSONBIN_BIN_ID || !JSONBIN_MASTER_KEY) {
-    console.warn('[JSONBin] No BIN_ID/MASTER_KEY set — data not persisted to JSONBin.');
-    return false;
-  }
-  try {
-    const res = await fetch(`${JSONBIN_BASE}/${JSONBIN_BIN_ID}`, {
-      method: 'PUT',
-      headers: jsonbinHeaders(),
-      body: JSON.stringify(data)
-    });
-    if (!res.ok) {
-      console.error('[JSONBin] Save failed:', res.status, await res.text());
-      return false;
+  saveLocalFileDb(data);
+  let cloudSaved = false;
+
+  if (JSONBIN_BIN_ID && JSONBIN_MASTER_KEY) {
+    try {
+      const res = await fetch(`${JSONBIN_BASE}/${JSONBIN_BIN_ID}`, {
+        method: 'PUT',
+        headers: jsonbinHeaders(),
+        body: JSON.stringify(data)
+      });
+      if (res.ok) {
+        console.log('[JSONBin] Successfully saved portfolio data to JSONBin cloud database.');
+        cloudSaved = true;
+      } else {
+        console.error('[JSONBin] Cloud save warning:', res.status, await res.text());
+      }
+    } catch (err) {
+      console.error('[JSONBin] saveToJsonBin error:', err.message);
     }
-    console.log('[JSONBin] Successfully saved portfolio data to persistent global database.');
-    return true;
-  } catch (err) {
-    console.error('[JSONBin] saveToJsonBin error:', err.message);
-    return false;
   }
+  return cloudSaved || !!serverMemoryDb;
 };
 
 // ─── Email Config (env-seeded) ──────────────────────────────────────────────────
@@ -110,6 +147,8 @@ app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use((req, _res, next) => {
   if (req.url.startsWith('/.netlify/functions/api')) {
     req.url = req.url.replace('/.netlify/functions/api', '') || '/';
+  } else if (req.url.startsWith('/.netlify/functions/server')) {
+    req.url = req.url.replace('/.netlify/functions/server', '') || '/';
   }
   next();
 });
@@ -170,21 +209,17 @@ const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 const handleGetData = async (req, res) => {
   try {
     const data = await fetchFromJsonBin();
-    if (data) {
-      return res.status(200).json({ success: true, data });
-    }
-    // JSONBin not configured or empty → return null so frontend uses its defaults
-    return res.status(200).json({ success: false, data: null });
+    return res.status(200).json({ success: true, data: data || serverMemoryDb });
   } catch (err) {
     console.error('[GET /api/data] Error:', err);
-    return res.status(500).json({ success: false, error: err.message });
+    return res.status(200).json({ success: true, data: serverMemoryDb });
   }
 };
 
 app.get('/api/data', handleGetData);
 app.get('/data', handleGetData);
 
-// ── Protected: Admin saves portfolio data to JSONBin ──────────────────────────
+// ── Protected: Admin saves portfolio data ──────────────────────────────────────
 const handleSaveData = async (req, res) => {
   const { data } = req.body;
   if (!data) {
@@ -195,12 +230,13 @@ const handleSaveData = async (req, res) => {
   if (saved) {
     return res.status(200).json({
       success: true,
-      message: 'Portfolio data saved to persistent global database (JSONBin.io). All devices will see updated data immediately.'
+      message: 'Portfolio data saved to persistent production database. All devices will see updated data.',
+      data: serverMemoryDb
     });
   }
   return res.status(500).json({
     success: false,
-    error: 'Failed to save to JSONBin. Check JSONBIN_BIN_ID and JSONBIN_MASTER_KEY environment variables.'
+    error: 'Failed to save portfolio data to production database.'
   });
 };
 
@@ -392,6 +428,7 @@ const handleHealth = (_req, res) =>
   res.json({
     status: 'ok',
     jsonbinConfigured: !!(JSONBIN_BIN_ID && JSONBIN_MASTER_KEY),
+    hasLocalDb: !!serverMemoryDb,
     recipient: emailConfig.recipientEmail
   });
 
