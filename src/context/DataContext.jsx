@@ -3,21 +3,54 @@ import { initialPortfolioData } from '../data/portfolioData';
 
 const DataContext = createContext();
 
+// Helper: Intelligently merge new dataset over existing data without overwriting custom user fields with empty/demo fallbacks
+const mergeDatasets = (existingData, incomingData) => {
+  if (!incomingData || !incomingData.personalInfo) return existingData || initialPortfolioData;
+
+  const mergedPersonalInfo = {
+    ...initialPortfolioData.personalInfo,
+    ...(existingData?.personalInfo || {}),
+    ...(incomingData.personalInfo || {})
+  };
+
+  // Preserve social links
+  mergedPersonalInfo.socials = {
+    ...initialPortfolioData.personalInfo.socials,
+    ...(existingData?.personalInfo?.socials || {}),
+    ...(incomingData.personalInfo?.socials || {})
+  };
+
+  // Preserve stats
+  mergedPersonalInfo.stats = {
+    ...initialPortfolioData.personalInfo.stats,
+    ...(existingData?.personalInfo?.stats || {}),
+    ...(incomingData.personalInfo?.stats || {})
+  };
+
+  return {
+    ...initialPortfolioData,
+    ...existingData,
+    ...incomingData,
+    personalInfo: mergedPersonalInfo,
+    projects: incomingData.projects || existingData?.projects || initialPortfolioData.projects,
+    services: incomingData.services || existingData?.services || initialPortfolioData.services,
+    experience: incomingData.experience || existingData?.experience || initialPortfolioData.experience,
+    skills: incomingData.skills || existingData?.skills || initialPortfolioData.skills,
+    testimonials: incomingData.testimonials || existingData?.testimonials || initialPortfolioData.testimonials,
+    inboxMessages: incomingData.inboxMessages || existingData?.inboxMessages || []
+  };
+};
+
 export const DataProvider = ({ children }) => {
+  // Initialize state from local persistent storage first
   const [data, setData] = useState(() => {
     const savedData = localStorage.getItem('ponkoj_portfolio_data');
     if (savedData) {
       try {
         const parsed = JSON.parse(savedData);
-        if (parsed.personalInfo) {
-          if (!parsed.personalInfo.email || parsed.personalInfo.email === 'contact@ponkojdas.com') {
-            parsed.personalInfo.email = 'ponkojdas6586@gmail.com';
-          }
-          if (!parsed.personalInfo.phone || parsed.personalInfo.phone === '+880 1700-000000') {
-            parsed.personalInfo.phone = '+8801741783521';
-          }
+        if (parsed && parsed.personalInfo) {
+          return mergeDatasets(initialPortfolioData, parsed);
         }
-        return parsed;
       } catch (err) {
         console.error('Failed to parse saved portfolio data', err);
       }
@@ -25,16 +58,19 @@ export const DataProvider = ({ children }) => {
     return initialPortfolioData;
   });
 
-  // Fetch production database data from backend server on initial mount
+  // Fetch production database data from backend server on initial mount and merge cleanly
   useEffect(() => {
     const loadServerData = async () => {
       try {
         const res = await fetch('/api/data');
         if (res.ok) {
           const resData = await res.json();
-          if (resData.success && resData.data) {
-            setData(resData.data);
-            localStorage.setItem('ponkoj_portfolio_data', JSON.stringify(resData.data));
+          if (resData.success && resData.data && resData.data.personalInfo) {
+            setData((prev) => {
+              const merged = mergeDatasets(prev, resData.data);
+              localStorage.setItem('ponkoj_portfolio_data', JSON.stringify(merged));
+              return merged;
+            });
           }
         }
       } catch (err) {
@@ -45,10 +81,14 @@ export const DataProvider = ({ children }) => {
     loadServerData();
   }, []);
 
-  // Sync dataset changes to backend server storage & localStorage
+  // Sync dataset changes permanently to backend server storage & local storage
   const persistDataset = (newDataset) => {
     setData(newDataset);
-    localStorage.setItem('ponkoj_portfolio_data', JSON.stringify(newDataset));
+    try {
+      localStorage.setItem('ponkoj_portfolio_data', JSON.stringify(newDataset));
+    } catch (e) {
+      console.warn('localStorage save warning (quota or restricted):', e);
+    }
 
     const token = localStorage.getItem('ponkoj_admin_token');
     fetch('/api/admin/data', {
@@ -151,13 +191,25 @@ export const DataProvider = ({ children }) => {
   const updatePersonalInfo = (info) => {
     const updated = {
       ...data,
-      personalInfo: { ...data.personalInfo, ...info }
+      personalInfo: {
+        ...data.personalInfo,
+        ...info,
+        socials: {
+          ...data.personalInfo.socials,
+          ...(info.socials || {})
+        },
+        stats: {
+          ...data.personalInfo.stats,
+          ...(info.stats || {})
+        }
+      }
     };
     persistDataset(updated);
   };
 
-  // Reset to initial defaults
+  // Reset to initial defaults ONLY when explicitly triggered by Admin button
   const resetToDefaultData = () => {
+    localStorage.removeItem('ponkoj_portfolio_data');
     persistDataset(initialPortfolioData);
   };
 
