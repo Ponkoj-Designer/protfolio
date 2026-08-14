@@ -42,8 +42,8 @@ export const AboutPage = () => {
       </div>
 
       {/* Main Bio Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-        <div className="lg:col-span-6 space-y-4 text-on-surface-variant dark:text-stone-300 font-body-lg text-base leading-relaxed">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+        <div className="lg:col-span-7 space-y-4 text-on-surface-variant dark:text-stone-300 font-body-lg text-base leading-relaxed">
           <p className="text-lg md:text-xl font-headline-sm text-on-surface dark:text-white">
             Hello, I'm Ponkoj Das. Over the past 5 years, I've bridged the gap between graphic art and modern software development.
           </p>
@@ -71,8 +71,8 @@ export const AboutPage = () => {
         </div>
 
         {/* Studio Photo */}
-        <div className="lg:col-span-6 relative">
-          <div className="relative aspect-[4/5] max-w-md mx-auto lg:max-w-none rounded-2xl overflow-hidden group shadow-xl border border-outline-variant dark:border-white/20">
+        <div className="lg:col-span-5 flex justify-center lg:justify-end">
+          <div className="relative aspect-[4/5] w-full max-w-sm rounded-2xl overflow-hidden group shadow-xl border border-outline-variant dark:border-white/20">
             {(personalInfo.aboutImage || personalInfo.heroImage) ? (
               <img
                 src={personalInfo.aboutImage || personalInfo.heroImage}
