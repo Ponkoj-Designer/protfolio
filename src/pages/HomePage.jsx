@@ -118,7 +118,8 @@ export const HomePage = () => {
                   <img
                     src={personalInfo.heroImage}
                     alt={personalInfo.name}
-                    fetchpriority="high"
+                    loading="eager"
+                    fetchPriority="high"
                     decoding="async"
                     onLoad={() => setImgLoaded(true)}
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 600px"
@@ -258,6 +259,9 @@ export const HomePage = () => {
                 <img
                   src={item.avatar}
                   alt={item.name}
+                  loading="eager"
+                  fetchPriority="low"
+                  decoding="async"
                   className="w-11 h-11 rounded-full object-cover border border-outline-variant dark:border-white/20"
                 />
                 <div>

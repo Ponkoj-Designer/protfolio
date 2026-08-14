@@ -161,6 +161,9 @@ export const ProjectsPage = () => {
               <img
                 src={quickViewProject.heroImage || quickViewProject.thumbnail}
                 alt={quickViewProject.title}
+                loading="eager"
+                fetchPriority="high"
+                decoding="async"
                 className="w-full h-full object-cover"
               />
             </div>

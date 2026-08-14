@@ -120,6 +120,9 @@ export const TestimonialsPage = () => {
               <img
                 src={item.avatar}
                 alt={item.name}
+                loading="eager"
+                fetchPriority="low"
+                decoding="async"
                 className="w-12 h-12 rounded-full object-cover border border-outline-variant dark:border-white/20"
               />
               <div>

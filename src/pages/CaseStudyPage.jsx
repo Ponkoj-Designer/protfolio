@@ -94,6 +94,9 @@ export const CaseStudyPage = () => {
             <img
               src={project.heroImage || project.thumbnail}
               alt={project.title}
+              loading="eager"
+              fetchPriority="high"
+              decoding="async"
               className="w-full h-full object-cover"
             />
           ) : (
@@ -157,7 +160,14 @@ export const CaseStudyPage = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {project.gallery.map((imgUrl, i) => (
               <div key={i} className="aspect-[16/10] rounded-xl overflow-hidden shadow-md border border-outline-variant dark:border-white/20">
-                <img src={imgUrl} alt={`${project.title} screenshot ${i + 1}`} className="w-full h-full object-cover" />
+                <img
+                  src={imgUrl}
+                  alt={`${project.title} screenshot ${i + 1}`}
+                  loading="eager"
+                  fetchPriority="low"
+                  decoding="async"
+                  className="w-full h-full object-cover"
+                />
               </div>
             ))}
           </div>

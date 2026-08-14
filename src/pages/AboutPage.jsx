@@ -72,12 +72,13 @@ export const AboutPage = () => {
 
         {/* Studio Photo */}
         <div className="lg:col-span-5 flex justify-center lg:justify-end">
-          <div className="relative aspect-[4/5] w-full max-w-sm rounded-2xl overflow-hidden group shadow-xl border border-outline-variant dark:border-white/20">
+          <div className="relative w-full aspect-[4/5] rounded-2xl overflow-hidden group shadow-2xl border border-outline-variant dark:border-white/20">
             {(personalInfo.aboutImage || personalInfo.heroImage) ? (
               <img
                 src={personalInfo.aboutImage || personalInfo.heroImage}
                 alt={personalInfo.name}
-                loading="lazy"
+                loading="eager"
+                fetchPriority="high"
                 decoding="async"
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
               />

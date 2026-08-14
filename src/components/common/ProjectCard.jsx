@@ -10,7 +10,8 @@ export const ProjectCard = ({ project, onQuickView }) => {
           <img
             src={project.thumbnail}
             alt={project.title}
-            loading="lazy"
+            loading="eager"
+            fetchPriority="high"
             decoding="async"
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px"
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"

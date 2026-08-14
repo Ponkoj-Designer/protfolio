@@ -5,6 +5,7 @@ import { ProtectedRoute } from './components/common/ProtectedRoute';
 import { Navbar } from './components/layout/Navbar';
 import { Footer } from './components/layout/Footer';
 import { Preloader } from './components/common/Preloader';
+import { ImagePreloader } from './components/common/ImagePreloader';
 import { HomePage } from './pages/HomePage';
 import { AboutPage } from './pages/AboutPage';
 import { ServicesPage } from './pages/ServicesPage';
@@ -34,6 +35,7 @@ export function App() {
       <div className="flex flex-col min-h-screen bg-surface dark:bg-black text-on-surface dark:text-surface-bright transition-colors duration-300">
         {/* Minimal Initial Preloader */}
         <Preloader />
+        <ImagePreloader />
 
         <ScrollToTop />
         <Navbar />
