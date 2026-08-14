@@ -129,7 +129,7 @@ const uploadImageToSupabaseStorage = async (base64Str, filenamePrefix = 'image')
         .from(bucketName)
         .upload(fileName, buffer, {
           contentType: mimeType,
-          cacheControl: '31536000',
+          cacheControl: '3600',
           upsert: true
         });
 
@@ -427,10 +427,12 @@ const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 // ── Public: Fetch portfolio data (served to ALL visitors on ALL devices) ───────
 const handleGetData = async (req, res) => {
   try {
+    res.set('Cache-Control', 'no-store, max-age=0');
     const data = await fetchDatabaseData();
     return res.status(200).json({ success: true, data: data || serverMemoryDb || initialPortfolioData });
   } catch (err) {
     console.error('[GET /api/data] Error:', err);
+    res.set('Cache-Control', 'no-store, max-age=0');
     return res.status(200).json({ success: true, data: serverMemoryDb || initialPortfolioData });
   }
 };
@@ -440,6 +442,7 @@ app.get('/data', handleGetData);
 
 // ── Protected: Admin saves portfolio data to production database ──────────────
 const handleSaveData = async (req, res) => {
+  res.set('Cache-Control', 'no-store, max-age=0');
   const { data } = req.body;
   if (!data) {
     return res.status(400).json({ success: false, error: 'No data payload provided.' });

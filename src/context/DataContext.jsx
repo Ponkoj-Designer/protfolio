@@ -31,7 +31,7 @@ export const DataProvider = ({ children }) => {
   useEffect(() => {
     const loadFromServerDatabase = async () => {
       try {
-        const res = await fetch('/api/data');
+        const res = await fetch('/api/data', { cache: 'no-store' });
         if (res.ok) {
           const json = await res.json();
           if (json.success && json.data && json.data.personalInfo) {
@@ -63,6 +63,7 @@ export const DataProvider = ({ children }) => {
     try {
       const response = await fetch('/api/admin/data', {
         method: 'POST',
+        cache: 'no-store',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`

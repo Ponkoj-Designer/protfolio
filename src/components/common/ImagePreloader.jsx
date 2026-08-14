@@ -16,15 +16,13 @@ export const ImagePreloader = () => {
 
     addImage(images, personalInfo?.heroImage);
     addImage(images, personalInfo?.aboutImage);
-    addImage(images, personalInfo?.adminAvatar);
 
-    projects.forEach((project) => {
+    projects.slice(0, 6).forEach((project) => {
       addImage(images, project.thumbnail);
       addImage(images, project.heroImage);
-      (project.gallery || []).forEach((src) => addImage(images, src));
     });
 
-    testimonials.forEach((item) => addImage(images, item.avatar));
+    testimonials.slice(0, 3).forEach((item) => addImage(images, item.avatar));
 
     return Array.from(images);
   }, [personalInfo, projects, testimonials]);
@@ -32,16 +30,10 @@ export const ImagePreloader = () => {
   useEffect(() => {
     if (!dataLoaded || imageUrls.length === 0) return;
 
-    imageUrls.forEach((src, index) => {
+    const preload = () => {
+      imageUrls.forEach((src, index) => {
       if (preloadedImages.current.has(src)) return;
       preloadedImages.current.add(src);
-
-      const link = document.createElement('link');
-      link.rel = 'preload';
-      link.as = 'image';
-      link.href = src;
-      link.fetchPriority = index < 6 ? 'high' : 'low';
-      document.head.appendChild(link);
 
       const img = new Image();
       img.decoding = 'async';
@@ -50,7 +42,16 @@ export const ImagePreloader = () => {
       if (img.decode) {
         img.decode().catch(() => {});
       }
-    });
+      });
+    };
+
+    if ('requestIdleCallback' in window) {
+      const idleId = window.requestIdleCallback(preload, { timeout: 1200 });
+      return () => window.cancelIdleCallback(idleId);
+    }
+
+    const timerId = window.setTimeout(preload, 250);
+    return () => window.clearTimeout(timerId);
   }, [dataLoaded, imageUrls]);
 
   return null;
