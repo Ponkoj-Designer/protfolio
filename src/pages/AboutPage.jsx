@@ -29,13 +29,13 @@ export const AboutPage = () => {
   ];
 
   return (
-    <div className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-6 md:py-8 space-y-10 md:space-y-12">
+    <div className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-5 md:py-6 space-y-6 md:space-y-8">
       {/* Header Banner */}
-      <div className="space-y-2 border-b border-surface-variant dark:border-white/15 pb-4">
+      <div className="space-y-2 border-b border-surface-variant dark:border-white/15 pb-3">
         <span className="font-label-caps text-xs font-bold text-secondary dark:text-emerald-400 uppercase tracking-widest">
           About Ponkoj Das
         </span>
-        <h1 className="font-headline-md md:font-display-lg text-3xl md:text-5xl font-bold text-on-surface dark:text-white">
+        <h1 className="font-headline-md md:font-display-lg text-3xl md:text-5xl font-bold leading-tight text-on-surface dark:text-white">
           Designing with Intent, <br />
           Building with Precision.
         </h1>
