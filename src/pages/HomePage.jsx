@@ -4,7 +4,8 @@ import { useData } from '../context/DataContext';
 import { ProjectCard } from '../components/common/ProjectCard';
 
 export const HomePage = () => {
-  const { personalInfo, projects, services, testimonials } = useData();
+  const { personalInfo, projects, services, testimonials, dataLoaded } = useData();
+  const [imgLoaded, setImgLoaded] = React.useState(false);
 
   // Dynamic Hero Image Preloader for instant LCP performance
   useEffect(() => {
@@ -105,16 +106,25 @@ export const HomePage = () => {
 
           {/* Hero Designer Portrait */}
           <div className="lg:col-span-5 relative mt-8 lg:mt-0">
-            <div className="relative w-full aspect-[4/5] rounded-2xl overflow-hidden group shadow-2xl border border-outline-variant dark:border-white/20">
-              {personalInfo.heroImage ? (
+            <div className="relative w-full aspect-[4/5] rounded-2xl overflow-hidden group shadow-2xl border border-outline-variant dark:border-white/20 bg-surface-container dark:bg-neutral-800">
+              {!dataLoaded ? (
+                // Smooth neutral skeleton frame during initial server load
+                <div className="w-full h-full animate-pulse bg-gradient-to-br from-surface-container to-surface-container-high dark:from-neutral-800 dark:to-neutral-900" />
+              ) : personalInfo.heroImage ? (
                 <>
+                  {!imgLoaded && (
+                    <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-surface-container to-surface-container-high dark:from-neutral-800 dark:to-neutral-900" />
+                  )}
                   <img
                     src={personalInfo.heroImage}
                     alt={personalInfo.name}
                     fetchpriority="high"
                     decoding="async"
+                    onLoad={() => setImgLoaded(true)}
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 600px"
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    className={`w-full h-full object-cover transition-all duration-700 group-hover:scale-105 ${
+                      imgLoaded ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+                    }`}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent opacity-70"></div>
                   <div className="absolute bottom-6 left-6 right-6 text-white space-y-1">
