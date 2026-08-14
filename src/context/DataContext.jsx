@@ -4,9 +4,28 @@ import { initialPortfolioData } from '../data/portfolioData';
 const DataContext = createContext();
 
 export const DataProvider = ({ children }) => {
-  // Pure Server Database Source of Truth
-  const [data, setData] = useState(initialPortfolioData);
-  const [loaded, setLoaded] = useState(false);
+  // Pure Server Database Source of Truth with 0ms Pre-hydration Cache
+  const [data, setData] = useState(() => {
+    try {
+      const cached = sessionStorage.getItem('ponkoj_cached_portfolio');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (parsed && parsed.personalInfo) {
+          return parsed;
+        }
+      }
+    } catch (e) {}
+    return initialPortfolioData;
+  });
+
+  const [loaded, setLoaded] = useState(() => {
+    try {
+      const cached = sessionStorage.getItem('ponkoj_cached_portfolio');
+      return !!cached;
+    } catch (e) {
+      return false;
+    }
+  });
 
   // ── On mount: fetch latest portfolio data directly from persistent server database ──
   useEffect(() => {
@@ -18,6 +37,9 @@ export const DataProvider = ({ children }) => {
           if (json.success && json.data && json.data.personalInfo) {
             setData(json.data);
             setLoaded(true);
+            try {
+              sessionStorage.setItem('ponkoj_cached_portfolio', JSON.stringify(json.data));
+            } catch (e) {}
             return;
           }
         }
@@ -52,6 +74,9 @@ export const DataProvider = ({ children }) => {
         const resJson = await response.json();
         if (resJson.success && resJson.data) {
           setData(resJson.data);
+          try {
+            sessionStorage.setItem('ponkoj_cached_portfolio', JSON.stringify(resJson.data));
+          } catch (e) {}
           return { success: true, message: resJson.message || 'Saved permanently to production database.' };
         }
       }
