@@ -5,13 +5,20 @@ export const ProjectCard = ({ project, onQuickView }) => {
   return (
     <div className="group bg-surface-container-lowest dark:bg-inverse-surface border border-outline-variant dark:border-white/10 rounded-2xl overflow-hidden hover-lift flex flex-col h-full transition-all duration-300">
       {/* Thumbnail Container */}
-      <div className="relative aspect-[16/10] overflow-hidden bg-surface-container">
-        <img
-          src={project.thumbnail}
-          alt={project.title}
-          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-          loading="lazy"
-        />
+      <div className="relative aspect-[16/10] overflow-hidden bg-surface-container dark:bg-neutral-800">
+        {project.thumbnail ? (
+          <img
+            src={project.thumbnail}
+            alt={project.title}
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+            loading="lazy"
+          />
+        ) : (
+          <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-surface-container to-surface-container-high dark:from-neutral-800 dark:to-neutral-900 p-4 text-center">
+            <span className="material-symbols-outlined text-3xl text-on-surface-variant/40 dark:text-stone-500 mb-1">image</span>
+            <span className="font-headline-sm text-sm font-semibold text-on-surface/60 dark:text-stone-400 line-clamp-1">{project.title}</span>
+          </div>
+        )}
         {/* Category Pill Tag */}
         <div className="absolute top-4 left-4 z-10">
           <span className="bg-surface/90 dark:bg-black/80 backdrop-blur-md text-on-surface dark:text-surface-bright px-3 py-1 rounded-full text-xs font-label-caps tracking-wider shadow-sm">

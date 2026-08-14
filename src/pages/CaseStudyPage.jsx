@@ -90,11 +90,19 @@ export const CaseStudyPage = () => {
 
         {/* Main Hero Showcase Image */}
         <div className="aspect-[16/9] rounded-2xl overflow-hidden shadow-2xl border border-outline-variant dark:border-white/20">
-          <img
-            src={project.heroImage || project.thumbnail}
-            alt={project.title}
-            className="w-full h-full object-cover"
-          />
+          {(project.heroImage || project.thumbnail) ? (
+            <img
+              src={project.heroImage || project.thumbnail}
+              alt={project.title}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-surface-container to-surface-container-high dark:from-neutral-800 dark:to-neutral-900 p-8 text-center">
+              <span className="material-symbols-outlined text-4xl text-on-surface-variant/40 dark:text-stone-500 mb-2">image</span>
+              <p className="font-headline-sm text-xl font-bold text-on-surface dark:text-white">{project.title}</p>
+              <span className="text-xs text-on-surface-variant dark:text-stone-400 font-label-caps mt-1">{project.category}</span>
+            </div>
+          )}
         </div>
       </div>
 

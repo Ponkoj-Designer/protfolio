@@ -89,16 +89,28 @@ export const HomePage = () => {
           {/* Hero Designer Portrait */}
           <div className="lg:col-span-5 relative mt-8 lg:mt-0">
             <div className="relative w-full aspect-[4/5] rounded-2xl overflow-hidden group shadow-2xl border border-outline-variant dark:border-white/20">
-              <img
-                src={personalInfo.heroImage}
-                alt={personalInfo.name}
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent opacity-70"></div>
-              <div className="absolute bottom-6 left-6 right-6 text-white space-y-1">
-                <p className="font-headline-sm text-lg font-bold">{personalInfo.name}</p>
-                <p className="text-xs opacity-90 font-label-caps">{personalInfo.title}</p>
-              </div>
+              {personalInfo.heroImage ? (
+                <>
+                  <img
+                    src={personalInfo.heroImage}
+                    alt={personalInfo.name}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent opacity-70"></div>
+                  <div className="absolute bottom-6 left-6 right-6 text-white space-y-1">
+                    <p className="font-headline-sm text-lg font-bold">{personalInfo.name}</p>
+                    <p className="text-xs opacity-90 font-label-caps">{personalInfo.title}</p>
+                  </div>
+                </>
+              ) : (
+                <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-surface-container to-surface-container-high dark:from-neutral-800 dark:to-neutral-900 p-8 text-center">
+                  <div className="w-20 h-20 rounded-full bg-primary/10 dark:bg-white/10 flex items-center justify-center mb-4">
+                    <span className="material-symbols-outlined text-4xl text-primary dark:text-white">person</span>
+                  </div>
+                  <p className="font-headline-sm text-xl font-bold text-on-surface dark:text-white">{personalInfo.name}</p>
+                  <p className="text-xs text-on-surface-variant dark:text-stone-400 font-label-caps mt-1">{personalInfo.title}</p>
+                </div>
+              )}
             </div>
           </div>
         </div>

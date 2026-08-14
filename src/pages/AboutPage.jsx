@@ -73,11 +73,21 @@ export const AboutPage = () => {
         {/* Studio Photo */}
         <div className="lg:col-span-6 relative">
           <div className="relative aspect-[4/5] rounded-2xl overflow-hidden group shadow-xl border border-outline-variant dark:border-white/20">
-            <img
-              src={personalInfo.aboutImage || personalInfo.heroImage}
-              alt={personalInfo.name}
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-            />
+            {(personalInfo.aboutImage || personalInfo.heroImage) ? (
+              <img
+                src={personalInfo.aboutImage || personalInfo.heroImage}
+                alt={personalInfo.name}
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+              />
+            ) : (
+              <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-surface-container to-surface-container-high dark:from-neutral-800 dark:to-neutral-900 p-8 text-center">
+                <div className="w-20 h-20 rounded-full bg-primary/10 dark:bg-white/10 flex items-center justify-center mb-4">
+                  <span className="material-symbols-outlined text-4xl text-primary dark:text-white">person</span>
+                </div>
+                <p className="font-headline-sm text-xl font-bold text-on-surface dark:text-white">{personalInfo.name}</p>
+                <p className="text-xs text-on-surface-variant dark:text-stone-400 font-label-caps mt-1">{personalInfo.title}</p>
+              </div>
+            )}
           </div>
         </div>
       </div>

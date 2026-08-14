@@ -216,8 +216,8 @@ export const AdminPage = () => {
       fullDescription: '',
       client: '',
       year: '2025',
-      thumbnail: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAZcJsniiLEsvlnkht-UJyO0b0G0a_JPGLlbfDs0NXM5Z42RJa4caagDv-elIHO9CM2_yL_8TJisVHnEJ65IfIZsB2ryXxiz5DtGb-P_09gfnWpVxVguCBzASTt9D9D6KSd7quiDFU-S3m_AzTYHMyxYxom1IkYkdl0eVDLYzjJQL9PrXC9Ft_lBmVS-RFM3hcvy3Zwm1V4Nmo2b5J63FLx7HHTiOfvTD7jO0RWWozsw8LYCgmgyXmb4Q',
-      heroImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAZcJsniiLEsvlnkht-UJyO0b0G0a_JPGLlbfDs0NXM5Z42RJa4caagDv-elIHO9CM2_yL_8TJisVHnEJ65IfIZsB2ryXxiz5DtGb-P_09gfnWpVxVguCBzASTt9D9D6KSd7quiDFU-S3m_AzTYHMyxYxom1IkYkdl0eVDLYzjJQL9PrXC9Ft_lBmVS-RFM3hcvy3Zwm1V4Nmo2b5J63FLx7HHTiOfvTD7jO0RWWozsw8LYCgmgyXmb4Q',
+      thumbnail: '',
+      heroImage: '',
       gallery: [],
       tags: 'UI/UX, Web Design',
       featured: true
