@@ -160,7 +160,7 @@ export const ImageUploadModal = ({
       ctx.drawImage(img, -renderW / 2, -renderH / 2, renderW, renderH);
       ctx.restore();
 
-      const croppedDataUrl = canvas.toDataURL('image/jpeg', 0.92);
+      const croppedDataUrl = canvas.toDataURL('image/jpeg', 0.85);
       onSave(croppedDataUrl);
       onClose();
     };

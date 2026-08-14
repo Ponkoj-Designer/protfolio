@@ -129,6 +129,7 @@ const uploadImageToSupabaseStorage = async (base64Str, filenamePrefix = 'image')
         .from(bucketName)
         .upload(fileName, buffer, {
           contentType: mimeType,
+          cacheControl: '31536000',
           upsert: true
         });
 
