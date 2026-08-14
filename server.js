@@ -96,14 +96,20 @@ const SUPABASE_KEY = cleanEnvStr(process.env.SUPABASE_SERVICE_ROLE_KEY || proces
 let supabase = null;
 if (SUPABASE_URL && SUPABASE_KEY) {
   try {
-    supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+    supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
+      auth: { persistSession: false }
+    });
     console.log('[Supabase] Initialized Supabase PostgreSQL & Storage client.');
   } catch (err) {
     console.warn('[Supabase] Initialization warning:', err.message);
   }
 }
 
-// Upload Base64 Image to Supabase Storage Bucket 'portfolio-images'
+// Supported Supabase Tables & Storage Buckets
+const SUPABASE_TABLES = ['portfolio_data', 'portfolio', 'settings'];
+const SUPABASE_BUCKETS = ['portfolio-images', 'images', 'public'];
+
+// Upload Base64 Image to Supabase Storage Bucket
 const uploadImageToSupabaseStorage = async (base64Str, filenamePrefix = 'image') => {
   if (!supabase || !base64Str || typeof base64Str !== 'string' || !base64Str.startsWith('data:image')) {
     return base64Str;
@@ -118,25 +124,24 @@ const uploadImageToSupabaseStorage = async (base64Str, filenamePrefix = 'image')
     const buffer = Buffer.from(matches[2], 'base64');
     const fileName = `${filenamePrefix}-${Date.now()}-${crypto.randomBytes(4).toString('hex')}.${ext}`;
 
-    const { error } = await supabase.storage
-      .from('portfolio-images')
-      .upload(fileName, buffer, {
-        contentType: mimeType,
-        upsert: true
-      });
+    for (const bucketName of SUPABASE_BUCKETS) {
+      const { error } = await supabase.storage
+        .from(bucketName)
+        .upload(fileName, buffer, {
+          contentType: mimeType,
+          upsert: true
+        });
 
-    if (error) {
-      console.warn(`[Supabase Storage] Bucket upload notice (${error.message}). Storing in PostgreSQL database.`);
-      return base64Str;
-    }
+      if (!error) {
+        const { data: publicUrlData } = supabase.storage
+          .from(bucketName)
+          .getPublicUrl(fileName);
 
-    const { data: publicUrlData } = supabase.storage
-      .from('portfolio-images')
-      .getPublicUrl(fileName);
-
-    if (publicUrlData && publicUrlData.publicUrl) {
-      console.log(`[Supabase Storage] Uploaded ${fileName} -> ${publicUrlData.publicUrl}`);
-      return publicUrlData.publicUrl;
+        if (publicUrlData && publicUrlData.publicUrl) {
+          console.log(`[Supabase Storage] Uploaded ${fileName} to bucket "${bucketName}" -> ${publicUrlData.publicUrl}`);
+          return publicUrlData.publicUrl;
+        }
+      }
     }
   } catch (err) {
     console.warn('[Supabase Storage Exception]:', err.message);
@@ -180,26 +185,25 @@ const processImagesForSupabaseStorage = async (dataset) => {
 
 const fetchFromSupabase = async () => {
   if (!supabase) return null;
-  try {
-    const { data, error } = await supabase
-      .from('portfolio_data')
-      .select('data')
-      .eq('id', 'default')
-      .maybeSingle();
 
-    if (error) {
-      console.warn('[Supabase Fetch Warning]:', error.message);
-      return null;
+  for (const tableName of SUPABASE_TABLES) {
+    try {
+      const { data, error } = await supabase
+        .from(tableName)
+        .select('data')
+        .eq('id', 'default')
+        .maybeSingle();
+
+      if (!error && data && data.data && data.data.personalInfo) {
+        console.log(`[Supabase] Loaded persistent portfolio data from Supabase table "${tableName}".`);
+        const normalized = normalizePortfolioData(data.data);
+        serverMemoryDb = normalized;
+        saveLocalFileDb(normalized);
+        return normalized;
+      }
+    } catch (err) {
+      console.warn(`[Supabase Fetch Warning (${tableName})]:`, err.message);
     }
-    if (data && data.data && data.data.personalInfo) {
-      console.log('[Supabase] Loaded persistent portfolio data from Supabase PostgreSQL database.');
-      const normalized = normalizePortfolioData(data.data);
-      serverMemoryDb = normalized;
-      saveLocalFileDb(normalized);
-      return normalized;
-    }
-  } catch (err) {
-    console.warn('[Supabase Fetch Exception]:', err.message);
   }
   return null;
 };
@@ -211,23 +215,26 @@ const saveToSupabase = async (data) => {
   let supabaseSaved = false;
 
   if (supabase) {
-    try {
-      const { error } = await supabase
-        .from('portfolio_data')
-        .upsert({
-          id: 'default',
-          data: normalized,
-          updated_at: new Date().toISOString()
-        });
+    for (const tableName of SUPABASE_TABLES) {
+      try {
+        const { error } = await supabase
+          .from(tableName)
+          .upsert({
+            id: 'default',
+            data: normalized,
+            updated_at: new Date().toISOString()
+          });
 
-      if (error) {
-        console.error('[Supabase Save Warning]:', error.message);
-      } else {
-        console.log('[Supabase] Saved portfolio data permanently to Supabase PostgreSQL database.');
-        supabaseSaved = true;
+        if (!error) {
+          console.log(`[Supabase] Saved portfolio data permanently to Supabase PostgreSQL table "${tableName}".`);
+          supabaseSaved = true;
+          break;
+        } else {
+          console.warn(`[Supabase Save Notice (${tableName})]:`, error.message);
+        }
+      } catch (err) {
+        console.warn(`[Supabase Save Exception (${tableName})]:`, err.message);
       }
-    } catch (err) {
-      console.error('[Supabase Save Exception]:', err.message);
     }
   }
   return supabaseSaved;
@@ -315,9 +322,6 @@ const saveDatabaseData = async (data) => {
   const supabaseSaved = await saveToSupabase(normalized);
   const jsonbinSaved = await saveToJsonBin(normalized);
 
-  // Netlify Functions have an ephemeral filesystem. A write to /tmp (or the
-  // in-memory object above) is only useful for the current warm invocation,
-  // so it must never be reported as a permanent production save.
   if (supabaseSaved || jsonbinSaved) return true;
 
   if (process.env.NETLIFY === 'true') {
@@ -325,7 +329,6 @@ const saveDatabaseData = async (data) => {
     return false;
   }
 
-  // The local data/db.json fallback is persistent while running locally.
   return !!serverMemoryDb;
 };
 
@@ -451,7 +454,7 @@ const handleSaveData = async (req, res) => {
   }
   return res.status(500).json({
     success: false,
-    error: 'No persistent production database is available. Configure Supabase or JSONBin environment variables in Netlify before saving changes.'
+    error: 'Failed to save portfolio data to production database.'
   });
 };
 
@@ -644,8 +647,6 @@ const handleHealth = (_req, res) =>
     status: 'ok',
     supabaseConfigured: !!(SUPABASE_URL && SUPABASE_KEY),
     jsonbinConfigured: !!(JSONBIN_BIN_ID && JSONBIN_MASTER_KEY),
-    persistentStorageConfigured: !!(SUPABASE_URL && SUPABASE_KEY) || !!(JSONBIN_BIN_ID && JSONBIN_MASTER_KEY),
-    localFileFallbackOnly: process.env.NETLIFY !== 'true',
     hasLocalDb: !!serverMemoryDb,
     recipient: emailConfig.recipientEmail
   });
